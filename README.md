@@ -54,11 +54,20 @@ I use the following addons:
 - Check Home Assistant configuration
 - phpMyAdmin
 
-## Configuration
-I have two primary Lovelace dashboards:
+## Lovelace dashboards
+I use two different Lovelace dashboards:
 
-- Main dashboard for use on mobile devices
-- Dashboard optimized for viewing on tablet with screen resolution 1280x800
+### Tablet dashboard
+This dashboard is optimized for viewing on tablet with screen resolution 1280x800:
+
+![Main view](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/01_main.png)
+
+See more screenshots [HERE](/screenshots/screenshots.md)
+
+### Mobile device dashboard 
+This dashboard is mainly used on mobile devices, and includes additional elements, such as a universal remote:
+
+![Universal remote](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/06_remote.jpg)
 
 For the time being, only my tablet dashboard is included in this repository.
 
