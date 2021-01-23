@@ -1,0 +1,127 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to choose between meal plan, shopping list, TODO list or garbage
+# collection information
+#
+# Selected information will be shown as popup cards
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: horizontal-stack
+cards:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Daily meal plan selection
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:calendar-month
+    name: Madplan
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+    entity: dummy.madplan
+  #─────────────────────────────────────────────────────────────────────────────
+  # TODO list selection
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:format-list-checks
+    name: Opgaver
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+    entity: dummy.TODO
+  #─────────────────────────────────────────────────────────────────────────────
+  # Shopping list selection
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:cart
+    name: Indkøb
+    show_label: false
+    label: >
+      [[[
+        if (entity.attributes.shopping_lists[0].activeCount > 1) 
+          var txt=' varer'
+        else 
+          var txt=' vare';
+      ]]]
+    custom_fields:
+      items: >
+        [[[return entity.attributes.shopping_lists[0].activeCount;]]]
+    styles:
+      grid:
+        - position: relative
+      custom_fields:
+        items:
+          - background-color: var(--paper-item-icon-active-color)
+          - border-radius: 50%
+          - position: absolute
+          - left: 67%
+          - top: 10%
+          - height: 20px
+          - width: 20px
+          - font-size: 12px
+          - line-height: 20px #- grid-template-columns: 1fr 70%
+      card:
+        - background-color: var(--card-background-color)
+        - color: "rgb(255,255,255)"
+        - border-radius: 10px
+    entity: sensor.our_groceries
+    #--- List is empty ---#
+    state:
+      - operator: template
+        value: >
+          [[[
+            return entity.attributes.shopping_lists[0].activeCount==0
+          ]]]
+        icon: mdi:cart-outline
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+          custom_fields:
+            items:
+              - background-color: var(--card-background-color)
+              - color: var(--card-background-color)
+  #─────────────────────────────────────────────────────────────────────────────
+  # Garbage collection information selection
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:delete
+    name: Affald
+    custom_fields:
+      days: >
+        [[[var currentdate = Date.parse(new Date());
+        var nextdate=Date.parse(entity.attributes.start_time);
+        var diff=Math.ceil((nextdate - currentdate) / (1000*60*60*24));
+        return diff;]]]
+    # return entity.attributes.start_time;]]]
+    styles:
+      #[[[
+      #var currentTime = new Date();
+      #return entity.attributes.start_time - currentTime;]]]
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+      custom_fields:
+        days:
+          - background-color: var(--paper-item-icon-active-color)
+          - border-radius: 50%
+          - position: absolute
+          - left: 67%
+          - top: 10%
+          - height: 20px
+          - width: 20px
+          - font-size: 12px
+          - line-height: 20px #- grid-template-columns: 1fr 70%
+    entity: calendar.garbage_collection

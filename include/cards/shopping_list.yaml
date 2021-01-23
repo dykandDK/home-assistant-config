@@ -1,0 +1,18 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display shopping list items
+#
+# Shopping list items are collected from OurGroceries.com using the following
+# custom integration:
+#
+#   Our Groceries integration: https://github.com/ljmerza/ha-our-groceries
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - our-groceries-card: https://github.com/ljmerza/our-groceries-card
+
+type: custom:our-groceries-card
+title: ""
+show_crossed_off: false

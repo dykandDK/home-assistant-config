@@ -1,0 +1,11 @@
+/.HA_VERSION
+/.cloud
+/.shopping_list.json
+/.storage
+/home-assistant.log
+/home-assistant_v2.db
+/secrets.yaml
+/scripts.yaml
+/automations.yaml
+/node-red
+/ui-lovelace.yaml

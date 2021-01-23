@@ -1,0 +1,35 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Display home status, including alarm status, latest motion and door opened
+# events
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# multiple-entity-row: https://github.com/benct/lovelace-multiple-entity-row
+
+type: entities
+title: Status
+entities:
+  - alarm_control_panel.alarm
+  - entity: input_select.home_state
+    type: custom:multiple-entity-row
+    name: Tilstand for hjem
+    icon: mdi:shield-home
+  - entity: sensor.last_motion_sensor
+    type: custom:multiple-entity-row
+    name: Seneste bevægelse
+    icon: mdi:run
+    secondary_info:
+      entity: sensor.last_motion_time
+      format: relative
+      name: false
+  - entity: sensor.last_door_sensor
+    type: custom:multiple-entity-row
+    name: Senest åbne dør
+    icon: mdi:door-open
+    secondary_info:
+      entity: sensor.last_door_time
+      format: relative
+      name: false

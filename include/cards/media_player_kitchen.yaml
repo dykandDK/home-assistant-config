@@ -1,0 +1,31 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Mini mediaplayer card for control of Kitchen speakers
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# mini-media-player: https://github.com/kalkih/mini-media-player
+
+type: custom:mini-media-player
+entity: media_player.alrum
+icon: mdi:surround-sound
+source: full
+hide:
+  power: true
+  progress: true
+speaker_group:
+  platform: sonos
+  show_group_count: true
+  entities:
+    - entity_id: media_player.alrum
+      name: Alrum
+    - entity_id: media_player.stue
+      name: Stue
+    - entity_id: media_player.bornevaerelse
+      name: Isabella
+    - entity_id: media_player.badevaerelse
+      name: Stort bad
+    - entity_id: media_player.terrasse
+      name: Lille bad

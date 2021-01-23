@@ -1,0 +1,46 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Picture glance card to display camera feed include PTZ control buttons
+# and other relevant room controls
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture-glance
+title: Isabella
+image: "https://www.home-assistant.io/images/merchandise/shirt-frontpage.png"
+aspect_ratio: 0%
+camera_image: camera.reolink_e1_pro_profile000_mainstream #camera.streaming_enabled
+camera_view: live
+entities:
+  - entity: input_boolean.clean_room_01
+    name: Move left
+    icon: mdi:arrow-left-bold-circle-outline
+    tap_action:
+      action: call-service
+      service: onvif.ptz
+      service_data:
+        pan: LEFT
+        entity_id: camera.reolink_e1_pro_profile000_mainstream
+        move_mode: ContinuousMove
+        continuous_duration: 1
+  - entity: input_boolean.clean_room_01
+    name: Move right
+    icon: mdi:arrow-right-bold-circle-outline
+    tap_action:
+      action: call-service
+      service: onvif.ptz
+      service_data:
+        pan: RIGHT
+        entity_id: camera.reolink_e1_pro_profile000_mainstream
+        move_mode: ContinuousMove
+        continuous_duration: 1
+  - entity: light.sky
+    name: Sky
+    icon: mdi:led-strip-variant
+  - entity: switch.on_off_plug_in_unit_12
+    name: Blæser
+    icon: mdi:fan

@@ -1,0 +1,103 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to choose rooms for vacuuming and start vacuum cleaning
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: vertical-stack
+cards:
+  # Row #1
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_24 #Bryggers
+        aspect_ratio: 1/0.8
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_22 #Gang
+        aspect_ratio: 1/0.8
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_01 #Gæste toilet
+        aspect_ratio: 1/0.8
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_16 #Kontor
+        aspect_ratio: 1/0.8
+  # Row #2
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_23 #Laura
+        icon: mdi:chess-queen
+        aspect_ratio: 1/0.4
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_19 #Isabella
+        icon: hass:unicorn
+        aspect_ratio: 1/0.4
+  # Row #3
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_17 #Køkken/alrum
+        aspect_ratio: 1/0.4
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_26 #Stue
+        aspect_ratio: 1/0.4
+  # Row #4
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_20 #Soveværelse
+        aspect_ratio: 1/0.4
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_boolean.clean_room_21 #Stort bad
+        name: Stort bad
+        aspect_ratio: 1/0.4
+  # Row #5
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        color_type: card
+        entity: scene.select_all_rooms
+        icon: mdi:checkbox-multiple-marked-outline
+        name: Vælg alle
+        aspect_ratio: 1/0.5
+        tap_action:
+          action: call-service
+          service: scene.turn_on
+          service_data:
+            entity_id: scene.select_all_rooms
+      - type: "custom:button-card"
+        color_type: card
+        entity: script.nodered_vacuum_test
+        icon: mdi:broom
+        name: Start støvsugning
+        aspect_ratio: 1/0.5
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.nodered_vacuum_test
+      - type: "custom:button-card"
+        color_type: card
+        entity: scene.select_no_rooms
+        icon: mdi:checkbox-multiple-blank-outline
+        name: Fravælg alle
+        aspect_ratio: 1/0.5
+        tap_action:
+          action: call-service
+          service: scene.turn_on
+          service_data:
+            entity_id: scene.select_no_rooms

@@ -1,0 +1,610 @@
+---
+################################################################################
+#                            BASIS CONFIGURATION                               #
+################################################################################
+
+#───────────────────────────────────────────────────────────────────────────────
+# Configure a default setup of Home Assistant
+# (frontend, api, etc)
+#───────────────────────────────────────────────────────────────────────────────
+default_config:
+
+#───────────────────────────────────────────────────────────────────────────────
+# Include folder with packages
+#───────────────────────────────────────────────────────────────────────────────
+homeassistant:
+  external_url: !secret HA_external_url
+  packages: !include_dir_named packages
+  allowlist_external_dirs:
+    - /config
+  media_dirs:
+    media: /media
+
+#───────────────────────────────────────────────────────────────────────────────
+# Allow external access via DuckDNS.org
+#───────────────────────────────────────────────────────────────────────────────
+http:
+  #ssl_certificate: /ssl/fullchain.pem
+  #ssl_key: /ssl/privkey.pem
+
+  # Enable parsing of the X-Forwarded-For header, passing on the client’s
+  # correct IP address, since I'm using a proxied setup.
+  #use_x_forwarded_for: true
+
+  # List of trusted proxies, consisting of IP addresses or networks, that are
+  # allowed to set the X-Forwarded-For header.
+  #trusted_proxies: !secret http_trusted_proxies
+
+  # Enables additional IP filtering.
+  #ip_ban_enabled: true
+
+  # Number of failed login attempts from a single IP after which it will be
+  # automatically banned.
+  #login_attempts_threshold: 5
+
+#───────────────────────────────────────────────────────────────────────────────
+# Save lovelace UI in seperate file and add resources
+#───────────────────────────────────────────────────────────────────────────────
+lovelace:
+  # Define dashboards
+  mode: yaml
+  dashboards:
+    tablet-yaml:
+      mode: yaml
+      title: Tablet
+      icon: mdi:tablet-ipad
+      show_in_sidebar: true
+      filename: tablet.yaml
+  # Include external resources
+  resources:
+    - url: /hacsfiles/our-groceries-card/our-groceries-card.js #
+      type: module
+    - url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js #
+      type: module
+    - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js #
+      type: module
+    - url: /hacsfiles/button-card/button-card.js #
+      type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js #
+      type: module
+    - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+      type: module
+    - url: /hacsfiles/atomic-calendar-revive/atomic-calendar-revive.js
+      type: module
+    - url: /hacsfiles/kiosk-mode/kiosk-mode.js
+      type: module
+    - url: /hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js
+      type: module
+    - url: /hacsfiles/spotify-card/spotify-card.js
+      type: module
+
+#───────────────────────────────────────────────────────────────────────────────
+# Enables the frontend and include themes
+#───────────────────────────────────────────────────────────────────────────────
+frontend:
+  themes: !include_dir_merge_named themes
+
+#───────────────────────────────────────────────────────────────────────────────
+# Enables IOS Actionable Notifications
+#───────────────────────────────────────────────────────────────────────────────
+ios:
+  push:
+    categories: !include ios_push_categories.yaml
+
+#───────────────────────────────────────────────────────────────────────────────
+# Text to speech
+#───────────────────────────────────────────────────────────────────────────────
+tts:
+  - platform: google_translate
+    base_url: !secret TTS_base_url
+
+#───────────────────────────────────────────────────────────────────────────────
+# Additional file includes
+#───────────────────────────────────────────────────────────────────────────────
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+#───────────────────────────────────────────────────────────────────────────────
+# Limit log entries
+#───────────────────────────────────────────────────────────────────────────────
+recorder:
+  db_url: !secret db_url
+  purge_keep_days: 14
+  #purge_interval: 1
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.local_time
+      - sensor.date_time
+      - sensor.time
+      - sensor.time_date
+      - sensor.time_utc
+      - sun.sun
+      - camera.streaming_enabled
+      - camera.reolink_e1_pro_profile000_mainstream
+      - camera.netatmo_kamera_gangsti
+      - sensor.indego_next_mow_countdown
+      - sensor.indego_next_mow
+    entity_globs:
+      - sensor.nodred*
+
+#───────────────────────────────────────────────────────────────────────────────
+# Additional logging
+#───────────────────────────────────────────────────────────────────────────────
+#logger:
+#  default: critical
+#  logs:
+#    custom_components.indego: debug
+#    pyIndego: debug
+#logger:
+#  default: critical
+#  logs:
+#    homeassistant.components.onvif: debug
+#    zeep: debug
+
+#───────────────────────────────────────────────────────────────────────────────
+# Forward entries for control in Apple HomeKit / Siri
+#───────────────────────────────────────────────────────────────────────────────
+homekit:
+  filter:
+    include_entities:
+      - input_boolean.anders_phone_charging
+      - input_boolean.manual_override
+      - cover.velux_window
+      - cover.velux_window_2
+      - sensor.velux_sensor_temperature
+      - input.home_state
+      - light.bryggers_2
+      - light.bryggers
+      - light.standerto
+      - light.hue_white_light_1 #Spisebord
+      - light.dimmable_light_5 #Stander
+      - light.dimmable_light_9 #Loft, kontor
+      - scene.film
+      - scene.mellem
+      - scene.lege
+      - scene.spise
+      - switch.koogeek_p1_c970e7
+      - camera.e1_zoom_profile000_mainstream
+      - camera.reolink_e1_pro_profile000_mainstream
+      - media_player.marantz_sr7010
+  entity_config:
+    # switch.on_off_plug_in_unit_4:
+    #   name: Sengebord
+    #   type: outlet
+    # switch.on_off_plug_in_unit_5:
+    #   name: Blæser
+    #   type: outlet
+    light.hue_white_light_1:
+      name: Spisebord
+    light.dimmable_light_5:
+      name: stander
+    light.dimmable_light_9:
+      name: Loftslampe
+    switch.koogeek_p1_c970e7:
+      name: Julelys
+      type: outlet
+    media_player.marantz_sr7010:
+      name: AVR
+      feature_list:
+        - feature: on_off
+        - feature: toggle_mute
+
+#───────────────────────────────────────────────────────────────────────────────
+# Use ffmpeg
+#───────────────────────────────────────────────────────────────────────────────
+ffmpeg:
+
+################################################################################
+#                                   SENSORS                                    #
+################################################################################
+sensor:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Local Date and time
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: time_date
+    display_options:
+      - "time"
+      - "date"
+      - "date_time"
+      - "time_date"
+      - "time_utc"
+    scan_interval: 55 #once every 55 secornd
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Local date and time template sensors
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: template
+    sensors:
+      local_time:
+        value_template: "{{states('sensor.time') and as_timestamp(now()) | timestamp_custom('%H:%M')}}"
+        #entity_id: sensor.time
+      local_weekday:
+        value_template: "{{ states('sensor.date') and as_timestamp(now()) | timestamp_custom('%a') | replace('Mon','Mandag') | replace('Tue','Tirsdag') | replace('Wed','Onsdag') | replace('Thu','Torsdag') | replace('Fri','Fredag') | replace('Sat','Lørdag') | replace('Sun','Søndag') }}"
+      local_date:
+        value_template: "{{ states('sensor.date') and as_timestamp(now()) | timestamp_custom('%a %d.%m.%y') | replace('Mon','Man') | replace('Tue','Tir') | replace('Wed','Ons') | replace('Thu','Tor') | replace('Fri','Fre') | replace('Sat','Lør') | replace('Sun','Søn') }}"
+      local_date2:
+        value_template: >
+          {{ (states('sensor.date') and as_timestamp(now()) | timestamp_custom('%a') | replace('Mon','Man') | replace('Tue','Tir') | replace('Wed','Ons') | replace('Thu','Tor') | replace('Fri','Fre') | replace('Sat','Lør') | replace('Sun','Søn')) + '\n' +
+            (states('sensor.date') and as_timestamp(now()) | timestamp_custom('%d.%m'))  }}
+      local_date3:
+        value_template: >
+          {{ states('sensor.date') and as_timestamp(now()) | timestamp_custom('%d.%m') }}
+      local_sunrise:
+        friendly_name: Solopgang
+        icon_template: mdi:weather-sunset-up
+        value_template: >-
+          {{ states.sun | map(attribute="attributes.next_rising") | first | as_timestamp | timestamp_custom('%H:%M') }}
+      local_sunset:
+        friendly_name: Solnedgang
+        icon_template: mdi:weather-sunset-down
+        value_template: >-
+          {{ states.sun | map(attribute="attributes.next_setting") | first | as_timestamp | timestamp_custom('%H:%M') }}
+      #─────────────────────────────────────────────────────────────────────────
+      # Sensor for last motion detected and door opened
+      #─────────────────────────────────────────────────────────────────────────
+      last_motion_sensor:
+        value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'motion') | sort(attribute='last_changed',reverse=true) | map(attribute='attributes.friendly_name') | first }}"
+        friendly_name: Sensor som senest har registreret bevægelse
+      last_motion_time:
+        value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'motion') | sort(attribute='last_changed',reverse=true) | map(attribute='last_changed') | first }}"
+        friendly_name: Tidspunkt for seneste registrerede bevægelse
+        device_class: timestamp
+      last_door_sensor:
+        value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'opening') | sort(attribute='last_changed',reverse=true) | map(attribute='attributes.friendly_name') | first }}"
+        friendly_name: Senest åbne dør
+      last_door_time:
+        value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'opening') | sort(attribute='last_changed',reverse=true) | map(attribute='last_changed') | first }}"
+        friendly_name: Tidspunkt for senest åbning af dør
+        device_class: timestamp
+      #─────────────────────────────────────────────────────────────────────────
+      # Fix Indego date formats and add countdown to next mow
+      #─────────────────────────────────────────────────────────────────────────
+      # indego_last_mow:
+      #   value_template: "{{ as_timestamp(states('sensor.indego_706601174_last_completed')) | timestamp_custom('%d.%m.%y %H:%M') }}"
+      #   #entity_id: sensor.indego_706601174_last_completed
+      # indego_next_mow:
+      #   value_template: "{{ states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) | timestamp_custom('%d.%m.%y %H:%M')}}"
+      #   #entity_id: sensor.indego_706601174_next_mow
+      # indego_next_mow_countdown:
+      #   value_template: >-
+      #     {% set day_diff = (( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) )/ (3600*24)) | int %}
+      #     {% set hour_diff =(( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) - (24*day_diff*3600) )/ (3600)) | int %}
+      #     {% set min_diff =(( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) - (24*day_diff*3600) - (3600*hour_diff) )/ (60)) | int %}
+      #     {% if day_diff>1 %} {{ day_diff }} dage, {% elif day_diff==1 %}{{ day_diff }} dag, {% endif %}{% if hour_diff>1 %}{{ hour_diff }} timer og {{ min_diff }} min. {% elif hour_diff==1 %}{{ hour_diff }} time og {{ min_diff }} min.{% else %}{{ min_diff }} min.{% endif %}
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # HA database size in MB
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: sql
+    db_url: !secret db_url
+    #scan_interval: 3600 #once per hour
+    scan_interval: 900 #once every 15 mins.
+    queries:
+      - name: "HA database size"
+        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="HA" GROUP BY table_schema;'
+        column: "value"
+        unit_of_measurement: MB
+      - name: ude_min_temp
+        query: "SELECT MIN(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_ude_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
+        unit_of_measurement: "°C"
+        column: "value"
+      - name: ude_max_temp
+        query: "SELECT MAX(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_ude_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
+        unit_of_measurement: "°C"
+        column: "value"
+      - name: inde_min_temp
+        query: "SELECT MIN(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_inde_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
+        unit_of_measurement: "°C"
+        column: "value"
+      - name: inde_max_temp
+        query: "SELECT MAX(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_inde_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
+        unit_of_measurement: "°C"
+        column: "value"
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Weather forecast from YR.NO
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: weather_data
+    name: YR_forecast5days
+    forecast: 120
+    latitude: !secret location_latitude
+    longitude: !secret location_longitude
+    monitored_conditions:
+      - temperature
+      - symbol
+      - precipitation
+      - windSpeed
+      - pressure
+      - windDirection
+      - humidity
+      - fog
+      - cloudiness
+      - lowClouds
+      - mediumClouds
+      - highClouds
+      - dewpointTemperature
+
+  - platform: weather_data
+    name: YR_forecast24
+    forecast: 24
+    latitude: !secret location_latitude
+    longitude: !secret location_longitude
+    monitored_conditions:
+      - temperature
+      - symbol
+      - precipitation
+      - windSpeed
+      - pressure
+      - windDirection
+      - humidity
+      - fog
+      - cloudiness
+      - lowClouds
+      - mediumClouds
+      - highClouds
+      - dewpointTemperature
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Host system monitor
+  #─────────────────────────────────────────────────────────────────────────────
+  # Log file size
+  - platform: filesize
+    file_paths:
+      - /config/home-assistant.log
+
+#───────────────────────────────────────────────────────────────────────────────
+# System monitoring
+#───────────────────────────────────────────────────────────────────────────────
+sensor sys:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /home
+      - type: memory_free
+      - type: memory_use_percent
+      - type: memory_use
+      - type: memory_free
+      - type: network_in
+        arg: eth0
+      - type: network_out
+        arg: eth0
+      - type: processor_use
+      - type: last_boot
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+    scan_interval: 59 #once per minute
+
+################################################################################
+#                               INPUT DEFINITIONS                              #
+################################################################################
+
+#───────────────────────────────────────────────────────────────────────────────
+# Input booleans:
+#
+# - for manual override of automations
+# - for room selection for vaccum cleaner
+#───────────────────────────────────────────────────────────────────────────────
+input_boolean:
+  manual_override:
+    name: Manuel styring
+    icon: mdi:gesture-double-tap
+  force_data_refresh:
+    name: Hent seneste web data
+    icon: mdi:earth
+    initial: false
+  clean_room_01:
+    name: Gæstetoilet
+    icon: mdi:paper-roll
+  clean_room_16:
+    name: Kontor
+    icon: mdi:laptop
+  clean_room_17:
+    name: Køkken/alrum
+    icon: mdi:silverware-fork-knife
+  clean_room_19:
+    name: Isabella's værelse
+    icon: mdi:alpha-i-circle
+  clean_room_20:
+    name: Soveværelse
+    icon: mdi:sleep
+  clean_room_21:
+    name: Stort badeværelse
+    icon: mdi:shower
+  clean_room_22:
+    name: Gang
+    icon: mdi:hanger
+  clean_room_23:
+    name: Laura's værelse
+    icon: mdi:baby-face
+  clean_room_24:
+    name: Bryggers
+    icon: mdi:tumble-dryer
+  clean_room_26:
+    name: Stue
+    icon: mdi:sofa
+  anders_phone_charging:
+    name: Anders' telefon oplader
+    icon: mdi:cellphone-charging
+
+#───────────────────────────────────────────────────────────────────────────────
+# Input selector for rooms, home state and countdown actions
+#───────────────────────────────────────────────────────────────────────────────
+input_select:
+  media_source:
+    name: Vælg kilde
+    options:
+      - AppleTV - Stue
+      - AppleTV - Soveværelse
+      - Sonos - Stue
+      - PS4
+    icon: mdi:exit-to-app
+    initial: AppleTV - Stue
+  music_source:
+    name: Vælg kilde
+    options:
+      - Sonos - Alrum
+      - Sonos - Stue
+      - Sonos - Isabella
+      - Sonos - Kontor
+      - Sonos - Stort bad
+      - Sonos - Lille bad
+    icon: mdi:music
+    initial: Sonos - Alrum
+  home_state:
+    name: Home State
+    options:
+      - Home
+      - Away
+      - Night
+      - Guests
+      - Holiday
+    icon: mdi:shield-home-outline
+  countdown_actions:
+    name: Countdown X-mas actions
+    options:
+      - blink
+      - music
+      - doorbell
+      - toilet
+      - drum
+    icon: mdi:cog-box
+
+#───────────────────────────────────────────────────────────────────────────────
+# Input number
+#───────────────────────────────────────────────────────────────────────────────
+input_number:
+  last_vaccuum_reset_m2:
+    min: 0
+    max: 99999999
+  countdown_select:
+    name: Nedtælling i antal minutter
+    initial: 5
+    min: 0
+    max: 15
+    step: 1
+#───────────────────────────────────────────────────────────────────────────────
+# Timer
+#───────────────────────────────────────────────────────────────────────────────
+timer:
+  automation_countdown:
+
+################################################################################
+#                                 INTEGRATIONS                                 #
+################################################################################
+
+#───────────────────────────────────────────────────────────────────────────────
+# Alarm control panel integration
+#───────────────────────────────────────────────────────────────────────────────
+alarm_control_panel:
+  - platform: manual
+    name: Alarm
+    code: !secret alarm_code
+    arming_time: 30
+    delay_time: 20
+    trigger_time: 4
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      arming_time: 0
+      delay_time: 0
+
+#───────────────────────────────────────────────────────────────────────────────
+# Enable browser_mod integration
+#───────────────────────────────────────────────────────────────────────────────
+browser_mod:
+  devices:
+    87b2d147-4c0bd366:
+      name: Lenovo M93z
+      #camera: true
+#───────────────────────────────────────────────────────────────────────────────
+# Bosch Indego Connect 400 lawnmover (disabled for winter storage)
+#───────────────────────────────────────────────────────────────────────────────
+# indego:
+#   name: Indego
+#   username: !secret indego_username
+#   password: !secret indego_password
+#   id: !secret indego_id
+#   #polling:  False
+
+#───────────────────────────────────────────────────────────────────────────────
+# Shared Calendar (iCloud and MS TODO)
+#───────────────────────────────────────────────────────────────────────────────
+calendar:
+  #─────────────────────────────────────────────────────────────────────────────
+  # iCloud Calendar
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: caldav
+    username: !secret icloud_username
+    password: !secret icloud_app_specific_password
+    url: !secret icloud_url
+    calendars:
+      - Fælles
+      - Test
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # MS TODO
+  #─────────────────────────────────────────────────────────────────────────────
+  - platform: microsoft_todo
+    client_id: !secret ms_client_id
+    client_secret: !secret ms_token
+
+#───────────────────────────────────────────────────────────────────────────────
+# Light groups
+#───────────────────────────────────────────────────────────────────────────────
+
+light:
+  - platform: group
+    name: standerto
+    entities:
+      - light.dimmable_light_10
+      - light.dimmable_light_11
+
+#───────────────────────────────────────────────────────────────────────────────
+# Netatmo Presence camera
+#───────────────────────────────────────────────────────────────────────────────
+netatmo:
+  client_id: !secret netatmo_apikey
+  client_secret: !secret netatmo_secret
+
+#───────────────────────────────────────────────────────────────────────────────
+# Xiaomi Roborock integration
+#───────────────────────────────────────────────────────────────────────────────
+vacuum:
+  - platform: xiaomi_miio
+    host: 192.168.2.40
+    token: !secret roborock_token
+
+#───────────────────────────────────────────────────────────────────────────────
+# Our Groceries custom component
+#───────────────────────────────────────────────────────────────────────────────
+ourgroceries:
+  username: !secret og_username
+  password: !secret og_password
+
+#───────────────────────────────────────────────────────────────────────────────
+# Synology SRM integration
+#───────────────────────────────────────────────────────────────────────────────
+device_tracker:
+  - platform: bluetooth_tracker
+    consider_home: 180
+    new_device_defaults:
+      track_new_devices: false
+
+#───────────────────────────────────────────────────────────────────────────────
+# Spotify integration
+#───────────────────────────────────────────────────────────────────────────────
+spotify:
+  client_id: !secret spotify_client_id
+  client_secret: !secret spotify_client_secret
+
+#───────────────────────────────────────────────────────────────────────────────
+# Spotcast integration
+#───────────────────────────────────────────────────────────────────────────────
+spotcast:
+  sp_dc: !secret sp_dc
+  sp_key: !secret sp_key

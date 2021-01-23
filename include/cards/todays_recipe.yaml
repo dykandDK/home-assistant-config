@@ -1,0 +1,81 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Markdown card with name and link to today's receipe
+#
+# Data is collected by a node-RED flow from a custom-developed website
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/thomasloven/lovelace-auto-entities
+
+type: vertical-stack
+cards:
+  - type: custom:button-card
+    name: Dagens ret
+    entity: sensor.madplan_dagensret
+    show_entity_picture: false
+    show_state: true
+    show_name: true
+    show_image: false
+    show_label: false
+    show_icon: false
+    styles:
+      card:
+        - background-image: '[[[ return "url(" + states["sensor.madplan_dagensret_image"].state + ")"; ]]]'
+        - background-size: cover
+        - height: 180px
+      grid:
+        - grid-template-areas: '"n" "l" "s"'
+        - grid-template-columns: 1fr
+        - grid-template-rows: 1fr 5fr 1fr
+      name:
+        - background-color: rgba(0, 0,0, 0.3)
+        - padding-left: 35px
+        - width: 100%
+        - line-height: 40px
+        - text-align: left
+        - display: inline-block
+        - vertical-align: middle
+      state:
+        - background-color: rgba(0, 0,0, 0.3)
+        - padding-left: 35px
+        - width: 100%
+        - line-height: 40px
+        - text-align: left
+        - display: inline-block
+        - vertical-align: middle
+  # - type: markdown
+  #   title: Dagens ret
+  #   content: |
+  #     <table style="background-image: url('https://i2.wp.com/gastromand.dk/wordpress/wp-content/uploads/2009/12/IMG_1091-e1437931985912.jpg?resize=700%2C325&amp;ssl=1');">
+  #     <tr><td width=100%>{{ states("sensor.madplan_dagensret") }}</td>
+  #     <td><a  href="{{ states("sensor.madplan_dagensretlink") }}" style="text-decoration:none">VIS</a>
+  #     </td></tr></table>
+
+  # - type: picture-elements
+  #   image: https://i2.wp.com/gastromand.dk/wordpress/wp-content/uploads/2009/12/IMG_1091-e1437931985912.jpg?resize=700%2C325&ssl=1
+  #   title: Dagens ret
+  #   elements:
+  #     - type: state-label
+  #       entity: sensor.madplan_dagensret
+  #       style:
+  #         top: 50px
+  #         left: 50px
+  #         width: 150px
+  #         text-align: left
+  #         font-size: 1.5em
+  #         text-transform: uppercase
+  #         color: rgba(202,217,235,.75)
+  # - type: picture-entity
+  #   name: Dagens ret
+  #   aspect_ratio: 16:9
+  #   #image: https://i2.wp.com/gastromand.dk/wordpress/wp-content/uploads/2009/12/IMG_1091-e1437931985912.jpg?resize=700%2C325&ssl=1
+  #   image: https://madplan2.lukic.dk/images/pic05.jpg
+  #   #image: https://i2.wp.com/gastromand.dk/wordpress/wp-content/uploads/2009/12/IMG_1091-e1437931985912.jpg
+  #   #image: https://cdn2.billeder.madopskrifter.nu/Images/Meals/WebLarge/10675/da/Kartoffelfad-med-hakket-oksekoed-0-fbdc228b-06f7-4cc1-82cf-172004ef79ce.jpg
+  #   title: Dagens ret
+  #   show_state: true
+  #   show_name: false
+  #   entity: sensor.madplan_dagensret

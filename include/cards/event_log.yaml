@@ -1,0 +1,106 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Displays a logbook card with selected events, e.g. alarm, motion and opening
+# or closing of doors and windows.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/thomasloven/lovelace-auto-entities
+
+type: horizontal-stack
+cards:
+  - type: custom:auto-entities
+    card:
+      type: logbook
+      title: Seneste hændelser
+      show_header_toggle: false
+      positions:
+        icon: off
+        indicator: inside
+        name: outside
+        value: inside
+      height: 2vh
+      width: 50%
+      hours_to_show: 24
+    filter:
+      include:
+        # Door/window events
+        - domain: binary_sensor
+          attributes:
+            device_class: "opening"
+          options:
+            secondary_info: last-changed
+        # Motion events
+        - domain: binary_sensor
+          attributes:
+            device_class: "motion"
+          options:
+            secondary_info: last-changed
+        # People events
+        - domain: person
+          options:
+            secondary_info: last-changed
+        # Alarm events
+        - entity_id: alarm_control_panel.alarm
+          options:
+            secondary_info: last-changed
+      exclude:
+        - entity_id: person.alle
+      sort:
+        method: last_changed
+        numeric: true
+  #─────────────────────────────────────────────────────────────
+  # Last door/window action
+  #─────────────────────────────────────────────────────────────
+  # - type: custom:auto-entities
+  #   card:
+  #     type: entities
+  #     title: Seneste åbning af dør/vindue
+  #     positions:
+  #       icon: off
+  #       indicator: inside
+  #       name: outside
+  #       value: inside
+  #     height: 2vh
+  #     width: 50%
+  #   filter:
+  #     include:
+  #       - domain: binary_sensor
+  #         attributes:
+  #           device_class: "opening"
+  #         #state: "on"
+  #         options:
+  #           secondary_info: last-changed
+  #   sort:
+  #     method: last_changed
+  #     numeric: true
+  #     count: 1
+
+  # #─────────────────────────────────────────────────────────────
+  # # Last motion action
+  # #─────────────────────────────────────────────────────────────
+  # - type: custom:auto-entities
+  #   card:
+  #     type: entities
+  #     title: Seneste bevægelse
+  #     positions:
+  #       icon: off
+  #       indicator: inside
+  #       name: outside
+  #       value: inside
+  #     height: 2vh
+  #     width: 50%
+  #   filter:
+  #     include:
+  #       - domain: binary_sensor
+  #         attributes:
+  #           device_class: "motion"
+  #         #state: "on"
+  #         options:
+  #           secondary_info: last-changed
+  #   sort:
+  #     method: last_changed
+  #     numeric: true
+  #     count: 1

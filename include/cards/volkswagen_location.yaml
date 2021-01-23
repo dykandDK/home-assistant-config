@@ -1,0 +1,18 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Map with car location history for the last 24 hours
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: map
+entities:
+  - entity: device_tracker.passat_bt
+    icon: mdi:car
+hours_to_show: 24
+aspect_ratio: 15x10
+#default_zoom: 6
+default_zoom: 10

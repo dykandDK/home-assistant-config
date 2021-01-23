@@ -1,0 +1,10 @@
+{
+    "domain": "ourgroceries",
+    "name": "Our Groceries",
+    "documentation": "https://www.home-assistant.io/components/our-groceries",
+    "requirements": [
+        "ourgroceries==1.3.5"
+    ],
+    "dependencies": [],
+    "codeowners": []
+}

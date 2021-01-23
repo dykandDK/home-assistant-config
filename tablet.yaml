@@ -1,0 +1,184 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Dashboard designed for viewing on tablet and optimized for 1280x800 screen
+# resolutions. Appearance may different on other screen resolutions.
+
+# Uses custom popup dialog boxes to display information and control various
+# smart home devices.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# Kiosk-mode:   https://github.com/maykar/kiosk-mode
+# Browser-mod:  https://github.com/thomasloven/hass-browser_mod
+#
+# Additional custom cards are used for some of the cards included below
+
+################################################################################
+###                    Kiosk mode - hide default HA header                   ###
+################################################################################
+kiosk_mode:
+  hide_header: true
+
+views:
+  ##############################################################################
+  ###                          FRONT PAGE VIEW                               ###
+  ##############################################################################
+  - icon: mdi:home
+    title: Home
+    #───────────────────────────────────────────────────────────────────────────
+    # Render dashboard in full-width. See more in HA documentation:
+    # https://www.home-assistant.io/lovelace/dashboards-and-views#panel
+    #───────────────────────────────────────────────────────────────────────────
+    panel: true
+    ############################################################################
+    ###       Popup card configuration for browser_mod custom component      ###
+    ############################################################################
+    popup_cards:
+      #─────────────────────────────────────────────────────────────────────────
+      # Weather forcast - next 48 hours
+      #─────────────────────────────────────────────────────────────────────────
+      weather.hjem:
+        title: Vejrudsigt for de næste 48 timer
+        large: true
+        card: !include include/cards/local_weather_popup.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Garbage collection dates
+      #─────────────────────────────────────────────────────────────────────────
+      calendar.garbage_collection:
+        title: Afhentning af affald og genbrug
+        card: !include include/cards/garbage_collection.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Today's recipe and weekly food plan
+      #─────────────────────────────────────────────────────────────────────────
+      sensor.madplan_dagensret:
+        title: Dagens ret
+        large: true
+        card:
+          type: iframe
+          url: !secret madplan_dagensret_url
+      dummy.madplan:
+        title: Madplan
+        large: true
+        card:
+          type: iframe
+          url: !secret madplan_ugeplan_url
+      #─────────────────────────────────────────────────────────────────────────
+      # Shopping list
+      #─────────────────────────────────────────────────────────────────────────
+      sensor.our_groceries:
+        title: Indkøbsliste
+        large: true
+        card: !include include/cards/shopping_list.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # TODO list
+      #─────────────────────────────────────────────────────────────────────────
+      dummy.TODO:
+        title: Opgaver
+        large: true
+        card:
+          type: shopping-list
+      #─────────────────────────────────────────────────────────────────────────
+      # Last motion and door open events
+      #─────────────────────────────────────────────────────────────────────────
+      sensor.last_door_sensor:
+        title: Seneste hændelser
+        large: true
+        card: !include include/cards/event_log.yaml
+      sensor.last_motion_sensor:
+        title: Seneste hændelser
+        large: true
+        card: !include include/cards/event_log.yaml
+    cards:
+      - type: vertical-stack
+        cards:
+          ######################################################################
+          ###                          Header row                            ###
+          ######################################################################
+          - type: horizontal-stack
+            cards:
+              - !include include/cards/tablet_header.yaml
+          ######################################################################
+          ###                   Main content - 3 columns                     ###
+          ######################################################################
+          - type: horizontal-stack
+            cards:
+              ##################################################################
+              ###                         Column #1                          ###
+              ##################################################################
+              - type: vertical-stack
+                cards:
+                  #─────────────────────────────────────────────────────────────
+                  # Today's receipe
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/todays_recipe.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Choose between calendar, shopping list, TODO list or
+                  # garbage collection information
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/info_select.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Custom calendar card
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/calendar_week.yaml
+
+              ##################################################################
+              ####                        Column #2                          ###
+              ##################################################################
+              - type: vertical-stack
+                cards:
+                  #─────────────────────────────────────────────────────────────
+                  # Light scene selection
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/light_scene_selection.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Mini media player
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/media_player_kitchen.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # IP camera feed
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/camera_feed01.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Status
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/home_status_events.yaml
+
+              ##################################################################
+              ####                        Column #3                          ###
+              ##################################################################
+              - type: vertical-stack
+                cards:
+                  #─────────────────────────────────────────────────────────────
+                  # Weather forecast from Met.no integration
+                  #─────────────────────────────────────────────────────────────
+                  - type: weather-forecast
+                    entity: weather.hjem
+                    name: Vejrudsigt
+                  #─────────────────────────────────────────────────────────────
+                  # Current weather data from Netatmo Weather Station
+                  #─────────────────────────────────────────────────────────────
+                  - !include include/cards/local_weather.yaml
+
+  ##############################################################################
+  ###                              VW INFO VIEW                              ###
+  ##############################################################################
+  - !include include/views/vw_info.yaml
+
+  ##############################################################################
+  ###                          VACUUM CONTROL VIEW                           ###
+  ##############################################################################
+  - !include include/views/vacuum_control.yaml
+
+  ##############################################################################
+  ###                            FLOORPLAN VIEW                              ###
+  ##############################################################################
+  - !include include/views/floorplan.yaml
+
+  ##############################################################################
+  ###                               MUSIC VIEW                               ###
+  ##############################################################################
+  - !include include/views/music2.yaml
+
+title: " "

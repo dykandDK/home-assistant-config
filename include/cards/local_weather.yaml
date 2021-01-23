@@ -1,0 +1,69 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Cards to display local weather information from Netatmo weather station and
+# different indoor climate and temperature sensors
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: vertical-stack
+cards:
+  - cards:
+      - type: sensor
+        entity: sensor.netatmo_weather_home_ude_temperature
+        name: Ude
+      - type: sensor
+        entity: sensor.ude_min_temp
+        name: Min
+        icon: mdi:arrow-collapse-down
+      - type: sensor
+        entity: sensor.ude_max_temp
+        name: Max
+        icon: mdi:arrow-collapse-up
+    type: horizontal-stack
+  - cards:
+      - type: sensor
+        graph: line
+        entity: sensor.netatmo_weather_home_regn_rain
+        name: Regn
+      - type: sensor
+        graph: line
+        name: Luftfugtighed
+        entity: sensor.netatmo_weather_home_ude_humidity
+    type: horizontal-stack
+  - type: horizontal-stack
+    cards:
+      - type: sensor
+        entity: sensor.bornevaerelse_sensor_temperature
+        name: Isabella
+        icon: ""
+      - type: sensor
+        #graph: line
+        entity: sensor.netatmo_weather_home_inde_temperature
+        name: Kontor
+      - type: sensor
+        entity: sensor.temperature_14
+        name: Gang
+        icon: ""
+  - type: horizontal-stack
+    cards:
+      #- type: markdown
+      #  title: Alrum
+      #  content: |
+      #     <h2>{{ states("sensor.velux_sensor_temperature") }} °C</h2>
+      - type: sensor
+        #graph: line
+        name: Alrum
+        entity: sensor.velux_sensor_temperature
+      - type: sensor
+        entity: sensor.temperature_8
+        name: Sove
+        icon: ""
+      - type: sensor
+        #graph: line
+        entity: sensor.temperature_5
+        name: Bad
+        icon: ""

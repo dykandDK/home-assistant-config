@@ -1,0 +1,106 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to choose different light scenes
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+# type: horizontal-stack
+# cards:
+#   - type: "custom:button-card"
+#     color_type: card
+#     name: Scener
+#     aspect_ratio: 12/1
+#     styles:
+#       card:
+#         - background-color: var(--card-background-color)
+#         #- background-color: var(--primary-background-color)
+#         - color: var(--primary-foreground-color)
+#         - border-radius: 5px
+#         # - border: 5px solid black
+#     entity: #scene.spise
+type: horizontal-stack
+cards:
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:silverware-fork-knife
+    name: Spise
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+        # - border: 5px solid black
+    entity: #scene.spise
+    tap_action:
+      action: call-service
+      service: scene.turn_on
+      service_data:
+        entity_id: #scene.spise
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:movie-roll
+    name: Film
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+        # - border: 5px solid black
+    entity: scene.film
+    tap_action:
+      action: call-service
+      service: scene.turn_on
+      service_data:
+        entity_id: scene.film
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:brightness-6
+    name: Mellem
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+        # - border: 5px solid black
+    entity: scene.mellem
+    tap_action:
+      action: call-service
+      service: scene.turn_on
+      service_data:
+        entity_id: scene.mellem
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:basketball
+    name: Lege
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+        # - border: 5px solid black
+    entity: scene.lege
+    tap_action:
+      action: call-service
+      service: scene.turn_on
+      service_data:
+        entity_id: scene.lege
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:lightbulb-off
+    name: Sluk
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border-radius: 10px
+        # - border: 5px solid black
+    entity: scene.sluk_stue_alrum
+    tap_action:
+      action: call-service
+      service: scene.turn_on
+      service_data:
+        entity_id: scene.sluk_stue_alrum

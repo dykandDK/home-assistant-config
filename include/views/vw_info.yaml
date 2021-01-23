@@ -1,0 +1,19 @@
+icon: mdi:car
+title: Passat
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      ######################################################################
+      ###                          Header row                            ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/tablet_header.yaml
+      ######################################################################
+      ###                          First row                             ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/volkswagen_info.yaml
+          - !include ../cards/volkswagen_location.yaml

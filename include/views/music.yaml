@@ -1,0 +1,379 @@
+icon: mdi:music
+title: Musik
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      ######################################################################
+      ###                          Header row                            ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/tablet_header.yaml
+      ######################################################################
+      ###                   Main content - 3 columns                     ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          ##################################################################
+          ###                         Column #1                          ###
+          ##################################################################
+          - type: vertical-stack
+            cards:
+              #─────────────────────────────────────────────────────────────
+              # Spotify card - Featured
+              #─────────────────────────────────────────────────────────────
+              - type: custom:spotify-card
+                name: Featured
+                limit: 12
+                account: default
+                spotify_entity: media_player.terrasse
+                grid_covers_per_row: 6
+                hide_currently_playing: true
+                hide_playback_controls: true
+                #hide_top_header: true
+                display_style: grid
+                playlist_type: featured
+              #─────────────────────────────────────────────────────────────
+              # Spotify card - Playlists
+              #─────────────────────────────────────────────────────────────
+              - type: custom:spotify-card
+                name: Playlister
+                limit: 12
+                account: default
+                spotify_entity: media_player.terrasse
+                grid_covers_per_row: 6
+                hide_currently_playing: true
+                hide_playback_controls: true
+                #hide_top_header: true
+                display_style: grid
+                #playlist_type: featured
+          ##################################################################
+          ###                         Column #2                          ###
+          ##################################################################
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  ### Alrum ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Alrum"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Alrum
+                    state:
+                      - value: "Sonos - Alrum"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+                  ### Stue ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Stue"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Stue
+                    state:
+                      - value: "Sonos - Stue"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+                  ### Kontor ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Kontor"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Kontor
+                    state:
+                      - value: "Sonos - Kontor"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+                  ### Isabella ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Isabella"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Isabella
+                    state:
+                      - value: "Sonos - Isabella"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+                  ### Stort bad ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Stort bad"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Stort bad
+                    state:
+                      - value: "Sonos - Stort bad"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+                  ### Lille bad ###
+                  - type: "custom:button-card"
+                    color_type: card
+                    icon: mdi:volume-plus
+                    entity: input_select.music_source
+                    name: "Lille bad"
+                    styles:
+                      card:
+                        - background-color: "rgb(0,0,0)"
+                        - border-radius: 20px
+                        - color: "rgb(255,255,255)"
+                        - border: 5px solid black
+                    show_entity_picture: true
+                    entity_picture: /local/assets/sonos2.png
+                    #aspect_ratio: 1/1
+                    tap_action:
+                      service: input_select.select_option
+                      action: call-service
+                      service_data:
+                        entity_id: input_select.music_source
+                        option: Sonos - Lille bad
+                    state:
+                      - value: "Sonos - Lille bad"
+                        styles:
+                          card:
+                            - border: 5px solid blue
+
+              #─────────────────────────────────────────────────────────────
+              # Mini media player for selected speaker
+              #─────────────────────────────────────────────────────────────
+              ### Alrum ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - Alrum"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.alrum
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad
+              ### Stue ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - Stue"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.marantz_sr7010
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad
+              ### Kontor ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - kontor"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.kontor
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad
+              ### Isabella ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - Isabella"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.bornevaerelse
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad
+              ### Stort bad ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - Stort bad"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.badevaerelse
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad
+              ### Lille bad ###
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source
+                    state: "Sonos - Lille bad"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.terrasse
+                  icon: mdi:surround-sound
+                  source: full
+                  artwork: full-cover
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Alrum
+                      - entity_id: media_player.stue
+                        name: Stue
+                      - entity_id: media_player.bornevaerelse
+                        name: Isabella
+                      - entity_id: media_player.badevaerelse
+                        name: Stort bad
+                      - entity_id: media_player.terrasse
+                        name: Lille bad

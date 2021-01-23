@@ -1,0 +1,40 @@
+standerto:
+    name: stander2
+    entities: 
+        - light.stander_2_stue_paere_1
+        - light.stander_2_stue_paere_2
+ovenlys:
+    name: Ovenlysvinduer i Alrum
+    entities:
+        - cover.velux_window
+        - cover.velux_window_2
+alle_batterier:
+    name: Batteristatus for alle enheder
+    entities:
+        - sensor.hue_dimmer_switch_gang_battery_level
+        - sensor.hue_dimmer_switch_stue_battery_level
+        - sensor.netatmo_weather_home_regn_battery_percent
+        - sensor.netatmo_weather_home_ude_battery_percent
+alle_personer:
+    name: Hjemme/ude status for alle personer
+    entities:
+        - person.anders
+        - person.line
+indeklima_bad:
+    name: Indeklima - badeværelse
+    entities:
+        - sensor.temperature_5
+        - sensor.humidity_6
+clean_rooms:
+    name: Valgte rum til støvsugning
+    entities:
+        - input_boolean.clean_room_01
+        - input_boolean.clean_room_16
+        - input_boolean.clean_room_17
+        - input_boolean.clean_room_19
+        - input_boolean.clean_room_20
+        - input_boolean.clean_room_21
+        - input_boolean.clean_room_22
+        - input_boolean.clean_room_23
+        - input_boolean.clean_room_24
+        - input_boolean.clean_room_26

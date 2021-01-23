@@ -1,0 +1,353 @@
+icon: mdi:floor-plan
+title: Plantegning
+panel: true
+cards:
+  - type: picture-elements
+    state_filter:
+      - null
+    image: /local/assets/floorplan.png
+    elements:
+      #─────────────────────────────────────────────────────────────────────
+      ### TIME ###
+      #─────────────────────────────────────────────────────────────────────
+      - type: state-label
+        entity: sensor.local_time
+        style:
+          top: 32px
+          left: 20px
+          #height: 100px
+          width: 200px
+          text-align: right
+          font-size: 2.8em
+          color: rgba(202,217,235,1)
+        tap_action:
+          action: navigate
+          navigation_path: "/ugeplan-yaml"
+      #─────────────────────────────────────────────────────────────────────
+      ### ICONS ###
+      #─────────────────────────────────────────────────────────────────────
+      - type: state-icon
+        entity: sensor.local_date
+        icon: mdi:home
+        style:
+          top: 25.7px
+          left: 78%
+          color: var(--primary-foreground-color)
+          --iron-icon-height: 50px
+          --mdc-icon-size: 50px
+        tap_action:
+          action: navigate
+          navigation_path: "/tablet-yaml/0"
+      - type: state-icon
+        entity: vacuum.xiaomi_vacuum_cleaner
+        icon: hass:robot-vacuum #mdi:robot-vacuum
+        style:
+          top: 25.7px
+          left: 84%
+          color: var(--primary-foreground-color)
+          --mdc-icon-size: 50px
+        tap_action:
+          action: navigate
+          navigation_path: "/tablet-yaml/2"
+      - type: state-icon
+        entity: sensor.local_date
+        icon: mdi:lightbulb
+        style:
+          top: 25.7px
+          left: 90%
+          color: var(--primary-foreground-color)
+          --mdc-icon-size: 50px
+        tap_action:
+          action: navigate
+          navigation_path: "/tablet-yaml/3"
+      - type: state-icon
+        entity: sensor.local_date
+        icon: mdi:music
+        style:
+          top: 25.7px
+          left: 96%
+          color: var(--primary-foreground-color)
+          --mdc-icon-size: 50px
+        tap_action:
+          action: navigate
+          navigation_path: "/tablet-yaml/4"
+
+      #─────────────────────────────────────────────────────────────────────
+      ### DATE AND TIME
+      #─────────────────────────────────────────────────────────────────────
+      # - type: state-label
+      #   entity: sensor.local_time
+      #   style:
+      #     top: 30px
+      #     left: 30px
+      #     width: 2.5%
+      #     text-align: left
+      #     font-size: 3.2em
+      #     color: rgba(202,217,235,1)
+      # - type: state-label
+      #   entity: sensor.local_date
+      #   style:
+      #     top: 60px
+      #     left: 30px
+      #     width: 2.5%
+      #     text-align: left
+      #     font-size: 1.2em
+      #     text-transform: uppercase
+      #     color: rgba(202,217,235,.75)
+
+      #─────────────────────────────────────────────────────────────────────
+      ### FLOORPLAN LIGHTS
+      #─────────────────────────────────────────────────────────────────────
+      ### Sky børneværelse ###
+      - type: image
+        entity: light.sky
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 49%
+          left: 41.5%
+          width: 3%
+      ### Kontor ###
+      - type: image
+        entity: light.kontor
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 28%
+          left: 37%
+          width: 3%
+      ### Lightstrip køkken ###
+      - type: image
+        entity: light.kokken
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 28%
+          left: 42%
+          width: 3%
+      ### Bordlampe køkken ###
+      - type: image
+        entity: light.bordlampe
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 55%
+          left: 44%
+          width: 3%
+      ### Spisebord køkken ###
+      - type: image
+        entity: light.hue_white_light_1
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 48%
+          left: 51.5%
+          width: 3%
+      ### Loftslampe stue ###
+      - type: image
+        entity: light.loft_i_stuen
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 66%
+          left: 74.5%
+          width: 3%
+      ### Stander stue ###
+      - type: image
+        entity: light.dimmable_light_5
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 60.5%
+          left: 63.5%
+          width: 3%
+      ### Stander 2 stue ###
+      - type: image
+        entity: light.standerto
+        tap_action:
+          action: toggle
+        image: /local/assets/lightbulb.png
+        state_image:
+          "off": /local/assets/lightbulb.png
+          "on": /local/assets/lightbulb_on2.png
+        style:
+          top: 49.5%
+          left: 71.5%
+          width: 3%
+
+      #─────────────────────────────────────────────────────────────────────
+      ### ROOM TEMPERATURES AND MOTIONS
+      #─────────────────────────────────────────────────────────────────────
+      - type: state-label
+        entity: sensor.bornevaerelse_sensor_temperature
+        style:
+          top: 47.5%
+          left: 32.5%
+          font-size: 1.1em
+          color: rgba(0,0,0,1)
+      ### Bevægelsessensor Isabella ###
+      - type: image
+        entity: binary_sensor.bornevaerelse_sensor_motion
+        image: /local/assets/motion.png
+        state_image:
+          "off": /local/assets/motion2.png
+          "on": /local/assets/motion_detected2.png
+        style:
+          top: 50%
+          left: 32.5%
+          width: 1.5%
+
+      - type: state-label
+        entity: sensor.netatmo_weather_home_inde_temperature
+        style:
+          top: 23.2%
+          left: 34.6%
+          font-size: 1.1em
+          color: rgba(0,0,0,1)
+
+      #─────────────────────────────────────────────────────────────────────
+      ### IP CAMERAS
+      #─────────────────────────────────────────────────────────────────────
+      ### Kamera Isabella ###
+      - type: image
+        entity: camera.reolink_e1_pro_profile000_mainstream
+        image: /local/assets/camera_right.png
+        style:
+          top: 46%
+          left: 35.5%
+          width: 3%
+      ### Kamera Alrum ###
+      - type: image
+        entity: camera.e1_zoom_profile000_mainstream
+        image: /local/assets/camera_right.png
+        style:
+          top: 23%
+          left: 43.5%
+          width: 3%
+
+      #─────────────────────────────────────────────────────────────────────
+      ### SONOS ZONES
+      #─────────────────────────────────────────────────────────────────────
+      - type: image
+        entity: media_player.alrum
+        image: /local/assets/speaker.png
+        state_image:
+          "idle": /local/assets/speaker.png
+          "playing": /local/assets/speaker_play.png
+        style:
+          top: 40%
+          left: 57.5%
+          width: 2%
+
+      #─────────────────────────────────────────────────────────────────────
+      # VACUUM ROOMS
+      #─────────────────────────────────────────────────────────────────────
+      - type: state-icon
+        icon: mdi:broom
+        entity: input_boolean.clean_room_01
+        state_filter:
+          "on": brightness(200%) hue-rotate(0deg)
+          "off": brightness(100%) hue-rotate(180deg)
+        style:
+          top: 37%
+          left: 32.5%
+          width: 1%
+          "--paper-item-icon-color": "gray"
+        tap_action:
+          action: toggle
+
+      #─────────────────────────────────────────────────────────────────────
+      # WEATHER BOX
+      #─────────────────────────────────────────────────────────────────────
+      - type: state-label
+        entity: sensor.netatmo_weather_home_ude_temperature
+        #suffix: °C
+        style:
+          top: 30px
+          left: 420px
+          width: 150px
+          text-align: left
+          font-size: 2.8em
+          color: rgba(202,217,235,1)
+          font-weight: bold
+
+      - type: state-label
+        entity: sensor.ude_min_temp
+        prefix: "Min: "
+        style:
+          top: 20px
+          left: 500px
+          width: 40px
+          text-align: left
+          font-size: 1.3em
+          color: rgba(164,196,233,1)
+
+      - type: state-label
+        entity: sensor.ude_max_temp
+        prefix: "Max: "
+        style:
+          top: 40px
+          left: 500px
+          width: 40px
+          text-align: left
+          font-size: 1.3em
+          color: rgba(245,166,35,.55)
+
+      # YR.no will return different "icon states" that need to be mapped using state-image
+      # See https://api.met.no/weatherapi/weathericon/2.0/documentation for icon states returned
+      - type: image
+        entity: sensor.yr_forecast24_symbol
+        #image: /local/assets/weather/weather_cloudy.png
+        image: /local/assets/weather/animated/rainy-1.svg
+        state_image:
+          1: /local/assets/weather/weather_clear.png
+          3: /local/assets/weather/weather_partlycloudy.png
+          4: /local/assets/weather/weather_cloudy.png
+          10: /local/assets/weather/weather_rain.png
+          12: /local/assets/weather/weather_sleet.png
+          13: /local/assets/weather/weather_snow.png
+          15: /local/assets/weather/weather_fog.png
+          "clear-day": /local/assets/weather/weather_clear.png
+          "clear-night": /local/assets/weather/weather_clearnight.png
+          "rain": /local/assets/weather/weather_rain.png
+          "snowy": /local/assets/weather/weather_snow.png
+          47: /local/assets/weather/animated/snowy-4.svg
+          #47: /local/assets/weather/weather_sleet.png
+          "wind": /local/assets/weather/weather_windy.png
+          "fog": /local/assets/weather/weather_fog.png
+          "partly-cloudy-day": /local/assets/weather/weather_partlycloudy.png
+          "partly-cloudy-night": /local/assets/weather/weather_cloudy.png
+        style:
+          top: 30px
+          left: 300px
+          width: 70px
+          font-size: 70px
+          color: rgba(202,217,235,.75)

@@ -1,0 +1,131 @@
+---
+#───────────────────────────────────────────────────────────────────────────────
+# Ask to start (Yes) or postpone (No) lawn moving
+#───────────────────────────────────────────────────────────────────────────────
+- name: Start Lawnmover
+  identifier: "start_lawn_mover"
+  actions:
+    - identifier: "START_LAWN_MOVER_YES"
+      title: "Ja"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "START_LAWN_MOVER_NO"
+      title: "Nej"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: yes
+#───────────────────────────────────────────────────────────────────────────────
+# Ask to start (Yes) ventilation
+#───────────────────────────────────────────────────────────────────────────────
+- name: Ventilation_Isabella
+  identifier: "ventilation_isabella"
+  actions:
+    - identifier: "VENT_FAN"
+      title: "Start blæser"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "VENT_WINDOW"
+      title: "OK - Jeg åbner vinduet"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+#───────────────────────────────────────────────────────────────────────────────
+# Ask to start full vacuum clean or room clean when away
+#───────────────────────────────────────────────────────────────────────────────
+- name: Vacuum_Notification
+  identifier: "vacuum_notification"
+  actions:
+    - identifier: "VACUUM_FULL_CLEAN"
+      title: "Ja, tak"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "VACUUM_ROOM_CLEAN"
+      title: "Kun i valgte rum"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "VACUUM_POSTPONE"
+      title: "Udsæt til i morgen"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "VACUUM_ASK_LATER"
+      title: "Spørg mig igen lidt senere"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+#───────────────────────────────────────────────────────────────────────────────
+# Ask to empty vacuum
+#───────────────────────────────────────────────────────────────────────────────
+- name: Vacuum_Empty_Notification
+  identifier: "vacuum_empty_notification"
+  actions:
+    - identifier: "VACUUM_EMPTY_YES"
+      title: "Ja, lad os gøre det!"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "VACUUM_EMPTY_ASK_LATER"
+      title: "Spørg mig igen lidt senere"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+#───────────────────────────────────────────────────────────────────────────────
+# Send reminder the day before scheduled garbage collection
+#───────────────────────────────────────────────────────────────────────────────
+- name: Garbage_Collection_Notification
+  identifier: "collection_notification"
+  actions:
+    - identifier: "COLLECTION_READY"
+      title: "Ja"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "COLLECTION_ASK_LATER"
+      title: "Spørg mig igen lidt senere"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+#───────────────────────────────────────────────────────────────────────────────
+# Send reminder for baby vitamins
+#───────────────────────────────────────────────────────────────────────────────
+- name: baby_drops
+  identifier: "baby_drops_notification"
+  actions:
+    - identifier: "BABY_DROPS_GIVEN"
+      title: "Ja"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+    - identifier: "BABY_DROPS_ASK_LATER"
+      title: "Spørg mig igen lidt senere"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: no
+#───────────────────────────────────────────────────────────────────────────────
+# Alarm
+#───────────────────────────────────────────────────────────────────────────────
+- name: camera1
+  identifier: "camera1"
+  actions:
+    - identifier: "START_ALARM"
+      title: "Aktiver alarm"
+      activationMode: "background"
+      authenticationRequired: no
+      destructive: true
+      behavior: "default"
+    - identifier: "STOP_ALARM"
+      title: "Stop alarm"
+      activationMode: "background"
+      authenticationRequired: true
+      destructive: no
+      behavior: "default"
+    - identifier: "NOTIFY_TTS"
+      title: "TTS besked"
+      destructive: false
+      behavior: "textInput"
+      textInputButtonTitle: "Send besked"
+      textInputPlaceholder: "Skriv besked"

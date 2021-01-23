@@ -1,0 +1,19 @@
+icon: mdi:robot-vacuum
+title: Støvsuger
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      ######################################################################
+      ###                          Header row                            ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/tablet_header.yaml
+      ######################################################################
+      ###                          First row                             ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/vacuum_room_select.yaml
+          - !include ../cards/vacuum_control.yaml

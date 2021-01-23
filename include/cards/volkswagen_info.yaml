@@ -1,0 +1,164 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Picture-elements card with car data collected from MinVolkswagen site.
+#
+# Data is collected by a node-RED flow every 15 minutues
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture-elements
+image: /local/assets/passat.JPG
+entity_id: device_tracker.passat_bt
+elements:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Home / Away home status
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    icon: mdi:map-outline
+    entity: device_tracker.passat_bt
+    title: Placering
+    style:
+      top: 8%
+      left: 30px
+      "--paper-item-icon-color": black
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    title: Placering
+    style:
+      top: 8%
+      left: 90px
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Odometer
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    entity: device_tracker.passat_bt
+    icon: mdi:counter
+    title: Kilometerstand
+    style:
+      top: 8%
+      left: 75%
+      "--paper-item-icon-color": black
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    title: Kilometerstand
+    attribute: odometer
+    suffix: " km"
+    style:
+      top: 8%
+      left: 90%
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Fuel left
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    entity: device_tracker.passat_bt
+    icon: mdi:gas-station
+    title: Brændstof
+    style:
+      top: 90%
+      left: 30px
+      "--paper-item-icon-color": black
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    attribute: fuel_level
+    title: Brændstof
+    suffix: " liter"
+    style:
+      top: 90%
+      left: 90px
+      font-size: 15px
+      text-align: left
+      width: 100px
+      color: rgba(0,0,0,1)
+  #─────────────────────────────────────────────────────────────────────────────
+  # Next oil-change
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    entity: device_tracker.passat_bt
+    icon: mdi:oil-level
+    title: Næste olieskift
+    style:
+      top: 90%
+      left: 40%
+      "--paper-item-icon-color": black
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    attribute: next_oilchange_days
+    title: Dage til næste olieskift
+    suffix: " dage"
+    style:
+      top: 87%
+      left: 55%
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    attribute: next_oilchange_km
+    title: Km til næste olieskift
+    suffix: " km"
+    style:
+      top: 93%
+      left: 55%
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Next service
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    entity: device_tracker.passat_bt
+    icon: mdi:tools
+    title: "Næste service"
+    suffix: " dage"
+    style:
+      top: 90%
+      left: 75%
+      "--paper-item-icon-color": black
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    attribute: next_service_days
+    title: Dage til næste service
+    suffix: " dage"
+    style:
+      top: 87%
+      left: 90%
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px
+  - type: state-label
+    entity: device_tracker.passat_bt
+    attribute: next_service_km
+    title: Km til næste service
+    suffix: " km"
+    style:
+      top: 93%
+      left: 90%
+      font-size: 15px
+      color: rgba(0,0,0,1)
+      text-align: left
+      width: 100px

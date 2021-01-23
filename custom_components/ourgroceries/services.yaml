@@ -1,0 +1,32 @@
+add_to_list:
+  description: Adds items to an OurGroceries list.
+  fields:
+    list_id:
+      description: Name or ID of the list to add to.
+      example: 'Shopping List'
+    items:
+      description: Item(s) to be added to the list.
+      example: 'milk'
+
+remove_from_list:
+  description: Removes items from an OurGroceries list.
+  fields:
+    list_id:
+      description: Name or ID of the list to remove from.
+      example: 'Shopping List'
+    items:
+      description: Item(s) to be removed from the list.
+      example: 'milk'
+
+copy_to_list:
+  description: Copies items from one OurGroceries list to another.
+  fields:
+    list_id:
+      description: Name or ID of the list to copy to.
+      example: 'Destination Shopping List'
+    from_list_id:
+      description: Name or ID of the list to copy from.
+      example: 'Source Shopping List'
+    unique_only:
+      description: When enabled, will not copy items already present on the destination list.
+      example: true

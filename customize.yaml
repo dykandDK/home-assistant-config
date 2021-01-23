@@ -1,0 +1,2 @@
+sensor.mad_og_restaffald:
+  device_class: timestamp

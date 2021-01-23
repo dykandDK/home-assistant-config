@@ -1,0 +1,10 @@
+---
+#───────────────────────────────────────────────────────────────────────────────
+# List of devices that are tracked
+#───────────────────────────────────────────────────────────────────────────────
+passat_bt:
+  name: VW Passat
+  mac:
+  icon: mdi:car
+  picture: /local/assets/vw_logo.jpg
+  track: true

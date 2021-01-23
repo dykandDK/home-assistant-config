@@ -1,0 +1,19 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display image with YR.no weather forecast for the next 48 hours
+#
+# Search location on YR.no to find relevant  URLs, e.g.:
+#
+#             Danmark/Hovedstaden/K%C3%B8benhavn/meteogram.png
+#
+# for Copenhagen, Denmark
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture
+#image: https://www.yr.no/sted/Danmark/Sj%C3%A6lland/Karlslunde_Strand/meteogram.png
+image: https://www.yr.no/sted/Danmark/Hovedstaden/K%C3%B8benhavn/meteogram.pngh

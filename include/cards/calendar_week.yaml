@@ -1,0 +1,38 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display scheduled appointments/events for the next 7 days.
+#
+# Data is collected from different calendars:
+#
+# - Google calendar integration
+# - Garbage collection dates are defined using the custom integration:
+#
+#     Garbage-Collection: https://github.com/bruxy70/Garbage-Collection
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# atomic-calendar-revive: https://github.com/marksie1988/atomic-calendar-revive
+
+type: custom:atomic-calendar-revive
+name: Kommende aftaler
+entities:
+  - entity: calendar.faelles
+    name: Fælles
+  - entity: calendar.test
+    name: Anders
+  - entity: calendar.garbage_collection
+    name: Affald
+initial_view: listWeek
+disableEventLink: true
+showMonth: false
+showWeekDay: true
+showLocation: true
+showNoEventsForToday: true
+dimFinishedEvents: true
+maxDaysToShow: 7
+fullDayEventText: "Hele dagen"
+untilText: "Indtil"
+noEventsForTodayText: "Ingen aftaler for i dag"
+noEventsForNextDaysText: "Ingen aftaler for de kommende dage"

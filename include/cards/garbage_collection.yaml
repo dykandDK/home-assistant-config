@@ -1,0 +1,26 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display next scheduled garbage collection dates
+#
+# Garbage collection dates are defined using the custom integration:
+#
+#     Garbage-Collection: https://github.com/bruxy70/Garbage-Collection
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - auto-entities: https://github.com/thomasloven/lovelace-auto-entities
+
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  include:
+    - attributes:
+        device_class: garbage_collection__schedule
+        days: <40
+sort:
+  method: attribute
+  attribute: days
+  numeric: true

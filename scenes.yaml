@@ -1,0 +1,210 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Fade light
+#───────────────────────────────────────────────────────────────────────────────
+- id: "1578336453666"
+  name: Fade lys over 5 min
+  entities:
+    light.kokken:
+      brightness: 77
+      effect: none
+      effect_list:
+        - colorloop
+        - random
+      friendly_name: Lightstrip i Køkken
+      hs_color:
+        - 38.824
+        - 53.333
+      rgb_color:
+        - 255
+        - 207
+        - 119
+      state: "off"
+      transition: 60
+      supported_features: 61
+      xy_color:
+        - 0.458
+        - 0.411
+#───────────────────────────────────────────────────────────────────────────────
+# Close skylight windows
+#───────────────────────────────────────────────────────────────────────────────
+- id: Luk ovenlysvinduer i Alrum
+  name: Luk ovenlysvinduer i Alrum
+  entities:
+    cover.velux_window:
+      current_position: 0
+      friendly_name: Vindue 1
+      icon: mdi:window-closed
+      state: closed
+      supported_features: 7
+    cover.velux_window_2:
+      current_position: 0
+      friendly_name: Vindue 2
+      icon: mdi:window-closed
+      state: closed
+      supported_features: 7
+#───────────────────────────────────────────────────────────────────────────────
+# Open skylight windows
+#───────────────────────────────────────────────────────────────────────────────
+- id: Åbn ovenlysvinduer i Alrum
+  name: Åbn ovenlysvinduer i Alrum på 80%
+  entities:
+    cover.velux_window:
+      current_position: 80
+      friendly_name: Vindue 1
+      icon: mdi:window-closed
+      state: open
+      supported_features: 7
+    cover.velux_window_2:
+      current_position: 80
+      friendly_name: Vindue 2
+      icon: mdi:window-closed
+      state: open
+      supported_features: 7
+#───────────────────────────────────────────────────────────────────────────────
+# Light scene: Movie
+#───────────────────────────────────────────────────────────────────────────────
+- id: Film
+  name: Film
+  entities:
+    light.loft_i_stuen:
+      brightness: 1
+      state: "on"
+    light.dimmable_light_10: #Stander 2 - Pære 1
+      brightness: 11
+      state: "on"
+    light.dimmable_light_11: #Stander 2 - Pære 2
+      brightness: 11
+      state: "on"
+    light.dimmable_light_5: #Stander
+      brightness: 71
+      state: "on"
+    light.kokken:
+      brightness: 33
+      rgb_color:
+        - 255
+        - 27
+        - 44
+      state: "on"
+    # light.bordlampe:
+    #   state: "off"
+#───────────────────────────────────────────────────────────────────────────────
+# Light scene: Medium lights in living room
+#───────────────────────────────────────────────────────────────────────────────
+- id: Mellem
+  name: Mellem
+  entities:
+    light.loft_i_stuen:
+      brightness: 109
+      state: "on"
+    light.dimmable_light_10: #Stander 2 - Pære 1
+      brightness: 44
+      state: "on"
+    light.dimmable_light_11: #Stander 2 - Pære 2
+      brightness: 44
+      state: "on"
+    light.dimmable_light_5: #Stander
+      brightness: 76
+      state: "on"
+    light.kokken:
+      brightness: 146
+      rgb_color:
+        - 229
+        - 80
+        - 255
+      state: "on"
+    light.bordlampe:
+      brightness: 114
+      state: "on"
+    light.hue_white_light_1: #Spisebord
+      brightness: 114
+      state: "on"
+#───────────────────────────────────────────────────────────────────────────────
+# Light scene: Full lights in living room
+#───────────────────────────────────────────────────────────────────────────────
+- id: Lege
+  name: Lege
+  entities:
+    light.loft_i_stuen:
+      brightness: 207
+      state: "on"
+    light.dimmable_light_5: #Stander
+      brightness: 207
+      state: "on"
+    light.dimmable_light_10: #Stander 2 - Pære 1
+      brightness: 85
+      state: "on"
+    light.dimmable_light_11: #Stander 2 - Pære 2
+      brightness: 85
+      state: "on"
+#───────────────────────────────────────────────────────────────────────────────
+# Light scene: Turn off selected lights
+#───────────────────────────────────────────────────────────────────────────────
+- id: Sluk_stue_alrum
+  name: Sluk_stue_alrum
+  entities:
+    light.loft_i_stuen:
+      state: "off"
+    light.dimmable_light_10: #Stander 2 - Pære 1
+      state: "off"
+    light.dimmable_light_11: #Stander 2 - Pære 2
+      state: "off"
+    light.dimmable_light_5: #Stander
+      state: "off"
+    light.kokken:
+      state: "off"
+    light.bordlampe:
+      state: "off"
+    light.hue_white_light_1: #Spisebord
+      state: "off"
+#───────────────────────────────────────────────────────────────────────────────
+# Select all rooms for cleaning
+#───────────────────────────────────────────────────────────────────────────────
+- id: select_all_rooms
+  name: select_all_rooms
+  entities:
+    input_boolean.clean_room_24: #Bryggers
+      state: "on"
+    input_boolean.clean_room_22: #Gang
+      state: "on"
+    input_boolean.clean_room_01: #Gæstetoilet
+      state: "on"
+    input_boolean.clean_room_23: #Laura's værelse
+      state: "on"
+    input_boolean.clean_room_19: #Isabella's værelse
+      state: "on"
+    input_boolean.clean_room_16: #Kontor
+      state: "on"
+    input_boolean.clean_room_17: #Køkken/alrum
+      state: "on"
+    input_boolean.clean_room_26: #Stue
+      state: "on"
+    input_boolean.clean_room_20: #Soveværelse
+      state: "on"
+    input_boolean.clean_room_21: #Stort badeværelse
+      state: "on"
+#───────────────────────────────────────────────────────────────────────────────
+# Deselect all rooms for cleaning
+#───────────────────────────────────────────────────────────────────────────────
+- id: select_no_rooms
+  name: select_no_rooms
+  entities:
+    input_boolean.clean_room_24: #Bryggers
+      state: "off"
+    input_boolean.clean_room_22: #Gang
+      state: "off"
+    input_boolean.clean_room_01: #Gæstetoilet
+      state: "off"
+    input_boolean.clean_room_23: #Laura's værelse
+      state: "off"
+    input_boolean.clean_room_19: #Isabella's værelse
+      state: "off"
+    input_boolean.clean_room_16: #Kontor
+      state: "off"
+    input_boolean.clean_room_17: #Køkken/alrum
+      state: "off"
+    input_boolean.clean_room_26: #Stue
+      state: "off"
+    input_boolean.clean_room_20: #Soveværelse
+      state: "off"
+    input_boolean.clean_room_21: #Stort badeværelse
+      state: "off"

@@ -1,0 +1,179 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Tablet header with in current date, time, sunset/sunrise and home/away
+# information as well as navigation icons.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture-elements
+state_filter:
+  - null
+image: /local/assets/blank.png
+aspect_ratio: 5%
+elements:
+  #─────────────────────────────────────────────────────────────────────────────
+  ### TIME ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.local_time
+    style:
+      top: 50%
+      left: 20px
+      #height: 100px
+      width: 200px
+      text-align: right
+      font-size: 2.8em
+      color: rgba(202,217,235,1)
+  #─────────────────────────────────────────────────────────────────────────────
+  ### WEEKDAY ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.local_weekday
+    style:
+      top: 34%
+      left: 150px
+      width: 50px
+      text-align: left
+      font-size: 0.8em
+      text-transform: uppercase
+      color: rgba(202,217,235,.75)
+  #─────────────────────────────────────────────────────────────────────────────
+  ### DATE ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.local_date3
+    style:
+      top: 64%
+      left: 150px
+      width: 50px
+      text-align: left
+      font-size: 1.3em
+      text-transform: uppercase
+      color: rgba(202,217,235,.75)
+  #─────────────────────────────────────────────────────────────────────────────
+  ### SUNRISE ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:weather-sunset-up
+    style:
+      top: 40%
+      left: 28%
+      color: rgba(202,217,235,1)
+  - type: state-label
+    entity: sensor.local_sunrise
+    style:
+      top: 40%
+      left: 31.2%
+      color: rgba(202,217,235,1)
+  #─────────────────────────────────────────────────────────────────────────────
+  ### SUNSET ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:weather-sunset-down
+    style:
+      top: 75%
+      left: 28%
+      color: rgba(202,217,235,1)
+  - type: state-label
+    entity: sensor.local_sunset
+    style:
+      top: 75%
+      left: 31.2%
+      color: rgba(202,217,235,1)
+  #─────────────────────────────────────────────────────────────────────────────
+  ### Home/Away status ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: image
+    entity: person.anders
+    image: /local/assets/dykand.png
+    state_image:
+      "not_home": /local/assets/dykand_away.png
+      "home": /local/assets/dykand.png
+    show_name: false
+    style:
+      top: 50%
+      left: 44%
+      height: 54px
+      width: 54px
+      border-radius: 27px
+  - type: image
+    entity: person.line
+    image: /local/assets/line.png
+    show_name: false
+    state_image:
+      "not_home": /local/assets/line_away.png
+      "home": /local/assets/line.png
+    style:
+      top: 50%
+      left: 50%
+      height: 54px
+      width: 54px
+      border-radius: 27px
+  - type: image
+    entity: device_tracker.passat_bt
+    image: /local/assets/vw_logo.jpg
+    show_name: false
+    state_image:
+      "not_home": /local/assets/vw_logo.jpg
+      "home": /local/assets/vw_logo.jpg
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/1"
+    style:
+      top: 50%
+      left: 56%
+      height: 54px
+      width: 54px
+      border-radius: 27px
+  #─────────────────────────────────────────────────────────────────────────────
+  ### ICONS ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-icon
+    entity: sensor.local_date
+    icon: mdi:home
+    style:
+      top: 40%
+      left: 78%
+      color: var(--primary-foreground-color)
+      --iron-icon-height: 50px
+      --mdc-icon-size: 50px
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/0"
+  - type: state-icon
+    entity: vacuum.xiaomi_vacuum_cleaner
+    icon: hass:robot-vacuum #mdi:robot-vacuum
+    style:
+      top: 40%
+      left: 84%
+      color: var(--primary-foreground-color)
+      --mdc-icon-size: 50px
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/2"
+  - type: state-icon
+    entity: sensor.local_date
+    icon: mdi:lightbulb
+    style:
+      top: 40%
+      left: 90%
+      color: var(--primary-foreground-color)
+      --mdc-icon-size: 50px
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/3"
+  - type: state-icon
+    entity: sensor.local_date
+    icon: mdi:music
+    style:
+      top: 40%
+      left: 96%
+      color: var(--primary-foreground-color)
+      --mdc-icon-size: 50px
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/4"

@@ -1,0 +1,117 @@
+[![Home Assistant version][img-ha-version]][link-ha-version] 
+![Project Maintenance][maintenance-shield]
+[![license][license-shield]](LICENSE.md)
+
+[![GitHub Activity][commits-shield]][commits]
+[![GitHub Last Commit][last-commit-shield]][commits]
+
+![GitHub Stars][stars-shield]
+![GitHub Watchers][watchers-shield]
+![GitHub Forks][forks-shield]
+
+# Home Assistant - configuration and automations
+This repository contains a collection of my personnal Home Assistant (HA) configuration and automations.
+
+It may not include the full configuration needed to replicate my setup, but it does include relevant examples of my configuration and automations.
+
+Please feel free to use and change as you like for your own HA setup.
+
+## Hardware
+This is my current hardware setup:
+
+- Intel NUC i7 with 16 Gb RAM and 500 Gb SSD
+	- Running Home Assistant in Proxmox VM with 2 cores, 32 Gb HDD and 4 Gb RAM allocated
+- Conbee II Zigbee stick
+- Lenovo M10 Smart Tab tablet for dashboard display
+
+## Integrated smart devices
+My current setup includes the following integrated devices:
+
+- Netatmo Weatherstation and Presence camera
+- Hue bulbs, lightstrips, remotes, smart buttons and motion sensors
+- IKEA TRÅDFRI bulbs, smart plugs and remotes
+- Innr Smart plugs
+- Koogeek Smart plugs
+- Aqara sensors
+- VELUX Active gateway
+- Nordtronic Zigbee Box Dimmers and Relays
+- Broadlink RM 4 Pro
+- Roborock S5 robot vacuum
+- Bosch Indego 400 Connect robot lawnmover
+- Sonos speakers
+- Marantz SR7010 AV receiver
+- Reolink IP cameras
+- Netatmo Weatherstation and Presence camera
+
+## Addons
+I use the following addons:
+
+- MariaDB
+- deCONZ
+- File editor
+- Visual Studio Code
+- Samba share
+- Check Home Assistant configuration
+- phpMyAdmin
+
+## Configuration
+I have two primary Lovelace dashboards:
+
+- Main dashboard for use on mobile devices
+- Dashboard optimized for viewing on tablet with screen resolution 1280x800
+
+For the time being, only my tablet dashboard is included in this repository.
+
+I prefer to maintain dashboards in YAML mode and I use `!include` statements to make it easier to maintain and re-use relevant parts of each dashboard.
+
+This means that the dashboards are divided into seperate files that are located in the [/include](/include) folder. 
+
+## Custom components
+I use several custom compontents that are installed via [HACS](https://hacs.xyz/):
+
+- [Browser_mod](https://github.com/thomasloven/hass-browser_mod)
+- [Kiosk mode](https://github.com/maykar/kiosk-mode)
+- [Custom button card](https://github.com/custom-cards/button-card)
+- [Our Groceries card](https://github.com/ljmerza/our-groceries-card)
+- [Xiaomi Vacuum card](https://github.com/benct/lovelace-xiaomi-vacuum-card)
+- [Mini media-player](https://github.com/kalkih/mini-media-player)
+- [Mini graph card](https://github.com/kalkih/mini-graph-card)
+- [Auto-entities card](https://github.com/thomasloven/lovelace-auto-entities)
+- [Atomic Calendar Revive card](https://github.com/marksie1988/atomic-calendar-revive)
+
+## Automations
+I mainly use node-RED for automations. HA scripts and automations are excluded from this repository.
+
+## License
+**MIT License**
+
+Copyright (c) 2019-2021
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+[commits-shield]: https://img.shields.io/github/commit-activity/m/dykandDK/home-assistant-config.svg
+[commits]: https://github.com/dykandDK/home-assistant-config/commits/master
+[license-shield]: https://img.shields.io/badge/license-MIT-green.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg
+[last-commit-shield]: https://img.shields.io/github/last-commit/dykandDK/home-assistant-config.svg
+[stars-shield]: https://img.shields.io/github/stars/dykandDK/home-assistant-config.svg?style=social&label=Stars
+[forks-shield]: https://img.shields.io/github/forks/dykandDK/home-assistant-config.svg?style=social&label=Forks
+[watchers-shield]: https://img.shields.io/github/watchers/dykandDK/home-assistant-config.svg?style=social&label=Watchers
+[link-ha-version]: https://github.com/home-assistant/core/releases/tag/2021.1.5
+[img-ha-version]: https://img.shields.io/badge/Home_Assistant_release-2021.1.5-53c1f1.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIxLjgsMTNIMjBWMjFIMTNWMTcuNjdMMTUuNzksMTQuODhMMTYuNSwxNUMxNy42NiwxNSAxOC42LDE0LjA2IDE4LjYsMTIuOUMxOC42LDExLjc0IDE3LjY2LDEwLjggMTYuNSwxMC44QTIuMSwyLjEgMCAwLDAgMTQuNCwxMi45TDE0LjUsMTMuNjFMMTMsMTUuMTNWOS42NUMxMy42Niw5LjI5IDE0LjEsOC42IDE0LjEsNy44QTIuMSwyLjEgMCAwLDAgMTIsNS43QTIuMSwyLjEgMCAwLDAgOS45LDcuOEM5LjksOC42IDEwLjM0LDkuMjkgMTEsOS42NVYxNS4xM0w5LjUsMTMuNjFMOS42LDEyLjlBMi4xLDIuMSAwIDAsMCA3LjUsMTAuOEEyLjEsMi4xIDAgMCwwIDUuNCwxMi45QTIuMSwyLjEgMCAwLDAgNy41LDE1TDguMjEsMTQuODhMMTEsMTcuNjdWMjFINFYxM0gyLjI1QzEuODMsMTMgMS40MiwxMyAxLjQyLDEyLjc5QzEuNDMsMTIuNTcgMS44NSwxMi4xNSAyLjI4LDExLjcyTDExLDNDMTEuMzMsMi42NyAxMS42NywyLjMzIDEyLDIuMzNDMTIuMzMsMi4zMyAxMi42NywyLjY3IDEzLDNMMTcsN1Y2SDE5VjlMMjEuNzgsMTEuNzhDMjIuMTgsMTIuMTggMjIuNTksMTIuNTkgMjIuNiwxMi44QzIyLjYsMTMgMjIuMiwxMyAyMS44LDEzTTcuNSwxMkEwLjksMC45IDAgMCwxIDguNCwxMi45QTAuOSwwLjkgMCAwLDEgNy41LDEzLjhBMC45LDAuOSAwIDAsMSA2LjYsMTIuOUEwLjksMC45IDAgMCwxIDcuNSwxMk0xNi41LDEyQzE3LDEyIDE3LjQsMTIuNCAxNy40LDEyLjlDMTcuNCwxMy40IDE3LDEzLjggMTYuNSwxMy44QTAuOSwwLjkgMCAwLDEgMTUuNiwxMi45QTAuOSwwLjkgMCAwLDEgMTYuNSwxMk0xMiw2LjlDMTIuNSw2LjkgMTIuOSw3LjMgMTIuOSw3LjhDMTIuOSw4LjMgMTIuNSw4LjcgMTIsOC43QzExLjUsOC43IDExLjEsOC4zIDExLjEsNy44QzExLjEsNy4zIDExLjUsNi45IDEyLDYuOVoiIGZpbGw9IiNmZmZmZmYiIC8+PC9zdmc+Cg==&maxAge=21600
