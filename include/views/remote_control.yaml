@@ -1,0 +1,500 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Remote controls for AppleTV(s) and Sonos speakers etc.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+icon: mdi:remote
+title: Fjernbetjening
+cards:
+  #─────────────────────────────────────────────────────────────────────────
+  # Select type of remote
+  #─────────────────────────────────────────────────────────────────────────
+  - type: horizontal-stack
+    cards:
+      ########################
+      # AppleTV - Stue
+      ########################
+      - type: "custom:button-card"
+        color_type: card
+        icon: mdi:apple
+        name: "Stue"
+        styles:
+          card:
+            - background-color: "rgb(0,0,0)"
+            - border-radius: 20px
+            - color: "rgb(255,255,255)"
+            - border: 5px solid black
+        entity: input_select.media_source
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.media_source
+            option: AppleTV - Stue
+        state:
+          - value: "AppleTV - Stue"
+            styles:
+              card:
+                - border: 5px solid blue
+      ########################
+      # PS4
+      ########################
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_select.media_source
+        icon: mdi:sony-playstation
+        name: "PS4"
+        styles:
+          card:
+            - background-color: "rgb(0,0,0)"
+            - border-radius: 20px
+            - color: "rgb(255,255,255)"
+            - border: 5px solid black
+        show_entity_picture: true
+        entity_picture: /local/assets/PS_logo3.png
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.media_source
+            option: PS4
+        state:
+          - value: "PS4"
+            styles:
+              card:
+                - border: 5px solid blue
+      ########################
+      # Sonos
+      ########################
+      - type: "custom:button-card"
+        color_type: card
+        icon: mdi:volume-plus
+        entity: input_select.media_source
+        name: "Musik"
+        styles:
+          card:
+            - background-color: "rgb(0,0,0)"
+            - border-radius: 20px
+            - color: "rgb(255,255,255)"
+            - border: 5px solid black
+        show_entity_picture: true
+        entity_picture: /local/assets/sonos2.png
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.media_source
+            option: Sonos - Stue
+        state:
+          - value: "Sonos - Stue"
+            styles:
+              card:
+                - border: 5px solid blue
+      ########################
+      # AppleTV - Soveværelse
+      ########################
+      - type: "custom:button-card"
+        color_type: card
+        icon: mdi:apple
+        name: "Sovevær."
+        entity: input_select.media_source
+        styles:
+          card:
+            - background-color: "rgb(0,0,0)"
+            - border-radius: 20px
+            - color: "rgb(255,255,255)"
+            - border: 5px solid black
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.media_source
+            option: AppleTV - Soveværelse
+        state:
+          - value: "AppleTV - Soveværelse"
+            styles:
+              card:
+                - border: 5px solid blue
+  #─────────────────────────────────────────────────────────────────────────
+  # AppleTV remote - living room
+  #─────────────────────────────────────────────────────────────────────────
+  - type: conditional
+    conditions:
+      - entity: input_select.media_source
+        state: "AppleTV - Stue"
+    card:
+      type: vertical-stack
+      cards:
+        - type: horizontal-stack
+          cards:
+            ########################
+            # R1C1: Power Off
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              entity: media_player.marantz_sr7010
+              icon: mdi:power
+              name: " "
+              aspect_ratio: 1.5/1
+              tap_action:
+                action: toggle
+              state:
+                - value: "off"
+                  styles:
+                    card:
+                      - color: "rgb(0,255,0)"
+                - value: "on"
+                  styles:
+                    card:
+                      - background-color: "rgb(0,255,0)"
+                      - color: "rgb(255,0,0)"
+            ########################
+            # R1C2: Up
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:arrow-up-thick
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - up
+            ########################
+            # R1C3: Top-menu
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:exit-to-app
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - top_menu
+              hold_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - home_hold
+        - type: horizontal-stack
+          cards:
+            ########################
+            # R2C1: Left
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:arrow-left-thick
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - left
+            ########################
+            # R2C2: Select / OK
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:image-filter-center-focus #checkbox-marked-circle
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - select
+            ########################
+            # R2C3: Right
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:arrow-right-thick
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - right
+        - type: horizontal-stack
+          cards:
+            ########################
+            # R3C1: Back
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:undo
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - menu
+            ########################
+            # R3C2: Down
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:arrow-down-thick
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - down
+            ########################
+            # R3C3: Play/Pause
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: mdi:play-pause
+              name: " "
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: call-service
+                service: media_player.media_play_pause
+                service_data:
+                  entity_id: media_player.apple_tv_stue
+        - type: horizontal-stack
+          cards:
+            ########################
+            # R4C1: Volume down
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              entity: script.avr_command_volume_down
+              icon: mdi:volume-minus
+              name: " "
+              aspect_ratio: 1.5/1
+              tap_action:
+                action: toggle
+            ########################
+            # R4C2: Hold
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              icon: null
+              name: "Hold"
+              aspect_ratio: 1.5/1
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+                  - font-size: 40px
+                  - font-weight: bold
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data:
+                  entity_id: remote.apple_tv_stue
+                  command:
+                    - home_hold
+            ########################
+            # R4C2: Volume up
+            ########################
+            - type: "custom:button-card"
+              color_type: card
+              entity: script.avr_command_volume_up
+              icon: mdi:volume-plus
+              aspect_ratio: 1.5/1
+              name: " "
+              styles:
+                card:
+                  - background-color: var(--card-background-color)
+                  - color: var(--primary-foreground-color)
+              tap_action:
+                action: toggle
+        - type: horizontal-stack
+          cards:
+            - type: custom:mini-media-player
+              entity: media_player.marantz_sr7010
+              hide:
+                name: true
+                icon: true
+                info: true
+                power: true
+                source: true
+                sound_mode: true
+                controls: true
+                play_pause: true
+                play_stop: true
+                progress: true
+  #─────────────────────────────────────────────────────────────────────────
+  # PS4 remote - living room
+  #─────────────────────────────────────────────────────────────────────────
+  - type: conditional
+    conditions:
+      - entity: input_select.media_source
+        state: "PS4"
+    card:
+      type: vertical-stack
+      cards:
+        - type: horizontal-stack
+          cards:
+
+  #─────────────────────────────────────────────────────────────────────────
+  # Sonos remote - living room
+  #─────────────────────────────────────────────────────────────────────────
+  - type: conditional
+    conditions:
+      - entity: input_select.media_source
+        state: "Sonos - Stue"
+    card:
+      type: vertical-stack
+      cards:
+        - type: custom:mini-media-player
+          entity: media_player.stue
+          artwork: cover
+          source: icon
+          hide:
+            volume: true
+            power: true
+        - type: custom:mini-media-player
+          entity: media_player.marantz_sr7010
+          hide:
+            name: true
+            icon: true
+            info: true
+            power: true
+            source: true
+            sound_mode: true
+            controls: true
+            play_pause: true
+            play_stop: true
+            progress: true
+
+  #─────────────────────────────────────────────────────────────────────────
+  # AppleTV remote - bed room
+  #─────────────────────────────────────────────────────────────────────────
+  - type: conditional
+    conditions:
+      - entity: input_select.media_source
+        state: "AppleTV - Soveværelse"
+    card:
+      type: glance
+      show_name: false
+      show_state: false
+      columns: 3
+      entities:
+        # R1C1: Power Off
+        - entity: script.atv_command_turnoff_sove
+          icon: mdi:power
+          tap_action:
+            action: toggle
+        # R1C2: Up
+        - entity: script.atv_command_up_sove
+          icon: mdi:arrow-up-thick
+          tap_action:
+            action: toggle
+        # R1C3: Top-menu
+        - entity: script.atv_command_top_menu_sove
+          icon: mdi:exit-to-app
+          tap_action:
+            action: toggle
+        # R2C1: Left
+        - entity: script.atv_command_left_sove
+          icon: mdi:arrow-left-thick
+          tap_action:
+            action: toggle
+        # R2C2: Select / OK
+        - entity: script.atv_command_select_sove
+          icon: mdi:image-filter-center-focus #checkbox-marked-circle
+          tap_action:
+            action: toggle
+        # R2C3: Right
+        - entity: script.atv_command_right_sove
+          icon: mdi:arrow-right-thick
+          tap_action:
+            action: toggle
+        # R3C1: Back
+        - entity: script.atv_command_menu_sove
+          icon: mdi:undo
+          tap_action:
+            action: toggle
+        # R3C2: Down
+        - entity: script.atv_command_down_sove
+          icon: mdi:arrow-down-thick
+          tap_action:
+            action: toggle
+        # R3C3: Play/Pause
+        - entity: script.atv_command_play_pause_sove
+          icon: mdi:play-pause
+          tap_action:
+            action: call-service
+            service: media_player.media_play_pause
+            service_data:
+              entity_id: media_player.apple_tv_sovevaerelse
+        # R4C1: Volume down
+        - entity: script.atv_command_volume_down_sove
+          icon: mdi:volume-minus
+          tap_action:
+            action: toggle
+        # R4C2: Volume mute
+        - entity: script.atv_command_volume_down_sove
+          icon: mdi:volume-off
+          tap_action:
+            action: toggle
+        # R4C2: Volume up
+        - entity: script.atv_command_volume_up_sove
+          icon: mdi:volume-plus
+          tap_action:
+            action: toggle
