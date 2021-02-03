@@ -60,7 +60,7 @@ I use two different Lovelace dashboards:
 ### Tablet dashboard
 This dashboard is optimized for viewing on tablet with screen resolution 1280x800:
 
-![Main view](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/01_main.png)
+![Main view](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/HA-dashboard.gif)
 
 See more screenshots [HERE](/screenshots/screenshots.md)
 
@@ -87,9 +87,12 @@ I use several custom compontents that are installed via [HACS](https://hacs.xyz/
 - [Mini graph card](https://github.com/kalkih/mini-graph-card)
 - [Auto-entities card](https://github.com/thomasloven/lovelace-auto-entities)
 - [Atomic Calendar Revive card](https://github.com/marksie1988/atomic-calendar-revive)
+- [Slider Entity Row](https://github.com/thomasloven/lovelace-slider-entity-row)
 
 ## Automations
 I mainly use node-RED for automations. HA scripts and automations are excluded from this repository.
+
+Examples of my node-RED automations are found [HERE](/automations/node-RED/node-RED.md).
 
 ## License
 **MIT License**

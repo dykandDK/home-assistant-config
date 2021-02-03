@@ -1,0 +1,409 @@
+[
+    {
+        "id": "1b197e85.6b7921",
+        "type": "tab",
+        "label": "Doorbell",
+        "disabled": false,
+        "info": "## Flow for automating doorbell\n**By Anders Lukic**\n\n---\n\nFlow for doorbell automation that:\n\n - plays doorbell sound and TTS over Sonos speaker when doorbell is pressed between 07.00 and 19.00 if somebody is home\n -  sends notification to mobile if nobody is home or after 19.00"
+    },
+    {
+        "id": "42a2b7.29f2cd48",
+        "type": "server-events",
+        "z": "1b197e85.6b7921",
+        "name": "Deconz events",
+        "server": "3bebce79.1e0962",
+        "event_type": "deconz_event",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "x": 120,
+        "y": 100,
+        "wires": [
+            [
+                "e33471f0.fc0c6"
+            ]
+        ]
+    },
+    {
+        "id": "e33471f0.fc0c6",
+        "type": "switch",
+        "z": "1b197e85.6b7921",
+        "name": "Doorbell?",
+        "property": "payload.event.id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "hue_smart_button",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 280,
+        "y": 100,
+        "wires": [
+            [
+                "d560ff9.ff5f2"
+            ]
+        ]
+    },
+    {
+        "id": "5bd2e771.ecb878",
+        "type": "switch",
+        "z": "1b197e85.6b7921",
+        "name": "Is home?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "not_home",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "home",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 740,
+        "y": 100,
+        "wires": [
+            [
+                "21346754.e3ea48"
+            ],
+            [
+                "93988d80.624f3"
+            ]
+        ]
+    },
+    {
+        "id": "d0e44ad0.341c18",
+        "type": "api-current-state",
+        "z": "1b197e85.6b7921",
+        "name": "Get home state",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "group.alle_personer",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 580,
+        "y": 100,
+        "wires": [
+            [
+                "5bd2e771.ecb878"
+            ]
+        ]
+    },
+    {
+        "id": "21346754.e3ea48",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Notify when not home",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"message\":\"Somebody is at the door\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 960,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d560ff9.ff5f2",
+        "type": "switch",
+        "z": "1b197e85.6b7921",
+        "name": "Pressed?",
+        "property": "payload.event.event",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1002",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 420,
+        "y": 100,
+        "wires": [
+            [
+                "d0e44ad0.341c18"
+            ]
+        ]
+    },
+    {
+        "id": "93988d80.624f3",
+        "type": "time-range-switch",
+        "z": "1b197e85.6b7921",
+        "name": "Day time?",
+        "lat": "",
+        "lon": "",
+        "startTime": "07:00",
+        "endTime": "19:00",
+        "startOffset": 0,
+        "endOffset": 0,
+        "x": 920,
+        "y": 130,
+        "wires": [
+            [
+                "ba41c449.63d148"
+            ],
+            [
+                "21346754.e3ea48"
+            ]
+        ]
+    },
+    {
+        "id": "ba41c449.63d148",
+        "type": "template",
+        "z": "1b197e85.6b7921",
+        "name": "data_variables",
+        "field": "sonos_data",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"sonos_entity\": \"media_player.alrum\",\n    \"volume\": \"0.51\",\n    \"message\": \"Somebody is at the door\"\n}",
+        "output": "json",
+        "x": 1120,
+        "y": 130,
+        "wires": [
+            [
+                "3bf56225.1c8a3e"
+            ]
+        ]
+    },
+    {
+        "id": "3bf56225.1c8a3e",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Snapshot",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "sonos",
+        "service": "snapshot",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "e86d12d3.cb7bc"
+            ]
+        ]
+    },
+    {
+        "id": "e86d12d3.cb7bc",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Unjoin",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "media_player",
+        "service": "volume_set",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "{\"volume_level\":\"{{ sonos_data.volume }}\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 230,
+        "y": 200,
+        "wires": [
+            [
+                "9cac309e.cba7"
+            ]
+        ]
+    },
+    {
+        "id": "9cac309e.cba7",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Volume",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "media_player",
+        "service": "volume_set",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "{\"volume_level\":\"{{ sonos_data.volume }}\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 360,
+        "y": 200,
+        "wires": [
+            [
+                "cd784173.a53ab"
+            ]
+        ]
+    },
+    {
+        "id": "cd784173.a53ab",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Doorbell",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "media_player",
+        "service": "play_media",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "{\"media_content_id\":\"[URL]/local/assets/sound/doorbell-1.mp3\",\"media_content_type\":\"music\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 500,
+        "y": 200,
+        "wires": [
+            [
+                "20067983.1ad836"
+            ]
+        ]
+    },
+    {
+        "id": "22972ce7.645474",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "TTS",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "tts",
+        "service": "google_translate_say",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "{\"message\":\"{{ sonos_data.message }}\",\"language\":\"da\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 770,
+        "y": 200,
+        "wires": [
+            [
+                "1a8d89eb.aa9976"
+            ]
+        ]
+    },
+    {
+        "id": "1a8d89eb.aa9976",
+        "type": "delay",
+        "z": "1b197e85.6b7921",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 900,
+        "y": 200,
+        "wires": [
+            [
+                "fb96ef87.1d161"
+            ]
+        ]
+    },
+    {
+        "id": "fb96ef87.1d161",
+        "type": "api-call-service",
+        "z": "1b197e85.6b7921",
+        "name": "Restore",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "sonos",
+        "service": "restore",
+        "entityId": "{{ sonos_data.sonos_entity }}",
+        "data": "",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1040,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "20067983.1ad836",
+        "type": "delay",
+        "z": "1b197e85.6b7921",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "4",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 640,
+        "y": 200,
+        "wires": [
+            [
+                "22972ce7.645474"
+            ]
+        ]
+    },
+    {
+        "id": "3bebce79.1e0962",
+        "type": "server",
+        "name": "Home Assistant",
+        "addon": true
+    }
+]

@@ -1,0 +1,1264 @@
+[
+    {
+        "id": "87f699c9.d830e8",
+        "type": "tab",
+        "label": "Vacuum Control",
+        "disabled": false,
+        "info": "## **Flow for automation of Xioami vacuum**\n**By Anders Lukic**\n\n---\n<br>\n\n---\n### **Functionality**\n---\n\nThis flow automates control over my S5 robot vacuum cleaner. It does the following:\n\n * Starts cleaning of selected rooms when cleaning started from Lovelace\n * Use actionable notification to ask if cleaning should start when nobody is home\n * Pause cleaning when the doorbell is pressed\n * Use actionable notification to ask to empty dustbin when the robot has cleaned 200m2 or more\n\n---\n### **Requirements**\n---\nThis flow requires the following additional configuration to work:\n\n * Definition of IOS push categories for actionable notifications\n * Definition of input booleans for room selection"
+    },
+    {
+        "id": "72c95e81.f3b8f",
+        "type": "server-events",
+        "z": "87f699c9.d830e8",
+        "name": "IOS Action?",
+        "server": "3bebce79.1e0962",
+        "event_type": "ios.notification_action_fired",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "x": 90,
+        "y": 280,
+        "wires": [
+            [
+                "e055f62a.f441c8"
+            ]
+        ]
+    },
+    {
+        "id": "e055f62a.f441c8",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Time for vacuuming?",
+        "property": "payload.event.actionName",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "VACUUM_ASK_LATER",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "VACUUM_FULL_CLEAN",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "VACUUM_ROOM_CLEAN",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "VACUUM_POSTPONE",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 4,
+        "x": 280,
+        "y": 280,
+        "wires": [
+            [
+                "217b1bd8.cbf464"
+            ],
+            [
+                "7208f2a1.51e55c"
+            ],
+            [
+                "4664246.2c1a3dc"
+            ],
+            []
+        ],
+        "outputLabels": [
+            "Remind me later (in 15 mins)",
+            "Clean entire house",
+            "Clean selected rooms only",
+            "Postpone cleaning (do nothing"
+        ]
+    },
+    {
+        "id": "c23ce2a1.7dca1",
+        "type": "comment",
+        "z": "87f699c9.d830e8",
+        "name": "Ask to start vacuum when away",
+        "info": "",
+        "x": 150,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "7208f2a1.51e55c",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Start full clean",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "vacuum",
+        "service": "start",
+        "entityId": "vacuum.xiaomi_vacuum_cleaner",
+        "data": "",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "msg",
+        "mustacheAltTags": false,
+        "x": 500,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "54f6e3ca.3060ac",
+        "type": "json",
+        "z": "87f699c9.d830e8",
+        "name": "Format as JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1110,
+        "y": 300,
+        "wires": [
+            [
+                "61429998.154718"
+            ]
+        ]
+    },
+    {
+        "id": "4664246.2c1a3dc",
+        "type": "ha-get-entities",
+        "z": "87f699c9.d830e8",
+        "server": "3bebce79.1e0962",
+        "name": "Get selected rooms",
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "starts_with",
+                "value": "input_boolean.clean_room",
+                "valueType": "str"
+            },
+            {
+                "property": "state",
+                "logic": "is",
+                "value": "on",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "split",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "ef565b7f.9e4f18",
+                "f77099a7.441168"
+            ]
+        ]
+    },
+    {
+        "id": "ef565b7f.9e4f18",
+        "type": "change",
+        "z": "87f699c9.d830e8",
+        "name": "Get room IDs only",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.entity_id",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "input_boolean.clean_room_",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 710,
+        "y": 300,
+        "wires": [
+            [
+                "45afd35d.f9cfac"
+            ]
+        ]
+    },
+    {
+        "id": "45afd35d.f9cfac",
+        "type": "join",
+        "z": "87f699c9.d830e8",
+        "name": "Combine to array",
+        "mode": "auto",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "",
+        "joiner": ",",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 910,
+        "y": 300,
+        "wires": [
+            [
+                "54f6e3ca.3060ac"
+            ]
+        ]
+    },
+    {
+        "id": "61429998.154718",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Start room cleaning",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "vacuum",
+        "service": "send_command",
+        "entityId": "vacuum.xiaomi_vacuum_cleaner",
+        "data": "{    \"command\": \"app_segment_clean\",    \"params\": [{{payload}}]}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "msg",
+        "mustacheAltTags": false,
+        "x": 1310,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f77099a7.441168",
+        "type": "template",
+        "z": "87f699c9.d830e8",
+        "name": "Entity names",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{{payload.attributes.friendly_name}}",
+        "output": "str",
+        "x": 690,
+        "y": 340,
+        "wires": [
+            [
+                "fd6898d6.b83ee8"
+            ]
+        ]
+    },
+    {
+        "id": "fd6898d6.b83ee8",
+        "type": "join",
+        "z": "87f699c9.d830e8",
+        "name": "combine msgs",
+        "mode": "custom",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "[92,110]",
+        "joinerType": "bin",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 860,
+        "y": 340,
+        "wires": [
+            [
+                "56961c70.742bf4"
+            ]
+        ]
+    },
+    {
+        "id": "9c1bd52c.6b86f8",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Confirm start",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"message\":\"Vacuum starts to clean:\\n\\n {{payload}}\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1190,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "56961c70.742bf4",
+        "type": "change",
+        "z": "87f699c9.d830e8",
+        "name": "Clean names",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "Støvsug ",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1030,
+        "y": 340,
+        "wires": [
+            [
+                "9c1bd52c.6b86f8"
+            ]
+        ]
+    },
+    {
+        "id": "217b1bd8.cbf464",
+        "type": "delay",
+        "z": "87f699c9.d830e8",
+        "name": "Ask again in 15 mins.",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 520,
+        "y": 220,
+        "wires": [
+            [
+                "64dea394.0cad1c"
+            ]
+        ]
+    },
+    {
+        "id": "5340d84a.088738",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Doorbell",
+        "property": "payload.event.id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "hue_smart_button1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 260,
+        "y": 440,
+        "wires": [
+            [
+                "f16d9001.d924f"
+            ]
+        ]
+    },
+    {
+        "id": "aa6f57b0.feeae8",
+        "type": "server-events",
+        "z": "87f699c9.d830e8",
+        "name": "Deconz events",
+        "server": "3bebce79.1e0962",
+        "event_type": "deconz_event",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "x": 100,
+        "y": 440,
+        "wires": [
+            [
+                "5340d84a.088738"
+            ]
+        ]
+    },
+    {
+        "id": "263681bf.0caf6e",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Is vacuumingr?",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 2,
+        "halt_if": "cleaning",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "vacuum.xiaomi_vacuum_cleaner",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 620,
+        "y": 440,
+        "wires": [
+            [
+                "175c9536.f2ad9b"
+            ],
+            []
+        ],
+        "outputLabels": [
+            "Ja",
+            "Nej"
+        ]
+    },
+    {
+        "id": "175c9536.f2ad9b",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Pause vacuum",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "vacuum",
+        "service": "pause",
+        "entityId": "vacuum.xiaomi_vacuum_cleaner",
+        "data": "",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 800,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f16d9001.d924f",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Someone home?",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "person.alle",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "263681bf.0caf6e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "38687a01.b42186",
+        "type": "comment",
+        "z": "87f699c9.d830e8",
+        "name": "Pause cleaning when doorbell is pressed",
+        "info": "",
+        "x": 180,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "b36baef5.28d54",
+        "type": "inject",
+        "z": "87f699c9.d830e8",
+        "name": "timestamp",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "45 18 * * 1,2,3,4,5,0",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 620,
+        "wires": [
+            [
+                "1eadd9ff.b6f2b6"
+            ]
+        ]
+    },
+    {
+        "id": "52acd7b4.0be0f8",
+        "type": "comment",
+        "z": "87f699c9.d830e8",
+        "name": "Ask to send vacuum to dustbin for manual emptying",
+        "info": "",
+        "x": 210,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1eadd9ff.b6f2b6",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Someone home?",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "person.alle",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 290,
+        "y": 620,
+        "wires": [
+            [
+                "ffded026.9172d"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f23bd77c.83c288",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Set last empty",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": true,
+        "service_domain": "input_number",
+        "service": "set_value",
+        "entityId": "input_number.last_vaccuum_reset_m2",
+        "data": "{       \"value\": {{payload}}}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "msg",
+        "mustacheAltTags": false,
+        "x": 860,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ffded026.9172d",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Vacuum state",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "vacuum.xiaomi_vacuum_cleaner",
+        "state_type": "str",
+        "state_location": "payload1",
+        "override_payload": "msg",
+        "entity_location": "data1",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 480,
+        "y": 620,
+        "wires": [
+            [
+                "c49ee993.333118"
+            ]
+        ]
+    },
+    {
+        "id": "c49ee993.333118",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Last reset count",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "input_number.last_vaccuum_reset_m2",
+        "state_type": "str",
+        "state_location": "payload2",
+        "override_payload": "msg",
+        "entity_location": "data2",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 660,
+        "y": 620,
+        "wires": [
+            [
+                "71d03095.ae593"
+            ]
+        ]
+    },
+    {
+        "id": "71d03095.ae593",
+        "type": "function",
+        "z": "87f699c9.d830e8",
+        "name": "area since last empty",
+        "func": "let lastempty=msg.payload2;\nlet cleanarea=msg.data1.attributes.total_cleaned_area;\nlet diff=cleanarea-lastempty\nmsg.payload = diff;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 860,
+        "y": 620,
+        "wires": [
+            [
+                "a4a35624.3707d8"
+            ]
+        ]
+    },
+    {
+        "id": "a4a35624.3707d8",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Time to empty?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "181",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1060,
+        "y": 620,
+        "wires": [
+            [
+                "f969ee58.3c5b"
+            ]
+        ]
+    },
+    {
+        "id": "f969ee58.3c5b",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Send notifcation",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"title\":\"Empty vacuum bin?\",\"message\":\"Do you want to empty the vacuum bin now? It has cleaned {{payload}} m2 since it was last emptied.\",\"data\":{\"push\":{\"category\":\"vacuum_empty_notification\"}}}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1240,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "77274b6.6a51ab4",
+        "type": "server-events",
+        "z": "87f699c9.d830e8",
+        "name": "IOS Action?",
+        "server": "3bebce79.1e0962",
+        "event_type": "ios.notification_action_fired",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "x": 90,
+        "y": 740,
+        "wires": [
+            [
+                "5d435347.5429ec"
+            ]
+        ]
+    },
+    {
+        "id": "5d435347.5429ec",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Time to empty?",
+        "property": "payload.event.actionName",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "VACUUM_EMPTY_ASK_LATER",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "VACUUM_EMPTY_YES",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 260,
+        "y": 740,
+        "wires": [
+            [
+                "cbda0b24.0a29a8"
+            ],
+            [
+                "762863c1.ecb94c"
+            ]
+        ],
+        "outputLabels": [
+            "Remind me later",
+            "Yes - Send robot to dustbin"
+        ]
+    },
+    {
+        "id": "cbda0b24.0a29a8",
+        "type": "delay",
+        "z": "87f699c9.d830e8",
+        "name": "Ask again in 15 mins.",
+        "pauseType": "delay",
+        "timeout": "15",
+        "timeoutUnits": "minutes",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 480,
+        "y": 700,
+        "wires": [
+            [
+                "f969ee58.3c5b"
+            ]
+        ]
+    },
+    {
+        "id": "762863c1.ecb94c",
+        "type": "api-current-state",
+        "z": "87f699c9.d830e8",
+        "name": "Vacuum state",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "vacuum.xiaomi_vacuum_cleaner",
+        "state_type": "str",
+        "state_location": "payload1",
+        "override_payload": "msg",
+        "entity_location": "data1",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 460,
+        "y": 740,
+        "wires": [
+            [
+                "be9ee5ba.0b09f8"
+            ]
+        ]
+    },
+    {
+        "id": "c4950af3.09e4d8",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Goto dustbin",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": true,
+        "service_domain": "xiaomi_miio",
+        "service": "vacuum_goto",
+        "entityId": "vacuum.xiaomi_vacuum_cleaner",
+        "data": "{\"x_coord\":20200,\"y_coord\":27000}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "msg",
+        "mustacheAltTags": false,
+        "x": 850,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a6ef0a28.fd85d8",
+        "type": "server-state-changed",
+        "z": "87f699c9.d830e8",
+        "name": "Vacuum is returning?",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "vacuum.xiaomi_vacuum_cleaner",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "str",
+        "haltifstate": "returning",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "output_only_on_state_change": true,
+        "x": 120,
+        "y": 580,
+        "wires": [
+            [
+                "1eadd9ff.b6f2b6"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "be9ee5ba.0b09f8",
+        "type": "change",
+        "z": "87f699c9.d830e8",
+        "name": "Get cleaned area",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "msg.data1.attributes.total_cleaned_area",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 740,
+        "wires": [
+            [
+                "f23bd77c.83c288",
+                "c4950af3.09e4d8"
+            ]
+        ]
+    },
+    {
+        "id": "465ef0bd.17c78",
+        "type": "trigger-state",
+        "z": "87f699c9.d830e8",
+        "name": "Home state changed",
+        "server": "3bebce79.1e0962",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityid": "person.alle",
+        "entityidfiltertype": "exact",
+        "debugenabled": false,
+        "constraints": [],
+        "outputs": 2,
+        "customoutputs": [],
+        "outputinitially": false,
+        "state_type": "str",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "693c6d24.8ecc34"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "693c6d24.8ecc34",
+        "type": "ha-get-entities",
+        "z": "87f699c9.d830e8",
+        "server": "3bebce79.1e0962",
+        "name": "Count home",
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "starts_with",
+                "value": "person.",
+                "valueType": "str"
+            },
+            {
+                "property": "state",
+                "logic": "is",
+                "value": "home",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "count",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 330,
+        "y": 160,
+        "wires": [
+            [
+                "c45a5dd6.ad556"
+            ]
+        ]
+    },
+    {
+        "id": "c45a5dd6.ad556",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Nobody home?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "64dea394.0cad1c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "64dea394.0cad1c",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Send notifcation",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"message\":\"Nobody is currently home. Should vacuum cleaning start while you are gone?\",\"data\":{\"push\":{\"category\":\"vacuum_notification\"}}}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 740,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5993aff2.d4702",
+        "type": "comment",
+        "z": "87f699c9.d830e8",
+        "name": "Start cleaning from Lovelace via Dummy script",
+        "info": "",
+        "x": 190,
+        "y": 30,
+        "wires": []
+    },
+    {
+        "id": "98be174c.4d4d18",
+        "type": "change",
+        "z": "87f699c9.d830e8",
+        "name": "Get room IDs only",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.entity_id",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "input_boolean.clean_room_",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$number(payload)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 70,
+        "wires": [
+            [
+                "ab6a1cd4.e41f9"
+            ]
+        ]
+    },
+    {
+        "id": "ab6a1cd4.e41f9",
+        "type": "join",
+        "z": "87f699c9.d830e8",
+        "name": "Combine to array",
+        "mode": "auto",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "",
+        "joiner": ",",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 890,
+        "y": 70,
+        "wires": [
+            [
+                "85ec876c.eb3dd8"
+            ]
+        ]
+    },
+    {
+        "id": "85ec876c.eb3dd8",
+        "type": "json",
+        "z": "87f699c9.d830e8",
+        "name": "Format as JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 1090,
+        "y": 70,
+        "wires": [
+            [
+                "9a7a3b6a.5ef528"
+            ]
+        ]
+    },
+    {
+        "id": "9a7a3b6a.5ef528",
+        "type": "api-call-service",
+        "z": "87f699c9.d830e8",
+        "name": "Start room cleaning",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "vacuum",
+        "service": "send_command",
+        "entityId": "vacuum.xiaomi_vacuum_cleaner",
+        "data": "{    \"command\": \"app_segment_clean\",    \"params\": [{{payload}}]}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "msg",
+        "mustacheAltTags": false,
+        "x": 1290,
+        "y": 70,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "14b1ac17.398e44",
+        "type": "server-events",
+        "z": "87f699c9.d830e8",
+        "name": "",
+        "server": "3bebce79.1e0962",
+        "event_type": "call_service",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "waitForRunning": true,
+        "x": 110,
+        "y": 70,
+        "wires": [
+            [
+                "88edca0c.c34658"
+            ]
+        ]
+    },
+    {
+        "id": "88edca0c.c34658",
+        "type": "switch",
+        "z": "87f699c9.d830e8",
+        "name": "Vacuum script",
+        "property": "payload.event.service_data.entity_id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "script.nodered_vacuum",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 300,
+        "y": 70,
+        "wires": [
+            [
+                "4bf1132.c1b32ec"
+            ]
+        ]
+    },
+    {
+        "id": "4bf1132.c1b32ec",
+        "type": "ha-get-entities",
+        "z": "87f699c9.d830e8",
+        "server": "3bebce79.1e0962",
+        "name": "Get selected rooms",
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "starts_with",
+                "value": "input_boolean.clean_room",
+                "valueType": "str"
+            },
+            {
+                "property": "state",
+                "logic": "is",
+                "value": "on",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "split",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 490,
+        "y": 70,
+        "wires": [
+            [
+                "98be174c.4d4d18"
+            ]
+        ]
+    },
+    {
+        "id": "3bebce79.1e0962",
+        "type": "server",
+        "name": "Home Assistant",
+        "addon": true
+    }
+]
