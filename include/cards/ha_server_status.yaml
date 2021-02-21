@@ -1,0 +1,73 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Display Home Assistant server status information, including CPU load, memory
+# usage, pending HACS updates etc.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# multiple-entity-row: https://github.com/benct/lovelace-multiple-entity-row
+
+type: vertical-stack
+title: Home Assistant
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: gauge
+        entity: sensor.processor_use
+        name: Forbrugt CPU
+        severity:
+          green: 0
+          yellow: 45
+          red: 80
+      - type: gauge
+        entity: sensor.memory_use_percent
+        name: Forbrugt hukommelse
+        severity:
+          green: 0
+          yellow: 45
+          red: 80
+  - type: horizontal-stack
+    cards:
+      - type: gauge
+        entity: sensor.disk_use_percent_home
+        name: Anvendt diskplads
+        severity:
+          green: 0
+          yellow: 75
+          red: 95
+      # Placeholder
+      - type: markdown
+        content: >
+          &nbsp;
+      # - type: gauge
+      #   entity: sensor.
+      #   name: CPU temperatur
+      #   severity:
+      #     green: 0
+      #     yellow: 50
+      #     red: 75
+  - type: horizontal-stack
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.load_15m
+            type: custom:multiple-entity-row
+            state_header: 15 min
+            name: CPU load
+            entities:
+              - entity: sensor.load_1m
+                name: 1 min
+              - entity: sensor.load_5m
+                name: 5 min
+          - entity: sensor.ha_database_size
+            name: Størrelse på database
+            icon: mdi:database
+          - entity: sensor.home_assistant_log
+            name: Størrelse på logfil
+            icon: mdi:file-document
+          - entity: sensor.hacs
+          - entity: sensor.last_boot
+            name: Seneste genstart af server
+            icon: mdi:calendar-clock
