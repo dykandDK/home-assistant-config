@@ -9,3 +9,5 @@
 /automations.yaml
 /node-red
 /ui-lovelace.yaml
+/*.log
+/custom_components

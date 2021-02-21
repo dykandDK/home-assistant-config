@@ -6,12 +6,12 @@
   identifier: "start_lawn_mover"
   actions:
     - identifier: "START_LAWN_MOVER_YES"
-      title: "Ja"
+      title: "Yes"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "START_LAWN_MOVER_NO"
-      title: "Nej"
+      title: "No"
       activationMode: "background"
       authenticationRequired: no
       destructive: yes
@@ -22,12 +22,12 @@
   identifier: "ventilation_isabella"
   actions:
     - identifier: "VENT_FAN"
-      title: "Start blæser"
+      title: "Start ventilation"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "VENT_WINDOW"
-      title: "OK - Jeg åbner vinduet"
+      title: "I'll open a window"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
@@ -38,22 +38,22 @@
   identifier: "vacuum_notification"
   actions:
     - identifier: "VACUUM_FULL_CLEAN"
-      title: "Ja, tak"
+      title: "Yes, please"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "VACUUM_ROOM_CLEAN"
-      title: "Kun i valgte rum"
+      title: "Only selected rooms"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "VACUUM_POSTPONE"
-      title: "Udsæt til i morgen"
+      title: "Postpone until tomorrow"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "VACUUM_ASK_LATER"
-      title: "Spørg mig igen lidt senere"
+      title: "Remind me later"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
@@ -64,12 +64,12 @@
   identifier: "vacuum_empty_notification"
   actions:
     - identifier: "VACUUM_EMPTY_YES"
-      title: "Ja, lad os gøre det!"
+      title: "Yes, please"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "VACUUM_EMPTY_ASK_LATER"
-      title: "Spørg mig igen lidt senere"
+      title: "Remind me later"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
@@ -80,12 +80,12 @@
   identifier: "collection_notification"
   actions:
     - identifier: "COLLECTION_READY"
-      title: "Ja"
+      title: "Yes"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "COLLECTION_ASK_LATER"
-      title: "Spørg mig igen lidt senere"
+      title: "Remind me later"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
@@ -96,12 +96,12 @@
   identifier: "baby_drops_notification"
   actions:
     - identifier: "BABY_DROPS_GIVEN"
-      title: "Ja"
+      title: "Yes"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
     - identifier: "BABY_DROPS_ASK_LATER"
-      title: "Spørg mig igen lidt senere"
+      title: "Remind me later"
       activationMode: "background"
       authenticationRequired: no
       destructive: no
@@ -112,7 +112,7 @@
   identifier: "camera1"
   actions:
     - identifier: "START_ALARM"
-      title: "Aktiver alarm"
+      title: "Sound alarm"
       activationMode: "background"
       authenticationRequired: no
       destructive: true
@@ -124,8 +124,8 @@
       destructive: no
       behavior: "default"
     - identifier: "NOTIFY_TTS"
-      title: "TTS besked"
+      title: "Send TTS"
       destructive: false
       behavior: "textInput"
-      textInputButtonTitle: "Send besked"
-      textInputPlaceholder: "Skriv besked"
+      textInputButtonTitle: "Send TTS"
+      textInputPlaceholder: "Enter message"
