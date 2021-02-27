@@ -90,6 +90,13 @@ views:
         title: Seneste hændelser
         large: true
         card: !include include/cards/event_log.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Home state selection
+      #─────────────────────────────────────────────────────────────────────────
+      input_select.home_state:
+        title: Vælg tilstand for hjem
+        large: true
+        card: !include include/cards/home_state_selection.yaml
     cards:
       - type: vertical-stack
         cards:

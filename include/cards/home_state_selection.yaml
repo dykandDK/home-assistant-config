@@ -1,0 +1,122 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to choose different Home States
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: horizontal-stack
+cards:
+  ### Home
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:home
+    name: Home
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 5px solid var(--card-background-color)
+    entity: input_select.home_state
+    state:
+      - value: "Home"
+        styles:
+          card:
+            - border: 5px solid var(--paper-item-icon-active-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.home_state
+        option: Home
+  ### Away
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:home-outline
+    name: Away
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 5px solid var(--card-background-color)
+    entity: input_select.home_state
+    state:
+      - value: "Away"
+        styles:
+          card:
+            - border: 5px solid var(--paper-item-icon-active-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.home_state
+        option: Away
+  ### Night
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:weather-night
+    name: Night
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 5px solid var(--card-background-color)
+    entity: input_select.home_state
+    state:
+      - value: "Night"
+        styles:
+          card:
+            - border: 5px solid var(--paper-item-icon-active-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.home_state
+        option: Night
+  ### Guest
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:party-popper
+    name: Guests
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 5px solid var(--card-background-color)
+    entity: input_select.home_state
+    state:
+      - value: "Guests"
+        styles:
+          card:
+            - border: 5px solid var(--paper-item-icon-active-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.home_state
+        option: Guests
+  ### Holiday
+  - type: "custom:button-card"
+    color_type: card
+    icon: mdi:beach
+    name: Holiday
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 5px solid var(--card-background-color)
+    entity: input_select.home_state
+    state:
+      - value: "Holiday"
+        styles:
+          card:
+            - border: 5px solid var(--paper-item-icon-active-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.home_state
+        option: Holiday
