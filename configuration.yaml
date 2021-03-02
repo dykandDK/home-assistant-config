@@ -77,6 +77,8 @@ lovelace:
       type: module
     - url: /hacsfiles/spotify-card/spotify-card.js
       type: module
+    - url: /hacsfiles/bar-card/bar-card.js
+      type: module
 
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
@@ -110,7 +112,7 @@ scene: !include scenes.yaml
 # Limit log entries
 #───────────────────────────────────────────────────────────────────────────────
 recorder:
-  db_url: !secret db_url
+  #db_url: !secret db_url
   purge_keep_days: 14
   #purge_interval: 1
   exclude:
@@ -387,7 +389,7 @@ sensor sys:
 # Input booleans:
 #
 # - for manual override of automations
-# - for room selection for vaccum cleaner
+# - for room selection for vaccum cleaner and conditional room views
 #───────────────────────────────────────────────────────────────────────────────
 input_boolean:
   manual_override:
@@ -473,6 +475,21 @@ input_select:
       - toilet
       - drum
     icon: mdi:cog-box
+  room_selection:
+    name: Vælg værelse
+    options:
+      - Isabella's værelse
+      - Laura's værelse
+      - Køkken/alrum
+      - Stue
+      - Soveværelse
+      - Kontor
+      - Stort bad
+      - Lille bad
+      - Bryggers
+      - Gang
+    icon: mdi:floor-plan
+    initial: Isabella's værelse
 
 #───────────────────────────────────────────────────────────────────────────────
 # Input number
