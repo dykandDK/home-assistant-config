@@ -9,6 +9,14 @@
 ![GitHub Watchers][watchers-shield]
 ![GitHub Forks][forks-shield]
 
+# Home Assistant - configuration and automations
+This repository contains a collection of my personnal Home Assistant (HA) configuration and automations.
+
+It may not include the full configuration needed to replicate my setup, but it does include relevant examples of my configuration and automations.
+
+Please feel free to use and change as you like for your own HA setup.
+
+---
 <p align="center">
   <a href="#hardware">Hardware</a> •
   <a href="#integrated-smart-devices">Integrated smart devices</a> •
@@ -18,13 +26,7 @@
   <a href="#automations">Automations</a> •
   <a href="#license">License</a>
 </p>
-
-# Home Assistant - configuration and automations
-This repository contains a collection of my personnal Home Assistant (HA) configuration and automations.
-
-It may not include the full configuration needed to replicate my setup, but it does include relevant examples of my configuration and automations.
-
-Please feel free to use and change as you like for your own HA setup.
+---
 
 ## Hardware
 This is my current hardware setup:
@@ -65,7 +67,7 @@ I use the following addons:
 - phpMyAdmin
 
 ## Lovelace dashboards
-I use two different Lovelace dashboards:
+I use different Lovelace dashboards:
 
 ### Tablet dashboard
 This dashboard is optimized for viewing on tablet with screen resolution 1280x800:
@@ -74,12 +76,32 @@ This dashboard is optimized for viewing on tablet with screen resolution 1280x80
 
 See more screenshots [HERE](/screenshots/screenshots.md)
 
+### Smart clock radion dashboard
+This dashboard is designed to replace and extend the functionality of an old clock radio. It is designed for viewing on a 8" tablet and includes four different views:
+
+1) Large digital clock display
+2) Set alarm timer
+3) Play music
+4) View weather information
+
+The Swipe-card custom component is used to swipe between the clock and other views.
+
+In addition an icon bar provides easy access to:
+
+- Open CCTV app
+- View and enable/disable alarm timer
+- View and control home alarm system
+- Turn off main lights
+- View/set home state
+
+![Clock radio](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/clock-radio01.png)
+
 ### Mobile device dashboard 
 This dashboard is mainly used on mobile devices, and includes additional elements, such as a universal remote:
 
 ![Universal remote](https://github.com/dykandDK/home-assistant-config/blob/master/screenshots/06_remote.jpg)
 
-For the time being, only my tablet dashboard is included in this repository.
+For the time being, only my tablet dashboards are included in this repository.
 
 I prefer to maintain dashboards in YAML mode and I use `!include` statements to make it easier to maintain and re-use relevant parts of each dashboard.
 
@@ -98,6 +120,9 @@ I use several custom compontents that are installed via [HACS](https://hacs.xyz/
 - [Auto-entities card](https://github.com/thomasloven/lovelace-auto-entities)
 - [Atomic Calendar Revive card](https://github.com/marksie1988/atomic-calendar-revive)
 - [Slider Entity Row](https://github.com/thomasloven/lovelace-slider-entity-row)
+- [Swipe card](https://github.com/bramkragten/swipe-card)
+
+My lovelace dashboards would simply not be possible without these custom cards. So a special shout out and million thanks goes out to all developers for their contributions to the Home Assistant community.
 
 ## Automations
 I mainly use node-RED for automations. HA scripts and automations are excluded from this repository.
@@ -135,5 +160,5 @@ SOFTWARE.
 [stars-shield]: https://img.shields.io/github/stars/dykandDK/home-assistant-config.svg?style=social&label=Stars
 [forks-shield]: https://img.shields.io/github/forks/dykandDK/home-assistant-config.svg?style=social&label=Forks
 [watchers-shield]: https://img.shields.io/github/watchers/dykandDK/home-assistant-config.svg?style=social&label=Watchers
-[link-ha-version]: https://github.com/home-assistant/core/releases/tag/2021.2.3
-[img-ha-version]: https://img.shields.io/badge/Home_Assistant_release-2021.2.3-53c1f1.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIxLjgsMTNIMjBWMjFIMTNWMTcuNjdMMTUuNzksMTQuODhMMTYuNSwxNUMxNy42NiwxNSAxOC42LDE0LjA2IDE4LjYsMTIuOUMxOC42LDExLjc0IDE3LjY2LDEwLjggMTYuNSwxMC44QTIuMSwyLjEgMCAwLDAgMTQuNCwxMi45TDE0LjUsMTMuNjFMMTMsMTUuMTNWOS42NUMxMy42Niw5LjI5IDE0LjEsOC42IDE0LjEsNy44QTIuMSwyLjEgMCAwLDAgMTIsNS43QTIuMSwyLjEgMCAwLDAgOS45LDcuOEM5LjksOC42IDEwLjM0LDkuMjkgMTEsOS42NVYxNS4xM0w5LjUsMTMuNjFMOS42LDEyLjlBMi4xLDIuMSAwIDAsMCA3LjUsMTAuOEEyLjEsMi4xIDAgMCwwIDUuNCwxMi45QTIuMSwyLjEgMCAwLDAgNy41LDE1TDguMjEsMTQuODhMMTEsMTcuNjdWMjFINFYxM0gyLjI1QzEuODMsMTMgMS40MiwxMyAxLjQyLDEyLjc5QzEuNDMsMTIuNTcgMS44NSwxMi4xNSAyLjI4LDExLjcyTDExLDNDMTEuMzMsMi42NyAxMS42NywyLjMzIDEyLDIuMzNDMTIuMzMsMi4zMyAxMi42NywyLjY3IDEzLDNMMTcsN1Y2SDE5VjlMMjEuNzgsMTEuNzhDMjIuMTgsMTIuMTggMjIuNTksMTIuNTkgMjIuNiwxMi44QzIyLjYsMTMgMjIuMiwxMyAyMS44LDEzTTcuNSwxMkEwLjksMC45IDAgMCwxIDguNCwxMi45QTAuOSwwLjkgMCAwLDEgNy41LDEzLjhBMC45LDAuOSAwIDAsMSA2LjYsMTIuOUEwLjksMC45IDAgMCwxIDcuNSwxMk0xNi41LDEyQzE3LDEyIDE3LjQsMTIuNCAxNy40LDEyLjlDMTcuNCwxMy40IDE3LDEzLjggMTYuNSwxMy44QTAuOSwwLjkgMCAwLDEgMTUuNiwxMi45QTAuOSwwLjkgMCAwLDEgMTYuNSwxMk0xMiw2LjlDMTIuNSw2LjkgMTIuOSw3LjMgMTIuOSw3LjhDMTIuOSw4LjMgMTIuNSw4LjcgMTIsOC43QzExLjUsOC43IDExLjEsOC4zIDExLjEsNy44QzExLjEsNy4zIDExLjUsNi45IDEyLDYuOVoiIGZpbGw9IiNmZmZmZmYiIC8+PC9zdmc+Cg==&maxAge=21600
+[link-ha-version]: https://github.com/home-assistant/core/releases/tag/2021.3.4
+[img-ha-version]: https://img.shields.io/badge/Home_Assistant_release-2021.2.4-53c1f1.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIxLjgsMTNIMjBWMjFIMTNWMTcuNjdMMTUuNzksMTQuODhMMTYuNSwxNUMxNy42NiwxNSAxOC42LDE0LjA2IDE4LjYsMTIuOUMxOC42LDExLjc0IDE3LjY2LDEwLjggMTYuNSwxMC44QTIuMSwyLjEgMCAwLDAgMTQuNCwxMi45TDE0LjUsMTMuNjFMMTMsMTUuMTNWOS42NUMxMy42Niw5LjI5IDE0LjEsOC42IDE0LjEsNy44QTIuMSwyLjEgMCAwLDAgMTIsNS43QTIuMSwyLjEgMCAwLDAgOS45LDcuOEM5LjksOC42IDEwLjM0LDkuMjkgMTEsOS42NVYxNS4xM0w5LjUsMTMuNjFMOS42LDEyLjlBMi4xLDIuMSAwIDAsMCA3LjUsMTAuOEEyLjEsMi4xIDAgMCwwIDUuNCwxMi45QTIuMSwyLjEgMCAwLDAgNy41LDE1TDguMjEsMTQuODhMMTEsMTcuNjdWMjFINFYxM0gyLjI1QzEuODMsMTMgMS40MiwxMyAxLjQyLDEyLjc5QzEuNDMsMTIuNTcgMS44NSwxMi4xNSAyLjI4LDExLjcyTDExLDNDMTEuMzMsMi42NyAxMS42NywyLjMzIDEyLDIuMzNDMTIuMzMsMi4zMyAxMi42NywyLjY3IDEzLDNMMTcsN1Y2SDE5VjlMMjEuNzgsMTEuNzhDMjIuMTgsMTIuMTggMjIuNTksMTIuNTkgMjIuNiwxMi44QzIyLjYsMTMgMjIuMiwxMyAyMS44LDEzTTcuNSwxMkEwLjksMC45IDAgMCwxIDguNCwxMi45QTAuOSwwLjkgMCAwLDEgNy41LDEzLjhBMC45LDAuOSAwIDAsMSA2LjYsMTIuOUEwLjksMC45IDAgMCwxIDcuNSwxMk0xNi41LDEyQzE3LDEyIDE3LjQsMTIuNCAxNy40LDEyLjlDMTcuNCwxMy40IDE3LDEzLjggMTYuNSwxMy44QTAuOSwwLjkgMCAwLDEgMTUuNiwxMi45QTAuOSwwLjkgMCAwLDEgMTYuNSwxMk0xMiw2LjlDMTIuNSw2LjkgMTIuOSw3LjMgMTIuOSw3LjhDMTIuOSw4LjMgMTIuNSw4LjcgMTIsOC43QzExLjUsOC43IDExLjEsOC4zIDExLjEsNy44QzExLjEsNy4zIDExLjUsNi45IDEyLDYuOVoiIGZpbGw9IiNmZmZmZmYiIC8+PC9zdmc+Cg==&maxAge=21600

@@ -1,0 +1,619 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Smart clock radio dashboard designed for viewing on 8" tablet, optimized for
+# 1004x628 screen# resolutions. Functionality include:
+#
+# 1) Large digital clock display
+# 2) Set alarm timer
+# 3) Play music
+# 5) View and control alarm system
+# 5) View weather information
+#
+# Appearance may by different on other screen resolutions.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# Kiosk-mode:         https://github.com/maykar/kiosk-mode
+# Browser-mod:        https://github.com/thomasloven/hass-browser_mod
+# Custom button card: https://github.com/custom-cards/button-card
+# Swipe card:         https://github.com/bramkragten/swipe-card
+# Spotify card:       https://github.com/custom-cards/spotify-card
+# Mini media-player:  https://github.com/kalkih/mini-media-player
+
+################################################################################
+###                    Kiosk mode - hide default HA header                   ###
+################################################################################
+kiosk_mode:
+  hide_header: true
+
+views:
+  - icon: mdi:radio
+    title: Clockradio
+    #───────────────────────────────────────────────────────────────────────────
+    # Render dashboard in full-width. See more in HA documentation:
+    # https://www.home-assistant.io/lovelace/dashboards-and-views#panel
+    #───────────────────────────────────────────────────────────────────────────
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          ######################################################################
+          ###                      ROW #1: MAIN CONTENT                      ###
+          ######################################################################
+          - type: horizontal-stack
+            cards:
+              #─────────────────────────────────────────────────────────────────
+              # Swipe between clock, music and weather infor
+              #─────────────────────────────────────────────────────────────────
+              - type: custom:swipe-card
+                reset_after: 30
+                cards:
+                  #─────────────────────────────────────────────────────────────
+                  # Digital clock
+                  #─────────────────────────────────────────────────────────────
+                  - type: "custom:button-card"
+                    color_type: card
+                    entity: sensor.local_time
+                    show_state: true
+                    show_name: false
+                    show_icon: false
+                    show_label: false
+                    styles:
+                      card:
+                        - background-color: var(--card-background-color)
+                        - color: var(--primary-foreground-color)
+                        - border: 5px solid var(--card-background-color)
+                        - font-size: 255pt
+                    tap_action:
+                      action: none
+                  #─────────────────────────────────────────────────────────────
+                  # Set timer
+                  #─────────────────────────────────────────────────────────────
+                  - type: vertical-stack
+                    cards:
+                      - type: horizontal-stack
+                        cards:
+                          ### Add hours
+                          - type: "custom:button-card"
+                            color_type: card
+                            icon: mdi:chevron-up-circle
+                            styles:
+                              card:
+                                - background-color: var(--card-background-color)
+                                - color: var(--primary-foreground-color)
+                                - border: 5px solid var(--card-background-color)
+                                - height: 90px
+                            tap_action:
+                              action: call-service
+                              service: input_datetime.set_datetime
+                              service_data:
+                                entity_id: input_datetime.alarm_anders
+                                time: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime()+60*60*1000);return newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]'
+                          ### Add minutes
+                          - type: "custom:button-card"
+                            color_type: card
+                            icon: mdi:chevron-up-circle
+                            styles:
+                              card:
+                                - background-color: var(--card-background-color)
+                                - color: var(--primary-foreground-color)
+                                - border: 5px solid var(--card-background-color)
+                                - height: 90px
+                            tap_action:
+                              action: call-service
+                              service: input_datetime.set_datetime
+                              service_data:
+                                entity_id: input_datetime.alarm_anders
+                                time: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime()+60*1000);return newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]'
+                      ### Current alarm time
+                      - type: "custom:button-card"
+                        color_type: card
+                        name: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime());return newtime.toLocaleTimeString("da-DA").replaceAll(".",":").replace(":00","");]]]'
+                        show_state: false
+                        show_name: true
+                        show_icon: false
+                        show_label: false
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border: 5px solid var(--card-background-color)
+                            - font-size: 150pt
+                            - height: 200px
+                      - type: horizontal-stack
+                        cards:
+                          ### Minus one hour
+                          - type: "custom:button-card"
+                            color_type: card
+                            icon: mdi:chevron-down-circle
+                            styles:
+                              card:
+                                - background-color: var(--card-background-color)
+                                - color: var(--primary-foreground-color)
+                                - border: 5px solid var(--card-background-color)
+                                - height: 90px
+                            tap_action:
+                              action: call-service
+                              service: input_datetime.set_datetime
+                              service_data:
+                                entity_id: input_datetime.alarm_anders
+                                time: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime()-60*60*1000);return newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]'
+                          ### Minus one minute
+                          - type: "custom:button-card"
+                            color_type: card
+                            icon: mdi:chevron-down-circle
+                            styles:
+                              card:
+                                - background-color: var(--card-background-color)
+                                - color: var(--primary-foreground-color)
+                                - border: 5px solid var(--card-background-color)
+                                - height: 90px
+                            tap_action:
+                              action: call-service
+                              service: input_datetime.set_datetime
+                              service_data:
+                                entity_id: input_datetime.alarm_anders
+                                time: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime()-60*1000);return newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]'
+                      ### Activate / Deactive alarm
+                      - type: "custom:button-card"
+                        color_type: card
+                        name: Indstil alarm
+                        entity: input_boolean.anders_alarm_active
+                        show_state: false
+                        show_name: true
+                        show_icon: false
+                        show_label: false
+                        state:
+                          - value: "on"
+                            name: "Deaktiver vækning"
+                          - value: "off"
+                            name: "Indstil vækning"
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border: 5px solid var(--card-background-color)
+                            - font-size: 30pt
+                            - height: 60px
+                  #─────────────────────────────────────────────────────────────
+                  # Music control
+                  #─────────────────────────────────────────────────────────────
+                  - type: horizontal-stack
+                    cards:
+                      - type: vertical-stack
+                        cards:
+                          ### Music source selection
+                          - type: "custom:button-card"
+                            color_type: card
+                            show_state: false
+                            show_name: true
+                            styles:
+                              grid:
+                                - grid-template-areas: "'i n'"
+                                - grid-template-columns: 20% min-content
+                                - grid-template-rows: min-content min-content min-content
+                                - font-size: 20pt
+                              card:
+                                - background-color: var(--card-background-color)
+                                - color: var(--primary-foreground-color)
+                                - border-radius: 5px
+                                - height: 67px
+                              icon:
+                                - margin: none
+                            entity: input_select.music_source_type
+                            state:
+                              - value: "spotify_playlist"
+                                name: Spotify - Afspilningslister
+                                icon: mdi:spotify
+                              - value: "spotify_featured"
+                                icon: mdi:spotify
+                                name: Spotify - Featured
+                              - value: "radio"
+                                icon: mdi:radio
+                                name: Radiokanaler
+                            tap_action:
+                              action: call-service
+                              service: input_select.select_next
+                              service_data:
+                                cycle: true
+                                entity_id: input_select.music_source_type
+                          ### Spotify card - Playlists
+                          - type: conditional
+                            conditions:
+                              - entity: input_select.music_source_type
+                                state: "spotify_playlist"
+                            card:
+                              type: custom:spotify-card
+                              name: Playlister
+                              limit: 24
+                              account: default
+                              display_style: grid
+                              grid_covers_per_row: 6
+                              hide_currently_playing: true
+                              hide_playback_controls: true
+                              hide_top_header: true
+                              device: Soveværelse
+                              default_device: Soveværelse
+                          ### Spotify card - Featured
+                          - type: conditional
+                            conditions:
+                              - entity: input_select.music_source_type
+                                state: "spotify_featured"
+                            card:
+                              type: custom:spotify-card
+                              name: Playlister
+                              limit: 12
+                              account: default
+                              playlist_type: featured
+                              spotify_entity: media_player.sovevaerelse
+                              display_style: grid
+                              grid_covers_per_row: 4
+                              hide_currently_playing: true
+                              hide_playback_controls: true
+                              hide_top_header: true
+                              device: Soveværelse
+                              default_device: Soveværelse
+                          ### Radio channels
+                          - type: conditional
+                            conditions:
+                              - entity: input_select.music_source_type
+                                state: "radio"
+                            card:
+                              type: vertical-stack
+                              cards:
+                                ### FIRST ROW
+                                - type: horizontal-stack
+                                  cards:
+                                    ### DR P3
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P3_logo_2020.svg.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://live-icy.gss.dr.dk/A/A05H.mp3
+                                          media_content_type: audio/mp4
+                                    ### DR P4
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P4_logo_2020.svg.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://live-icy.gss.dr.dk/A/A08H.mp3
+                                          media_content_type: audio/mp4
+                                    ### Nova FM
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          #- background-image: "url(https://assets.planetradio.co.uk/img/ConfigWebListenBarLogoImageUrl/174.jpg)"
+                                          - background-image: "url(https://cdn-radiotime-logos.tunein.com/s87164g.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://stream.novafm.dk/nova128
+                                          media_content_type: audio/mp4
+                                ### SECOND ROW
+                                - type: horizontal-stack
+                                  cards:
+                                    ### Radio 100
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://www.radio.dk/images/broadcasts/d3/f9/4626/c175.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: contain
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://onair.100fmlive.dk/100fm_live.mp3
+                                          media_content_type: audio/mp4
+                                    ### POP FM
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://bluesmenchannel.com/_dr/1/41682169.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://stream.popfm.dk/pop128
+                                          media_content_type: audio/mp4
+                                    ### Soft
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://www.radio.dk/images/broadcasts/86/85/4659/7/c175.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://onair.100fmlive.dk/soft_live.mp3
+                                          media_content_type: audio/mp4
+                                ### THIRD ROW
+                                - type: horizontal-stack
+                                  cards:
+                                    ### Voice
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://www.radio.dk/images/broadcasts/68/7c/10657/c175.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: cover
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://stream.voice.dk/voice128
+                                          media_content_type: audio/mp4
+                                    ### NRJ
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://digitalt.tv/wp-content/uploads/2019/04/NRJ-Radio.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: contain
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: https://stream.rcs.revma.com/vf65su7pshruv
+                                          media_content_type: audio/mp4
+                                    ### MyROCK
+                                    - type: "custom:button-card"
+                                      color_type: card
+                                      styles:
+                                        card:
+                                          - background-image: "url(https://cdn-radiotime-logos.tunein.com/s216726q.png)"
+                                          - background-repeat: no-repeat
+                                          - background-size: contain
+                                          - background-position: center
+                                          - border-radius: 10px
+                                          - height: 133px
+                                      tap_action:
+                                        action: call-service
+                                        service: media_player.play_media
+                                        service_data:
+                                          entity_id: media_player.sovevaerelse
+                                          media_content_id: http://stream.myrock.fm/myrock128
+                                          media_content_type: audio/mp4
+                      ### Mediaplayer
+                      - type: custom:mini-media-player
+                        entity: media_player.sovevaerelse
+                        artwork: full-cover
+                        source: icon
+                        hide:
+                          power: true
+                  #─────────────────────────────────────────────────────────────
+                  # Weather information
+                  #─────────────────────────────────────────────────────────────
+                  - type: vertical-stack
+                    cards:
+                      - type: weather-forecast
+                        entity: weather.hjem
+                        name: Vejrudsigt
+                      - type: horizontal-stack
+                        cards:
+                          - type: sensor
+                            graph: line
+                            entity: sensor.netatmo_weather_home_ude_temperature
+                            name: Temperatur, ude
+                          - type: "vertical-stack"
+                            cards:
+                              - type: sensor
+                                entity: sensor.ude_min_temp
+                                name: Min
+                              - type: sensor
+                                entity: sensor.ude_max_temp
+                                name: Max
+                          - type: sensor
+                            graph: line
+                            entity: sensor.netatmo_weather_home_regn_rain
+                            name: Regn
+                          - type: sensor
+                            graph: line
+                            name: Luftfugtighed
+                            entity: sensor.netatmo_weather_home_ude_humidity
+          ######################################################################
+          ###                       ROW #2: BUTTON BAR                       ###
+          ######################################################################
+          - type: horizontal-stack
+            cards:
+              #─────────────────────────────────────────────────────────────────
+              # Show surveilance camera feeds (external app)
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                name: Overvågning
+                icon: mdi:camera-wireless-outline
+                tap_action:
+                  action: javascript
+                  launch: |
+                    [[[
+                      fully.startApplication('com.mcu.reolink')
+                    ]]]
+              #─────────────────────────────────────────────────────────────────
+              # Activate or deactivate alarm clock
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                entity: input_boolean.anders_alarm_active
+                icon: mdi:alarm
+                name: Ingen vækning
+                styles:
+                  card:
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-foreground-color)
+                    - border-radius: 10px
+                state:
+                  - value: "on"
+                    name: '[[[var newtime = new Date("1970-01-01 " + states["input_datetime.alarm_anders"].state);newtime.setTime(newtime.getTime());return "Vækning kl. "+ newtime.toLocaleTimeString("da-DA").replaceAll(".",":").replace(":00","");]]]'
+                    icon: mdi:alarm
+                  - value: "off"
+                    name: Ingen vækning
+                    icon: mdi:bell-off-outline
+                tap_action:
+                  action: none
+                hold_action:
+                  action: call-service
+                  service: input_boolean.toggle
+                  service_data:
+                    entity_id: input_boolean.anders_alarm_active
+              #─────────────────────────────────────────────────────────────────
+              # Activate or deactivate alarm system
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:shield-check-outline
+                entity: alarm_control_panel.alarm
+                show_state: true
+                show_name: false
+                styles:
+                  card:
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-foreground-color)
+                    - border-radius: 10px
+                state:
+                  - value: "armed_home"
+                    styles:
+                      icon:
+                        - color: green
+                      state:
+                        - color: green
+                  - value: "armed_away"
+                    styles:
+                      icon:
+                        - color: green
+                      state:
+                        - color: green
+                  - value: "arming"
+                    styles:
+                      icon:
+                        - color: yellow
+                      state:
+                        - color: yellow
+                  - value: "disarmed"
+                    icon: mdi:shield-off-outline
+                    styles:
+                      icon:
+                        - color: red
+                      state:
+                        - color: red
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    command: popup
+                    title: Alarm status
+                    hide_header: false
+                    card:
+                      type: alarm-panel
+                      entity: alarm_control_panel.alarm
+              #─────────────────────────────────────────────────────────────────
+              # Control lights
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:lightbulb-off
+                name: Lys
+                styles:
+                  card:
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-foreground-color)
+                    - border-radius: 10px
+                entity: scene.sluk_stue_alrum
+                tap_action:
+                  action: call-service
+                  service: scene.turn_on
+                  service_data:
+                    entity_id: scene.sluk_stue_alrum
+              #─────────────────────────────────────────────────────────────────
+              # Select home state
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:home
+                show_state: true
+                show_name: false
+                styles:
+                  card:
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-foreground-color)
+                    - border-radius: 10px
+                entity: input_select.home_state
+                state:
+                  - value: "Hjemme"
+                    icon: mdi:home
+                  - value: "Ude"
+                    icon: mdi:home-outline
+                  - value: "Nat"
+                    icon: mdi:weather-night
+                  - value: "Gæster"
+                    icon: mdi:party-popper
+                  - value: "Ferie"
+                    icon: mdi:beach
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    command: popup
+                    auto_close: true
+                    large: true
+                    card: !include include/cards/home_state_selection.yaml
+
+title: " "

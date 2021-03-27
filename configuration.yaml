@@ -55,6 +55,12 @@ lovelace:
       icon: mdi:tablet-ipad
       show_in_sidebar: true
       filename: tablet.yaml
+    smart-clock-yaml:
+      mode: yaml
+      title: Smart Clock
+      icon: mdi:clock-digital
+      show_in_sidebar: true
+      filename: smart-clock.yaml
   # Include external resources
   resources:
     - url: /hacsfiles/our-groceries-card/our-groceries-card.js #
@@ -79,7 +85,8 @@ lovelace:
       type: module
     - url: /hacsfiles/bar-card/bar-card.js
       type: module
-
+    - url: /hacsfiles/swipe-card/swipe-card.js #
+      type: module
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
 #───────────────────────────────────────────────────────────────────────────────
@@ -432,6 +439,9 @@ input_boolean:
   anders_phone_charging:
     name: Anders' telefon oplader
     icon: mdi:cellphone-charging
+  anders_alarm_active:
+    name: Alarm aktiveret for Anders
+    icon: mdi:bell
 
 #───────────────────────────────────────────────────────────────────────────────
 # Input selector for rooms, home state and countdown actions
@@ -446,6 +456,12 @@ input_select:
       - PS4
     icon: mdi:exit-to-app
     initial: AppleTV - Stue
+  music_source_type:
+    name: Vælg kilde
+    options:
+      - spotify_playlist
+      - spotify_featured
+      - radio
   music_source:
     name: Vælg kilde
     options:
@@ -504,6 +520,15 @@ input_number:
     min: 0
     max: 15
     step: 1
+#───────────────────────────────────────────────────────────────────────────────
+# Input time
+#───────────────────────────────────────────────────────────────────────────────
+input_datetime:
+  alarm_anders:
+    name: Indstil alarm for Anders
+    icon: mdi:alarm
+    has_date: false
+    has_time: true
 #───────────────────────────────────────────────────────────────────────────────
 # Timer
 #───────────────────────────────────────────────────────────────────────────────
