@@ -33,7 +33,8 @@ This flow requires the following additional configuration to work:
 Flow for doorbell automation that:
 
  * plays doorbell sound and TTS message over Sonos speaker when doorbell is pressed between 07.00 - 19.00 if somebody is home
- * sends notification to mobile if nobody is home or if it is after 19.00
+ * sends notification to mobile if nobody is home or if it is after 19.00 with image snapshot from camera as an attachment
+ * display live camera feed on tablet running FullyKioskBrowser
 
 ### **Screenshot**
 ![Doorbell](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/doorbell.png)

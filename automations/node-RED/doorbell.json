@@ -1,15 +1,15 @@
 [
     {
-        "id": "1b197e85.6b7921",
+        "id": "616249f0fec2c06a",
         "type": "tab",
         "label": "Doorbell",
         "disabled": false,
-        "info": "## Flow for automating doorbell\n**By Anders Lukic**\n\n---\n\nFlow for doorbell automation that:\n\n - plays doorbell sound and TTS over Sonos speaker when doorbell is pressed between 07.00 and 19.00 if somebody is home\n -  sends notification to mobile if nobody is home or after 19.00"
+        "info": "## Flow for automating doorbell\n**By Anders Lukic**\n\n---\n\nFlow for doorbell automation that:\n\n - plays doorbell sound and TTS over Sonos speaker when doorbell is pressed between 07.00 and 19.00 if somebody is home\n -  sends notification to mobile if nobody is home or after 19.00 with image (snapshot) from camera as an attachment\n -  display live camera feed on tablet running FullyKioskBrowser "
     },
     {
-        "id": "42a2b7.29f2cd48",
+        "id": "8dc463d3f50b71fd",
         "type": "server-events",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Deconz events",
         "server": "3bebce79.1e0962",
         "event_type": "deconz_event",
@@ -24,18 +24,19 @@
                 "value": ""
             }
         ],
-        "x": 120,
+        "waitForRunning": true,
+        "x": 110,
         "y": 100,
         "wires": [
             [
-                "e33471f0.fc0c6"
+                "55219958c36c2e20"
             ]
         ]
     },
     {
-        "id": "e33471f0.fc0c6",
+        "id": "55219958c36c2e20",
         "type": "switch",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Doorbell?",
         "property": "payload.event.id",
         "propertyType": "msg",
@@ -49,18 +50,18 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 280,
+        "x": 270,
         "y": 100,
         "wires": [
             [
-                "d560ff9.ff5f2"
+                "a19e9a5c22cec7e7"
             ]
         ]
     },
     {
-        "id": "5bd2e771.ecb878",
+        "id": "d0482723a85e5071",
         "type": "switch",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Is home?",
         "property": "payload",
         "propertyType": "msg",
@@ -79,21 +80,21 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 740,
+        "x": 730,
         "y": 100,
         "wires": [
             [
-                "21346754.e3ea48"
+                "0458dc5cd4037d00"
             ],
             [
-                "93988d80.624f3"
+                "e201d80127a3ca77"
             ]
         ]
     },
     {
-        "id": "d0e44ad0.341c18",
+        "id": "0c0e2daf28bd9106",
         "type": "api-current-state",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Get home state",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -102,48 +103,48 @@
         "halt_if_type": "str",
         "halt_if_compare": "is",
         "override_topic": false,
-        "entity_id": "group.alle_personer",
+        "entity_id": "group.all_persons",
         "state_type": "str",
         "state_location": "payload",
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
         "blockInputOverrides": false,
-        "x": 580,
+        "x": 570,
         "y": 100,
         "wires": [
             [
-                "5bd2e771.ecb878"
+                "d0482723a85e5071"
             ]
         ]
     },
     {
-        "id": "21346754.e3ea48",
+        "id": "0458dc5cd4037d00",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
-        "name": "Notify when not home",
+        "z": "616249f0fec2c06a",
+        "name": "Notify when not home or at night",
         "server": "3bebce79.1e0962",
         "version": 1,
         "debugenabled": false,
         "service_domain": "notify",
         "service": "notify",
         "entityId": "",
-        "data": "{\"message\":\"Somebody is at the door\"}",
+        "data": "{\"title\":\"Ding Dong!\",\"message\":\"Somebody is at the door\",\"data\":{\"attachment\":{\"content-type\":\"jpeg\",\"image\":\"http(s)://HA_URL/local/snapshots/carport.jpg\",\"url\":\"http(s)://HA_URL/local/snapshots/carport.jpg\"}}}",
         "dataType": "json",
         "mergecontext": "",
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 960,
-        "y": 60,
+        "x": 970,
+        "y": 40,
         "wires": [
             []
         ]
     },
     {
-        "id": "d560ff9.ff5f2",
+        "id": "a19e9a5c22cec7e7",
         "type": "switch",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Pressed?",
         "property": "payload.event.event",
         "propertyType": "msg",
@@ -157,18 +158,19 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 420,
+        "x": 410,
         "y": 100,
         "wires": [
             [
-                "d0e44ad0.341c18"
+                "0c0e2daf28bd9106",
+                "ce4d0d99dca9a5c0"
             ]
         ]
     },
     {
-        "id": "93988d80.624f3",
+        "id": "e201d80127a3ca77",
         "type": "time-range-switch",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Day time?",
         "lat": "",
         "lon": "",
@@ -176,40 +178,40 @@
         "endTime": "19:00",
         "startOffset": 0,
         "endOffset": 0,
-        "x": 920,
-        "y": 130,
+        "x": 900,
+        "y": 100,
         "wires": [
             [
-                "ba41c449.63d148"
+                "f752ea229770a1dc"
             ],
             [
-                "21346754.e3ea48"
+                "0458dc5cd4037d00"
             ]
         ]
     },
     {
-        "id": "ba41c449.63d148",
+        "id": "f752ea229770a1dc",
         "type": "template",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "data_variables",
         "field": "sonos_data",
         "fieldType": "msg",
         "format": "json",
         "syntax": "mustache",
-        "template": "{\n    \"sonos_entity\": \"media_player.alrum\",\n    \"volume\": \"0.51\",\n    \"message\": \"Somebody is at the door\"\n}",
+        "template": "{\n    \"sonos_entity\": \"media_player.sonos1\",\n    \"volume\": \"0.51\",\n    \"message\": \"Somebody is at the door\"\n}",
         "output": "json",
-        "x": 1120,
-        "y": 130,
+        "x": 1080,
+        "y": 100,
         "wires": [
             [
-                "3bf56225.1c8a3e"
+                "31d4b2e37b3377cd"
             ]
         ]
     },
     {
-        "id": "3bf56225.1c8a3e",
+        "id": "31d4b2e37b3377cd",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Snapshot",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -224,17 +226,18 @@
         "output_location_type": "none",
         "mustacheAltTags": false,
         "x": 100,
-        "y": 200,
+        "y": 170,
         "wires": [
             [
-                "e86d12d3.cb7bc"
+                "c654f5eb2188e7d0",
+                "b8f268397f86c006"
             ]
         ]
     },
     {
-        "id": "e86d12d3.cb7bc",
+        "id": "c654f5eb2188e7d0",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Unjoin",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -248,18 +251,18 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 230,
-        "y": 200,
+        "x": 250,
+        "y": 170,
         "wires": [
             [
-                "9cac309e.cba7"
+                "400966e845ef7e83"
             ]
         ]
     },
     {
-        "id": "9cac309e.cba7",
+        "id": "400966e845ef7e83",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Volume",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -273,18 +276,18 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 360,
-        "y": 200,
+        "x": 380,
+        "y": 170,
         "wires": [
             [
-                "cd784173.a53ab"
+                "f2f7f635477a76ed"
             ]
         ]
     },
     {
-        "id": "cd784173.a53ab",
+        "id": "f2f7f635477a76ed",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Doorbell",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -298,18 +301,18 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 500,
-        "y": 200,
+        "x": 520,
+        "y": 170,
         "wires": [
             [
-                "20067983.1ad836"
+                "08e2c71ab6e2104a"
             ]
         ]
     },
     {
-        "id": "22972ce7.645474",
+        "id": "0813d0a7ed38bd29",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "TTS",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -323,18 +326,18 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 770,
-        "y": 200,
+        "x": 790,
+        "y": 170,
         "wires": [
             [
-                "1a8d89eb.aa9976"
+                "b691c1a9d4f89183"
             ]
         ]
     },
     {
-        "id": "1a8d89eb.aa9976",
+        "id": "b691c1a9d4f89183",
         "type": "delay",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "",
         "pauseType": "delay",
         "timeout": "3",
@@ -346,18 +349,18 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 900,
-        "y": 200,
+        "x": 920,
+        "y": 170,
         "wires": [
             [
-                "fb96ef87.1d161"
+                "81c2dd8715785b67"
             ]
         ]
     },
     {
-        "id": "fb96ef87.1d161",
+        "id": "81c2dd8715785b67",
         "type": "api-call-service",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "Restore",
         "server": "3bebce79.1e0962",
         "version": 1,
@@ -371,16 +374,16 @@
         "output_location": "",
         "output_location_type": "none",
         "mustacheAltTags": false,
-        "x": 1040,
-        "y": 200,
+        "x": 1060,
+        "y": 170,
         "wires": [
             []
         ]
     },
     {
-        "id": "20067983.1ad836",
+        "id": "08e2c71ab6e2104a",
         "type": "delay",
-        "z": "1b197e85.6b7921",
+        "z": "616249f0fec2c06a",
         "name": "",
         "pauseType": "delay",
         "timeout": "4",
@@ -392,18 +395,133 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 640,
-        "y": 200,
+        "x": 660,
+        "y": 170,
         "wires": [
             [
-                "22972ce7.645474"
+                "0813d0a7ed38bd29"
             ]
         ]
     },
     {
-        "id": "3bebce79.1e0962",
-        "type": "server",
-        "name": "Home Assistant",
-        "addon": true
+        "id": "ce4d0d99dca9a5c0",
+        "type": "api-call-service",
+        "z": "616249f0fec2c06a",
+        "name": "Camera snapshot",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "camera",
+        "service": "snapshot",
+        "entityId": "camera.carport",
+        "data": "{\"filename\":\"/config/www/snapshots/carport.jpg\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 580,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b8f268397f86c006",
+        "type": "api-call-service",
+        "z": "616249f0fec2c06a",
+        "name": "Wake up tablet",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "browser_mod",
+        "service": "no_blackout",
+        "entityId": "",
+        "data": "{\"deviceID\":\"cb25ba4e-5d65e2c4\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 280,
+        "y": 220,
+        "wires": [
+            [
+                "4457cb8ad3966e46"
+            ]
+        ]
+    },
+    {
+        "id": "4457cb8ad3966e46",
+        "type": "api-call-service",
+        "z": "616249f0fec2c06a",
+        "name": "Show camera",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "browser_mod",
+        "service": "more_info",
+        "entityId": "camera.carport",
+        "data": "{\"deviceID\":\"cb25ba4e-5d65e2c4\",\"large\":true}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "529d96590f6c68d7"
+            ]
+        ]
+    },
+    {
+        "id": "529d96590f6c68d7",
+        "type": "delay",
+        "z": "616249f0fec2c06a",
+        "name": "Wait 1 ½ min",
+        "pauseType": "delay",
+        "timeout": "90",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "02d1e9bbdc2bba6b"
+            ]
+        ]
+    },
+    {
+        "id": "02d1e9bbdc2bba6b",
+        "type": "api-call-service",
+        "z": "616249f0fec2c06a",
+        "name": "Close popup",
+        "server": "3bebce79.1e0962",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "browser_mod",
+        "service": "close_popup",
+        "entityId": "",
+        "data": "",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 810,
+        "y": 220,
+        "wires": [
+            []
+        ]
     }
+ 
 ]
