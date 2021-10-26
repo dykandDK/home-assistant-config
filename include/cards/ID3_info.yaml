@@ -1,0 +1,148 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Picture-elements card with car data collected from We Connect ID integration.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# custom:bar-card - https://github.com/custom-cards/bar-card
+
+type: picture-elements
+image: /local/assets/ID3_2.JPG
+entity_id: sensor.wvwXXXXXXXXXXXXX_soc
+elements:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Battery graph
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: image
+    entity: sensor.wvwXXXXXXXXXXXXX_soc
+    image: local/assets/battery_outline2.png
+    style:
+      top: 8%
+      left: 51%
+      width: 650px
+  - type: custom:bar-card
+    entity: sensor.wvwXXXXXXXXXXXXX_soc
+    show_header_toggle: false
+    height: 60px
+    entity_row: true
+    animation:
+      - state: on
+        speed: 5
+    severity:
+      - color: Red
+        from: 0
+        to: 20
+      - color: Orange
+        from: 21
+        to: 49
+      - color: Yellow
+        from: 50
+        to: 60
+      - color: LawnGreen
+        from: 61
+        to: 74
+      - color: Green
+        from: 75
+        to: 100
+    positions:
+      icon: off
+      indicator: inside
+      name: off
+      value: inside
+    style:
+      top: 8%
+      #left: 630px
+      left: 50%
+      width: 600px
+      vertical-align: middle
+      font-size: 20px
+      "--paper-item-icon-color": black
+      card:
+        - background-color: "rgb(0,0,0)"
+        - border-radius: 0px
+        - color: "rgb(255,255,255)"
+        - border: 5px solid black
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Remaining range
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.wvwXXXXXXXXXXXXX_soc
+    attribute: CruisingRangeElectricKm
+    suffix: " km"
+    style:
+      top: 8%
+      left: 80%
+      font-size: 25px
+      text-align: right
+      width: 17%
+      color: rgba(0,0,0,1)
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Plug and Charging state
+  #─────────────────────────────────────────────────────────────────────────────
+  # Plug connection state
+  - type: state-icon
+    entity: sensor.id3_plug_state
+    style:
+      top: 8%
+      left: 5%
+      --mdc-icon-size: 40px
+      --paper-item-icon-color: black
+  # Charging state
+  - type: state-icon
+    entity: sensor.id3_charging_state
+    style:
+      top: 8%
+      left: 95%
+      --mdc-icon-size: 40px
+      --paper-item-icon-color: black
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Charging information (only show when charging)
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: conditional
+    conditions:
+      - entity: sensor.id3_charging_state
+        state: "charging"
+    elements:
+      - type: state-label
+        entity: sensor.wvwXXXXXXXXXXXXX_soc
+        title: TargetSOCPct
+        attribute: TargetSOCPct
+        prefix: "Charge to "
+        suffix: "%"
+        style:
+          top: 16%
+          left: 28.5%
+          font-size: 20px
+          color: rgba(0,0,0,1)
+          text-align: left
+          width: 100px
+      - type: state-label
+        entity: sensor.wvwXXXXXXXXXXXXX_soc
+        title: ChargePowerKW
+        attribute: ChargePowerKW
+        suffix: " kW"
+        style:
+          top: 16%
+          left: 51%
+          font-size: 20px
+          color: rgba(0,0,0,1)
+          text-align: left
+          width: 100px
+      - type: state-label
+        entity: sensor.wvwXXXXXXXXXXXXX_soc
+        title: RemainingChargingTimeToCompleteMin
+        attribute: RemainingChargingTimeToCompleteMin
+        prefix: "Remaining time: "
+        suffix: " min."
+        style:
+          top: 16%
+          left: 63%
+          font-size: 20px
+          color: rgba(0,0,0,1)
+          text-align: right
+          width: 100px
