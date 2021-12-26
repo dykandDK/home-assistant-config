@@ -1,0 +1,45 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the kids' room
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: entities
+show_header_toggle: false
+title: ""
+entities:
+  ### LIGHTS ###
+  - type: custom:slider-entity-row
+    entity: light.sky
+  - entity: input_boolean.laura_sleep
+    name: Ready to sleep
+    icon: mdi:sleep
+  ### MEDIA PLAYER ###
+  - type: custom:mini-media-player
+    entity: media_player.laura
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.bornevaerelse_sensor_temperature
+    name: Temperature
+  - entity: binary_sensor.openclose_14
+    secondary_info: last-changed
+    name: Window
+  - entity: binary_sensor.bornevaerelse_sensor_motion
+    name: Motion
+    icon: mdi:motion-sensor
+    secondary_info: last-changed

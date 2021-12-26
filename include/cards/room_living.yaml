@@ -1,0 +1,74 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the livingroom
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: entities
+title: ""
+entities:
+  ### LIGHTS ###
+  - type: custom:slider-entity-row
+    entity: light.loft_i_stuen
+    name: Ceiling
+  - type: custom:slider-entity-row
+    entity: light.dimmable_light_5
+    name: Floor lamp 1
+  - type: custom:slider-entity-row
+    entity: light.standerto
+    icon: mdi:floor-lamp-dual
+    name: Floor lamp 2
+  ### MEDIA PLAYERS ###
+  - type: custom:mini-media-player
+    entity: media_player.stue
+    name: Sonos
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+      volume: true
+  - type: custom:mini-media-player
+    entity: media_player.apple_tv_stue
+    icon: mdi:apple
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+  - type: custom:mini-media-player
+    entity: media_player.marantz_sr7010
+    group: true
+    hide:
+      name: true
+      icon: true
+      info: true
+      power: true
+      source: true
+      sound_mode: true
+      controls: true
+      play_pause: true
+      play_stop: true
+      progress: true
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.temperature_55
+    name: Temperature
+  - entity: sensor.humidity_56
+    name: Humidity
+  - entity: binary_sensor.openclose_22
+    secondary_info: last-changed
+    name: Door

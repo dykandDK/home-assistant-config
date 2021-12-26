@@ -87,6 +87,11 @@ lovelace:
       type: module
     - url: /hacsfiles/swipe-card/swipe-card.js #
       type: module
+    - url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
+      type: module
+    - url: /hacsfiles/lovelace-collapsable-cards/collapsable-cards.js
+      type: module
+
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
 #───────────────────────────────────────────────────────────────────────────────
@@ -410,31 +415,31 @@ input_boolean:
     name: Gæstetoilet
     icon: mdi:paper-roll
   clean_room_16:
-    name: Kontor
+    name: Office
     icon: mdi:laptop
   clean_room_17:
     name: Køkken/alrum
     icon: mdi:silverware-fork-knife
   clean_room_19:
-    name: Isabella's værelse
+    name: Kids room 01
     icon: mdi:alpha-i-circle
   clean_room_20:
-    name: Soveværelse
+    name: Master bedroom
     icon: mdi:sleep
   clean_room_21:
-    name: Stort badeværelse
+    name: Bathroom
     icon: mdi:shower
   clean_room_22:
-    name: Gang
+    name: Hallway
     icon: mdi:hanger
   clean_room_23:
-    name: Laura's værelse
+    name: Kids room 02
     icon: mdi:baby-face
   clean_room_24:
-    name: Bryggers
+    name: Pantry
     icon: mdi:tumble-dryer
   clean_room_26:
-    name: Stue
+    name: Livingroom
     icon: mdi:sofa
   anders_phone_charging:
     name: Anders' telefon oplader
@@ -591,9 +596,9 @@ calendar:
   #─────────────────────────────────────────────────────────────────────────────
   # MS TODO
   #─────────────────────────────────────────────────────────────────────────────
-  - platform: microsoft_todo
-    client_id: !secret ms_client_id
-    client_secret: !secret ms_token
+  # - platform: microsoft_todo
+  #   client_id: !secret ms_client_id
+  #   client_secret: !secret ms_token
 
 #───────────────────────────────────────────────────────────────────────────────
 # Light groups
@@ -643,10 +648,9 @@ device_tracker:
 spotify:
   client_id: !secret spotify_client_id
   client_secret: !secret spotify_client_secret
-
 #───────────────────────────────────────────────────────────────────────────────
 # Spotcast integration
 #───────────────────────────────────────────────────────────────────────────────
-spotcast:
-  sp_dc: !secret sp_dc
-  sp_key: !secret sp_key
+# spotcast:
+#   sp_dc: !secret sp_dc
+#   sp_key: !secret sp_key

@@ -15,11 +15,11 @@ entities:
   - alarm_control_panel.alarm
   - entity: input_select.home_state
     type: custom:multiple-entity-row
-    name: Tilstand for hjem
+    name: Home state
     icon: mdi:shield-home
   - entity: sensor.last_motion_sensor
     type: custom:multiple-entity-row
-    name: Seneste bevægelse
+    name: Recent motion detected
     icon: mdi:run
     secondary_info:
       entity: sensor.last_motion_time
@@ -27,7 +27,7 @@ entities:
       name: false
   - entity: sensor.last_door_sensor
     type: custom:multiple-entity-row
-    name: Senest åbne dør
+    name: Recent door/window opened
     icon: mdi:door-open
     secondary_info:
       entity: sensor.last_door_time

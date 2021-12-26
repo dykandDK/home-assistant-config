@@ -1,0 +1,61 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the kitchen
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+# -
+
+type: entities
+title: ""
+entities:
+  ### LIGHTS ###
+  - type: custom:slider-entity-row
+    entity: light.hue_white_light_1
+    name: Table lights
+  - type: custom:slider-entity-row
+    entity: light.bordlampe
+    name: Desk lamp
+  - type: custom:slider-entity-row
+    entity: light.kokken
+    icon: mdi:led-strip-variant
+    name: Lightstrip
+  ### MEDIA PLAYER ###
+  - type: custom:mini-media-player
+    entity: media_player.alrum
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+  ### SKYLIGHT WINDOWS ###
+  - type: divider
+  - type: custom:slider-entity-row
+    entity: cover.ovenlys_alrum
+    name: Skylights
+  - entity: input_boolean.manual_override
+    name: Manual override
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.velux_sensor_temperature
+    name: Temperature
+  - entity: sensor.velux_sensor_humidity
+    name: Humidity
+  - entity: binary_sensor.openclose_21
+    secondary_info: last-changed
+    name: Kitchen door
+  - entity: binary_sensor.openclose_27
+    secondary_info: last-changed
+    name: Double door 1
+  - entity: binary_sensor.openclose_28
+    secondary_info: last-changed
+    name: Double door 2

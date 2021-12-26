@@ -1,0 +1,61 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Mobile header with badges with home/away status
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture-elements
+state_filter:
+  - null
+image: /local/assets/blank.png
+aspect_ratio: 13%
+elements:
+  #─────────────────────────────────────────────────────────────────────────────
+  ### Home/Away status ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: image
+    entity: person.anders
+    image: /local/assets/dykand.png
+    state_image:
+      "not_home": /local/assets/dykand_away.png
+      "home": /local/assets/dykand.png
+    show_name: false
+    style:
+      top: 50%
+      left: 30px
+      height: 40px
+      width: 40px
+      border-radius: 20px
+  - type: image
+    entity: person.line
+    image: /local/assets/line.png
+    show_name: false
+    state_image:
+      "not_home": /local/assets/line_away.png
+      "home": /local/assets/line.png
+    style:
+      top: 50%
+      left: 80px
+      height: 40px
+      width: 40px
+      border-radius: 20px
+  - type: image
+    entity: device_tracker.passat_bt
+    image: /local/assets/vw_logo.jpg
+    show_name: false
+    state_image:
+      "not_home": /local/assets/vw_logo.jpg
+      "home": /local/assets/vw_logo.jpg
+    tap_action:
+      action: navigate
+      navigation_path: "/lovelace/6"
+    style:
+      top: 50%
+      left: 130px
+      height: 40px
+      width: 40px
+      border-radius: 20px

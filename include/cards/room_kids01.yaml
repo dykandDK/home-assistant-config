@@ -1,0 +1,52 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the kids' room
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: entities
+show_header_toggle: false
+title: ""
+entities:
+  ### LIGHTS ###
+  - type: custom:slider-entity-row
+    entity: light.dimmable_light_13
+    name: Ceiling
+    icon: mdi:ceiling-light
+  - entity: light.color_light_8
+    name: Balloon Lamp
+    icon: mdi:balloon
+  - entity: input_boolean.isabella_sleep
+    name: Ready to sleep
+    icon: mdi:sleep
+  ### MEDIA PLAYER ###
+  - type: custom:mini-media-player
+    entity: media_player.isabella
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.temperature_5
+    name: Temperature
+  - entity: sensor.humidity_6
+    name: Humidity
+  - entity: binary_sensor.openclose_38
+    secondary_info: last-changed
+    name: Window
+  - entity: binary_sensor.bornevaerelse_sensor_motion
+    name: Motion
+    icon: mdi:motion-sensor
+    secondary_info: last-changed

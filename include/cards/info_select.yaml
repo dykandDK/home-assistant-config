@@ -19,7 +19,7 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:calendar-month
-    name: Madplan
+    name: Meal plan
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -32,7 +32,7 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:format-list-checks
-    name: Opgaver
+    name: TO-DO
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -45,14 +45,14 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:cart
-    name: Indkøb
+    name: Shopping
     show_label: false
     label: >
       [[[
         if (entity.attributes.shopping_lists[0].activeCount > 1) 
-          var txt=' varer'
+          var txt=' items'
         else 
-          var txt=' vare';
+          var txt=' item';
       ]]]
     custom_fields:
       items: >
@@ -97,7 +97,7 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:delete
-    name: Affald
+    name: Garbage
     custom_fields:
       days: >
         [[[var currentdate = Date.parse(new Date());

@@ -13,7 +13,8 @@ slate:
   # Sidebar
   sidebar-icon-color: "#777777"
   # Background colors
-  primary-background-color: "#222222"
+  #primary-background-color: "#222222"
+  primary-background-color: "#444444"
   secondary-background-color: "#222222"
   divider-color: "rgba(0, 0, 0, .12)"
   table-row-background-color: "#292929"

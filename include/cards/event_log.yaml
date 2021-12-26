@@ -14,7 +14,7 @@ cards:
   - type: custom:auto-entities
     card:
       type: logbook
-      title: Seneste hændelser
+      title: Recent events
       show_header_toggle: false
       positions:
         icon: off
@@ -51,56 +51,3 @@ cards:
       sort:
         method: last_changed
         numeric: true
-  #─────────────────────────────────────────────────────────────
-  # Last door/window action
-  #─────────────────────────────────────────────────────────────
-  # - type: custom:auto-entities
-  #   card:
-  #     type: entities
-  #     title: Seneste åbning af dør/vindue
-  #     positions:
-  #       icon: off
-  #       indicator: inside
-  #       name: outside
-  #       value: inside
-  #     height: 2vh
-  #     width: 50%
-  #   filter:
-  #     include:
-  #       - domain: binary_sensor
-  #         attributes:
-  #           device_class: "opening"
-  #         #state: "on"
-  #         options:
-  #           secondary_info: last-changed
-  #   sort:
-  #     method: last_changed
-  #     numeric: true
-  #     count: 1
-
-  # #─────────────────────────────────────────────────────────────
-  # # Last motion action
-  # #─────────────────────────────────────────────────────────────
-  # - type: custom:auto-entities
-  #   card:
-  #     type: entities
-  #     title: Seneste bevægelse
-  #     positions:
-  #       icon: off
-  #       indicator: inside
-  #       name: outside
-  #       value: inside
-  #     height: 2vh
-  #     width: 50%
-  #   filter:
-  #     include:
-  #       - domain: binary_sensor
-  #         attributes:
-  #           device_class: "motion"
-  #         #state: "on"
-  #         options:
-  #           secondary_info: last-changed
-  #   sort:
-  #     method: last_changed
-  #     numeric: true
-  #     count: 1

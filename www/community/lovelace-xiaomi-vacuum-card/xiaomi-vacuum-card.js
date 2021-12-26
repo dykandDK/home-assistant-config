@@ -1,6 +1,6 @@
 ((LitElement) => {
     console.info(
-        '%c XIAOMI-VACUUM-CARD %c 4.1.0 ',
+        '%c XIAOMI-VACUUM-CARD %c 4.4.0 ',
         'color: cyan; background: black; font-weight: bold;',
         'color: darkblue; background: white; font-weight: bold;',
     );
@@ -81,10 +81,18 @@
     const compute = {
         trueFalse: v => (v === true ? 'Yes' : (v === false ? 'No' : '-')),
         divide100: v => Math.round(Number(v) / 100),
+        secToHour: v => Math.floor(Number(v) / 60 / 60),
     }
 
     const vendors = {
-        xiaomi: {},
+        xiaomi: {
+            attributes: {
+                main_brush: {compute: compute.secToHour},
+                side_brush: {compute: compute.secToHour},
+                filter: {compute: compute.secToHour},
+                sensor: {compute: compute.secToHour},
+            }
+        },
         xiaomi_mi: {
             attributes: {
                 main_brush: {key: 'main_brush_hours'},
@@ -98,9 +106,7 @@
         },
         valetudo: {
             state: {
-                status: {
-                    key: 'state',
-                },
+                status: {key: 'state'},
             },
             attributes: {
                 main_brush: {key: 'mainBrush'},
@@ -278,16 +284,27 @@
 
         renderAttribute(data) {
             const computeFunc = data.compute || (v => v);
-            const isValid = data && data.key in this.stateObj.attributes;
+            const isValidSensorData = data && `${this.config.sensorEntity}_${data.key}` in this._hass.states;
+            const isValidAttribute = data && data.key in this.stateObj.attributes;
+            const isValidEntityData = data && data.key in this.stateObj;
 
-            const value = isValid
-                ? computeFunc(this.stateObj.attributes[data.key]) + (data.unit || '')
-                : this._hass.localize('state.default.unavailable');
-            const attribute = html`<div>${data.icon && this.renderIcon(data)}${(data.label || '') + value}</div>`;
+            const value = isValidSensorData
+                ? computeFunc(this._hass.states[`${this.config.sensorEntity}_${data.key}`].state) + (data.unit || '')
+                : isValidAttribute
+                    ? computeFunc(this.stateObj.attributes[data.key]) + (data.unit || '')
+                    : isValidEntityData
+                        ? computeFunc(this.stateObj[data.key]) + (data.unit || '')
+                        : null;
+            const attribute = html`<div>
+                ${data.icon && this.renderIcon(data)}
+                ${(data.label || '') + (value !== null ? value : this._hass.localize('state.default.unavailable'))}
+            </div>`;
 
-            return (isValid && data.key === 'fan_speed' && 'fan_speed_list' in this.stateObj.attributes)
-                ? this.renderMode(attribute) : attribute;
+            const hasDropdown = `${data.key}_list` in this.stateObj.attributes;
 
+            return (hasDropdown && value !== null)
+                ? this.renderDropdown(attribute, data.key, data.service)
+                : attribute;
         }
 
         renderIcon(data) {
@@ -301,20 +318,21 @@
             return data && data.show !== false
                 ? html`<ha-icon-button
                     @click="${() => this.callService(data.service, data.service_data)}"
-                    icon="${data.icon}"
                     title="${data.label || ''}"
-                    style="${this.config.styles.icon}"></ha-icon-button>`
+                    style="${this.config.styles.icon}">
+                      <ha-icon style="display:flex;" icon="${data.icon}"></ha-icon>
+                    </ha-icon-button>`
                 : null;
         }
 
-        renderMode(attribute) {
-            const selected = this.stateObj.attributes.fan_speed;
-            const list = this.stateObj.attributes.fan_speed_list;
+        renderDropdown(attribute, key, service) {
+            const selected = this.stateObj.attributes[key];
+            const list = this.stateObj.attributes[`${key}_list`];
 
             return html`
               <paper-menu-button slot="dropdown-trigger" @click="${e => e.stopPropagation()}" style="padding: 0">
                 <paper-button slot="dropdown-trigger">${attribute}</paper-button>
-                <paper-listbox slot="dropdown-content" selected="${list.indexOf(selected)}" @click="${e => this.handleChange(e)}">
+                <paper-listbox slot="dropdown-content" selected="${list.indexOf(selected)}" @click="${e => this.handleChange(e, key, service)}">
                   ${list.map(item => html`<paper-item value="${item}" style="text-shadow: none;">${item}</paper-item>`)}
                 </paper-listbox>
               </paper-menu-button>
@@ -341,6 +359,7 @@
             this.config = {
                 name: config.name,
                 entity: config.entity,
+                sensorEntity: `sensor.${config.entity.split('.')[1]}`,
                 show: {
                     name: config.name !== false,
                     state: config.state !== false,
@@ -365,9 +384,9 @@
             this._hass = hass;
         }
 
-        handleChange(e) {
+        handleChange(e, key, service) {
             const mode = e.target.getAttribute('value');
-            this.callService('vacuum.set_fan_speed', {entity_id: this.stateObj.entity_id, fan_speed: mode});
+            this.callService(service || `vacuum.set_${key}`, {entity_id: this.stateObj.entity_id, [key]: mode});
         }
 
         callService(service, data = {entity_id: this.stateObj.entity_id}) {

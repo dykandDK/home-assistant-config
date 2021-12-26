@@ -6,19 +6,19 @@ https://github.com/zachowj/hass-node-red
 """
 import asyncio
 import logging
-import os
 from typing import Any, Dict, Optional, Union
 
-from integrationhelper.const import CC_STARTUP_VERSION
-
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ICON,
     CONF_STATE,
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
+    MAJOR_VERSION,
+    MINOR_VERSION,
 )
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -34,13 +34,12 @@ from .const import (
     CONF_REMOVE,
     CONF_SERVER_ID,
     CONF_VERSION,
-    DEFAULT_NAME,
     DOMAIN,
     DOMAIN_DATA,
-    ISSUE_URL,
+    NAME,
     NODERED_DISCOVERY_UPDATED,
     NODERED_ENTITY,
-    REQUIRED_FILES,
+    STARTUP_MESSAGE,
     VERSION,
 )
 from .discovery import (
@@ -57,68 +56,43 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass, config):
-    """Stub to allow setting up this component.
-
-    Configuration through YAML is not supported.
-    """
+    """Set up this integration using YAML is not supported."""
     return True
 
 
-async def async_setup_entry(hass, config_entry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
 
-    # Print startup message
-    _LOGGER.info(
-        CC_STARTUP_VERSION.format(name=DOMAIN, version=VERSION, issue_link=ISSUE_URL)
-    )
-
-    # Check that all required files are present
-    file_check = await hass.async_add_executor_job(check_files, hass)
-    if not file_check:
-        return False
-
-    # Create DATA dict
-    hass.data[DOMAIN_DATA] = {}
+    if hass.data.get(DOMAIN_DATA) is None:
+        hass.data.setdefault(DOMAIN_DATA, {})
+        _LOGGER.info(STARTUP_MESSAGE)
 
     register_websocket_handlers(hass)
-    await start_discovery(hass, hass.data[DOMAIN_DATA], config_entry)
+    await start_discovery(hass, hass.data[DOMAIN_DATA], entry)
     hass.bus.async_fire(DOMAIN, {CONF_TYPE: "loaded", CONF_VERSION: VERSION})
+
+    entry.add_update_listener(async_reload_entry)
 
     return True
 
 
-def check_files(hass):
-    """Return bool that indicates if all files are present."""
-    # Verify that the user downloaded all files.
-    base = f"{hass.config.path()}/custom_components/{DOMAIN}/"
-    missing = []
-    for file in REQUIRED_FILES:
-        fullpath = "{}{}".format(base, file)
-        if not os.path.exists(fullpath):
-            missing.append(file)
-
-    if missing:
-        _LOGGER.critical(f"The following files are missing: {str(missing)}")
-        returnvalue = False
-    else:
-        returnvalue = True
-
-    return returnvalue
-
-
-async def async_remove_entry(hass, config_entry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Handle removal of an entry."""
-    if hass.data[DOMAIN_DATA][CONFIG_ENTRY_IS_SETUP]:
-        await asyncio.wait(
-            [
-                hass.config_entries.async_forward_entry_unload(config_entry, platform)
+    unloaded = all(
+        await asyncio.gather(
+            *[
+                hass.config_entries.async_forward_entry_unload(entry, platform)
                 for platform in hass.data[DOMAIN_DATA][CONFIG_ENTRY_IS_SETUP]
             ]
         )
+    )
 
-    stop_discovery(hass)
-    del hass.data[DOMAIN_DATA]
-    hass.bus.async_fire(DOMAIN, {CONF_TYPE: "unloaded"})
+    if unloaded:
+        stop_discovery(hass)
+        hass.data.pop(DOMAIN_DATA)
+        hass.bus.async_fire(DOMAIN, {CONF_TYPE: "unloaded"})
+
+    return unloaded
 
 
 class NodeRedEntity(Entity):
@@ -136,6 +110,12 @@ class NodeRedEntity(Entity):
         self._node_id = config[CONF_NODE_ID]
         self._remove_signal_discovery_update = None
         self._remove_signal_entity_update = None
+
+        # changed property name since 2021.12
+        if MAJOR_VERSION >= 2022 or (MAJOR_VERSION == 2021 and MINOR_VERSION == 12):
+            NodeRedEntity.extra_state_attributes = property(lambda self: self.attr)
+        else:
+            NodeRedEntity.device_state_attributes = property(lambda self: self.attr)
 
     @property
     def should_poll(self) -> bool:
@@ -158,7 +138,7 @@ class NodeRedEntity(Entity):
     @property
     def name(self) -> Optional[str]:
         """Return the name of the sensor."""
-        return self._config.get(CONF_NAME, f"{DEFAULT_NAME} {self._node_id}")
+        return self._config.get(CONF_NAME, f"{NAME} {self._node_id}")
 
     @property
     def state(self) -> Union[None, str, int, float]:
@@ -174,11 +154,6 @@ class NodeRedEntity(Entity):
     def unit_of_measurement(self) -> Optional[str]:
         """Return the unit this state is expressed in."""
         return self._config.get(CONF_UNIT_OF_MEASUREMENT)
-
-    @property
-    def device_state_attributes(self) -> Optional[Dict[str, Any]]:
-        """Return the state attributes."""
-        return self.attr
 
     @property
     def device_info(self) -> Optional[Dict[str, Any]]:
@@ -252,7 +227,16 @@ class NodeRedEntity(Entity):
         # Remove the entity_id from the entity registry
         registry = await self.hass.helpers.entity_registry.async_get_registry()
         entity_id = registry.async_get_entity_id(
-            self._component, DOMAIN, self.unique_id,
+            self._component,
+            DOMAIN,
+            self.unique_id,
         )
         if entity_id:
             registry.async_remove(entity_id)
+            _LOGGER.info(f"Entity removed: {entity_id}")
+
+
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Reload config entry."""
+    await async_unload_entry(hass, entry)
+    await async_setup_entry(hass, entry)

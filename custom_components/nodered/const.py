@@ -2,21 +2,9 @@
 # Base component constants
 DOMAIN = "nodered"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.4.4"
-REQUIRED_FILES = [
-    "translations/en.json",
-    "binary_sensor.py",
-    "config_flow.py",
-    "const.py",
-    "discovery.py",
-    "manifest.json",
-    "sensor.py",
-    "services.yaml",
-    "switch.py",
-    "websocket.py",
-]
+VERSION = "0.5.4"
+
 ISSUE_URL = "https://github.com/zachowj/hass-node-red/issues"
-ATTRIBUTION = "Data from this is provided by Node-RED."
 
 # Configuration
 CONF_ATTRIBUTES = "attributes"
@@ -26,6 +14,7 @@ CONF_CONFIG = "config"
 CONF_CONNECTION = "connection"
 CONF_DATA = "data"
 CONF_DEVICE_INFO = "device_info"
+CONF_DEVICE_TRIGGER = "device_trigger"
 CONF_ENABLED = "enabled"
 CONF_NAME = "name"
 CONF_NODE_ID = "node_id"
@@ -35,6 +24,7 @@ CONF_REMOVE = "remove"
 CONF_SENSOR = "sensor"
 CONF_SERVER_ID = "server_id"
 CONF_SKIP_CONDITION = "skip_condition"
+CONF_SUB_TYPE = "sub_type"
 CONF_SWITCH = "switch"
 CONF_TRIGGER_ENTITY_ID = "trigger_entity_id"
 CONF_VERSION = "version"
@@ -47,5 +37,15 @@ NODERED_ENTITY = "nodered_entity_{}_{}"
 SERVICE_TRIGGER = "trigger"
 
 # Defaults
-DEFAULT_NAME = DOMAIN
+NAME = DOMAIN
 SWITCH_ICON = "mdi:electric-switch-closed"
+
+STARTUP_MESSAGE = f"""
+-------------------------------------------------------------------
+{NAME}
+Version: {VERSION}
+This is a custom integration!
+If you have any issues with this you need to open an issue here:
+{ISSUE_URL}
+-------------------------------------------------------------------
+"""

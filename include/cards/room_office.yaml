@@ -1,0 +1,44 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the office
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: entities
+title: ""
+entities:
+  ### LIGHTS ###
+  - type: custom:slider-entity-row
+    entity: light.kontor
+  ### MEDIA PLAYERS ###
+  - type: custom:mini-media-player
+    entity: media_player.kontor
+    name: Sonos
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+      volume: true
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.netatmo_weather_home_inde_temperature
+    name: Temperature
+  - entity: sensor.netatmo_weather_home_inde_humidity
+    name: Humidity
+  - entity: binary_sensor.openclose_29
+    secondary_info: last-changed
+    name: Window
+  - entity: binary_sensor.presence_34
+    secondary_info: last-changed
+    name: Motion

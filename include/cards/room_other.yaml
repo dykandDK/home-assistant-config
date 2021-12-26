@@ -1,0 +1,51 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the other rooms
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: vertical-stack
+cards:
+  - type: entities
+    title: Hall
+    entities:
+      ### LIGHTS ###
+      - type: custom:slider-entity-row
+        entity: light.bryggers
+        name: Hall
+      ### MEDIA PLAYERS ###
+      ### SENSORS ###
+      - entity: binary_sensor.openclose_25
+        secondary_info: last-changed
+      - entity: binary_sensor.openclose_24
+        secondary_info: last-changed
+  - type: entities
+    title: Bathroom
+    entities:
+      ### LIGHTS ###
+      ### MEDIA PLAYERS ###
+      ### SENSORS ###
+      - entity: sensor.temperature_61
+        name: Temperature
+      - entity: sensor.humidity_62
+        name: Humidity
+      - entity: binary_sensor.openclose_26
+        name: Window
+  - type: entities
+    title: Toilet
+    entities:
+      ### LIGHTS ###
+      ### MEDIA PLAYERS ###
+      ### SENSORS ###
+      - entity: sensor.temperature_66
+        name: Temperature
+      - entity: sensor.humidity_67
+        name: Humidity
+      - entity: binary_sensor.openclose_30
+        name: Window

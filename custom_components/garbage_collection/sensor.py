@@ -226,10 +226,10 @@ class GarbageCollection(RestoreEntity):
                 kwargs["prov"] = self._holiday_prov
             if (
                 self._holiday_observed is not None
-                and type(self._holiday_observed) == bool
+                and type(self._holiday_observed) is bool
                 and not self._holiday_observed
             ):
-                kwargs["observed"] = self._holiday_observed
+                kwargs["observed"] = self._holiday_observed  # type: ignore
             hol = holidays.CountryHoliday(self._country_holidays, **kwargs)
             if self._holiday_pop_named is not None:
                 for pop in self._holiday_pop_named:
@@ -324,7 +324,7 @@ class GarbageCollection(RestoreEntity):
         return self._icon
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
         res = {}
         if self._next_date is None:
@@ -554,19 +554,34 @@ class GarbageCollection(RestoreEntity):
             for entity_id in self._entities:
                 state_object = self.hass.states.get(entity_id)
                 try:
+                    # Wait for all members to get updated
                     if state_object.attributes.get(ATTR_LAST_UPDATED).date() != today:
                         members_ready = False
                         break
+                    # A member got updated after the group update
+                    if (
+                        state_object.attributes.get(ATTR_LAST_UPDATED)
+                        > self._last_updated
+                    ):
+                        ready_for_update = True
                 except AttributeError:
                     members_ready = False
                     break
+                except TypeError:
+                    ready_for_update = True
             if ready_for_update and not members_ready:
                 ready_for_update = False
         else:
             try:
                 if self._next_date == today and (
-                    now.time() >= self.expire_after
-                    or self.last_collection.date() == today
+                    (
+                        type(self.expire_after) is time
+                        and now.time() >= self.expire_after
+                    )
+                    or (
+                        type(self.last_collection) is datetime
+                        and self.last_collection.date() == today
+                    )
                 ):
                     ready_for_update = True
             except (AttributeError, TypeError):

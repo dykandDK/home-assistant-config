@@ -1,0 +1,102 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to select rooms for control of lights or other devices
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      ### Isabella
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_select.room_selection
+        icon: hass:unicorn
+        name: Isabella
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - color: var(--primary-foreground-color)
+            - border: 5px solid var(--card-background-color)
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.room_selection
+            option: Isabella's værelse
+        state:
+          - value: "Isabella's værelse"
+            styles:
+              card:
+                - border: 5px solid var(--paper-item-icon-active-color)
+      ### Laura
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_select.room_selection
+        icon: mdi:chess-queen
+        name: Laura
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - color: var(--primary-foreground-color)
+            - border: 5px solid var(--card-background-color)
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.room_selection
+            option: Laura's værelse
+        state:
+          - value: "Laura's værelse"
+            styles:
+              card:
+                - border: 5px solid var(--paper-item-icon-active-color)
+      ### Køkken/Alrum
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_select.room_selection
+        icon: mdi:silverware-fork-knife
+        name: Køkken
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - color: var(--primary-foreground-color)
+            - border: 5px solid var(--card-background-color)
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.room_selection
+            option: Køkken/alrum
+        state:
+          - value: "Køkken/alrum"
+            styles:
+              card:
+                - border: 5px solid var(--paper-item-icon-active-color)
+      ### Stue
+      - type: "custom:button-card"
+        color_type: card
+        entity: input_select.room_selection
+        icon: mdi:sofa
+        name: Stue
+        styles:
+          card:
+            - background-color: var(--card-background-color)
+            - color: var(--primary-foreground-color)
+            - border: 5px solid var(--card-background-color)
+        tap_action:
+          service: input_select.select_option
+          action: call-service
+          service_data:
+            entity_id: input_select.room_selection
+            option: Stue
+        state:
+          - value: "Stue"
+            styles:
+              card:
+                - border: 5px solid var(--paper-item-icon-active-color)

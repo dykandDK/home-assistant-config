@@ -53,7 +53,7 @@ class GarbageCollectionCalendar(CalendarEventDevice):
         )
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the device state attributes."""
         if self.hass.data[DOMAIN][CALENDAR_PLATFORM].event is None:
             # No tasks, we don't need to show anything.
@@ -113,7 +113,11 @@ class EntitiesCalendarData:
                     event = {
                         "uid": entity,
                         "summary": garbage_collection.name,
-                        "start": {"date": start.strftime("%Y-%m-%d %H:%M")},
+                        "start": {
+                            "date": datetime.combine(
+                                start, garbage_collection.expire_after
+                            ).strftime("%Y-%m-%d %H:%M")
+                        },
                         "end": {
                             "date": datetime.combine(
                                 start, garbage_collection.expire_after

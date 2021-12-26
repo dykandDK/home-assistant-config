@@ -23,11 +23,12 @@
 #         # - border: 5px solid black
 #     entity: #scene.spise
 type: horizontal-stack
+#title: Scener
 cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:silverware-fork-knife
-    name: Spise
+    name: Dinner
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -43,7 +44,7 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:movie-roll
-    name: Film
+    name: Movie
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -59,7 +60,7 @@ cards:
   - type: "custom:button-card"
     color_type: card
     icon: mdi:brightness-6
-    name: Mellem
+    name: Medium
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -74,8 +75,8 @@ cards:
         entity_id: scene.mellem
   - type: "custom:button-card"
     color_type: card
-    icon: mdi:basketball
-    name: Lege
+    icon: mdi:lightbulb-on
+    name: Max
     styles:
       card:
         - background-color: var(--card-background-color)
@@ -90,8 +91,8 @@ cards:
         entity_id: scene.lege
   - type: "custom:button-card"
     color_type: card
-    icon: mdi:lightbulb-off
-    name: Sluk
+    icon: mdi:lightbulb-off-outline
+    name: All off
     styles:
       card:
         - background-color: var(--card-background-color)

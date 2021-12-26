@@ -7,14 +7,19 @@
 #───────────────────────────────────────────────────────────────────────────────
 # Custom components required:
 #───────────────────────────────────────────────────────────────────────────────
-# None
+# - Collapsable Cards:  https://github.com/RossMcMillan92/lovelace-collapsable-cards
+# - Custom button card: https://github.com/custom-cards/button-card
 
 type: vertical-stack
 cards:
-  - cards:
+  ##############################################################################
+  ### Outdoor tempature incl. min and max
+  ##############################################################################
+  - type: horizontal-stack
+    cards:
       - type: sensor
         entity: sensor.netatmo_weather_home_ude_temperature
-        name: Ude
+        name: Outside
       - type: sensor
         entity: sensor.ude_min_temp
         name: Min
@@ -23,47 +28,260 @@ cards:
         entity: sensor.ude_max_temp
         name: Max
         icon: mdi:arrow-collapse-up
-    type: horizontal-stack
-  - cards:
+  ##############################################################################
+  ### Rain and humidity graphs
+  ##############################################################################
+  - type: horizontal-stack
+    cards:
       - type: sensor
         graph: line
         entity: sensor.netatmo_weather_home_regn_rain
-        name: Regn
+        name: Rain
       - type: sensor
         graph: line
-        name: Luftfugtighed
+        name: Humidity
         entity: sensor.netatmo_weather_home_ude_humidity
-    type: horizontal-stack
+  ##############################################################################
+  ### Indoor temperatures - row 1
+  ##############################################################################
   - type: horizontal-stack
     cards:
-      - type: sensor
+      - type: "custom:button-card"
+        template: custom_sensor_card
         entity: sensor.bornevaerelse_sensor_temperature
-        name: Isabella
-        icon: ""
-      - type: sensor
-        #graph: line
+        name: Kids room 1
+        custom_fields:
+          vent: >
+            [[[
+              if (states["switch.on_off_plug_in_unit_12"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:fan"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_14"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Kids room 1
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: history-graph
+                  entities:
+                    - entity: sensor.bornevaerelse_sensor_temperature
+                      name: Temperature
+                    - entity: binary_sensor.openclose_14
+                      name: Window
+                    - entity: switch.on_off_plug_in_unit_12
+                - !include ../cards/room_kids01.yaml
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        entity: sensor.temperature_5
+        name: Kids room 2
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_38"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Kids room 2
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: history-graph
+                  entities:
+                    - entity: sensor.temperature_5
+                      name: Temperature
+                    - entity: binary_sensor.openclose_38
+                      name: Window
+                - !include ../cards/room_kids02.yaml
+      - type: "custom:button-card"
+        template: custom_sensor_card
         entity: sensor.netatmo_weather_home_inde_temperature
-        name: Kontor
-      - type: sensor
-        entity: sensor.temperature_14
-        name: Gang
-        icon: ""
+        name: Office
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_29"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Office
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: history-graph
+                  entities:
+                    - entity: sensor.netatmo_weather_home_inde_temperature
+                      name: Temperature
+                    - entity: binary_sensor.openclose_29
+                      name: Window
+                - !include ../cards/room_office.yaml
+  ##############################################################################
+  ### Indoor temperatures - row 2
+  ##############################################################################
   - type: horizontal-stack
     cards:
-      #- type: markdown
-      #  title: Alrum
-      #  content: |
-      #     <h2>{{ states("sensor.velux_sensor_temperature") }} °C</h2>
-      - type: sensor
-        #graph: line
-        name: Alrum
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        name: Kitchen
         entity: sensor.velux_sensor_temperature
-      - type: sensor
+        custom_fields:
+          openings: >
+            [[[
+              if (states["group.openings_alrum"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Kitchen
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: "custom:collapsable-cards"
+                  title: Temperature
+                  defaultOpen: true
+                  buttonStyle: "font-size: var(--ha-card-header-font-size, 24px);font-family: var(--ha-card-header-font-family, inherit);letter-spacing: -0.012em;font-weight: normal;"
+                  cards:
+                    - type: history-graph
+                      entities:
+                        - entity: sensor.velux_sensor_temperature
+                          name: Temperature
+                - !include ../cards/room_kitchen.yaml
+      - type: "custom:button-card"
+        template: custom_sensor_card
         entity: sensor.temperature_8
-        name: Sove
+        name: Bed room
         icon: ""
-      - type: sensor
-        #graph: line
-        entity: sensor.temperature_5
-        name: Bad
+        custom_fields:
+          openings: >
+            [[[
+              if (states["group.openings_sovevaerelse"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Bed room
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: history-graph
+                  entities:
+                    - entity: sensor.temperature_8
+                      name: Temperature
+                    - entity: group.openings_sovevaerelse
+                      name: Door or Window
+                - !include ../cards/room_bed.yaml
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        entity: sensor.temperature_14
+        name: Hall
         icon: ""
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_25"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+  ##############################################################################
+  ### Indoor temperatures - row 3
+  ##############################################################################
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        name: Living room
+        entity: sensor.temperature_55
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_22"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            title: Living room
+            large: true
+            card:
+              type: vertical-stack
+              cards:
+                - type: history-graph
+                  entities:
+                    - entity: sensor.temperature_55
+                      name: Temperature
+                    - entity: binary_sensor.openclose_22
+                      name: Door
+                - !include ../cards/room_living.yaml
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        entity: sensor.temperature_61
+        name: Bathroom
+        icon: ""
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_26"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]
+      - type: "custom:button-card"
+        template: custom_sensor_card
+        entity: sensor.temperature_66
+        name: Toilet
+        icon: ""
+        custom_fields:
+          openings: >
+            [[[
+              if (states["binary_sensor.openclose_30"].state == 'on') 
+              return `<ha-icon
+                icon="mdi:window-open-variant"
+                style="width: 16px; height: 16px; color: white;">
+                </ha-icon>`
+            ]]]

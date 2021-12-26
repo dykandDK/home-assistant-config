@@ -1,0 +1,43 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of specific elements such as lights and CCTV's
+# and display information about temperature etc. outside
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Slider Entity Row: https://github.com/thomasloven/lovelace-slider-entity-row
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: vertical-stack
+cards:
+  - type: custom:swipe-card
+    cards:
+      - !include camera_feed06.yaml
+      - !include camera_feed05.yaml
+      - !include camera_feed04.yaml
+      - !include camera_feed07.yaml
+  - type: entities
+    title: ""
+    state_color: true
+    entities:
+      ### LIGHTS ###
+      # - type: custom:slider-entity-row
+      #   entity: light.kontor
+      ### MEDIA PLAYERS ###
+      ### SENSORS ###
+      - entity: sensor.netatmo_weather_home_ude_temperature
+        name: Temperature
+      - entity: sensor.temperature_58
+        name: Temperature - shed
+      - entity: sensor.temperature_52
+        name: Temperature - deck
+      - entity: switch.bedlamper
+        icon: mdi:lightbulb
+        name: Garden
+      - entity: light.skur
+        name: Shed
+      - entity: switch.on_off_plug_in_unit_16
+        name: Christmas
+        icon: mdi:string-lights

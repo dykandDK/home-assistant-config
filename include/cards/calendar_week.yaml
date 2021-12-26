@@ -16,14 +16,12 @@
 # atomic-calendar-revive: https://github.com/marksie1988/atomic-calendar-revive
 
 type: custom:atomic-calendar-revive
-name: Kommende aftaler
+name: Calendar
 entities:
   - entity: calendar.faelles
-    name: Fælles
-  - entity: calendar.test
-    name: Anders
+    name: Shared
   - entity: calendar.garbage_collection
-    name: Affald
+    name: Garbage
 initial_view: listWeek
 disableEventLink: true
 showMonth: false
@@ -32,7 +30,3 @@ showLocation: true
 showNoEventsForToday: true
 dimFinishedEvents: true
 maxDaysToShow: 7
-fullDayEventText: "Hele dagen"
-untilText: "Indtil"
-noEventsForTodayText: "Ingen aftaler for i dag"
-noEventsForNextDaysText: "Ingen aftaler for de kommende dage"

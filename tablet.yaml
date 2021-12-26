@@ -2,9 +2,11 @@
 # Description:
 #───────────────────────────────────────────────────────────────────────────────
 # Dashboard designed for viewing on tablet and optimized for 1280x800 screen
-# resolutions. Appearance may different on other screen resolutions.
-
-# Uses custom popup dialog boxes to display information and control various
+# resolutions. Appearance may be different on other screen resolutions.
+#
+# The main dashboard is designed with a custom header and three columns.
+#
+# Custom popup dialog boxes are used to display information and control various
 # smart home devices.
 #
 #───────────────────────────────────────────────────────────────────────────────
@@ -20,6 +22,11 @@
 ################################################################################
 kiosk_mode:
   hide_header: true
+
+################################################################################
+###                   Custom button card styling templates                   ###
+################################################################################
+button_card_templates: !include include/cards/button_card_templates.yaml
 
 views:
   ##############################################################################
@@ -40,20 +47,20 @@ views:
       # Weather forcast - next 48 hours
       #─────────────────────────────────────────────────────────────────────────
       weather.hjem:
-        title: Vejrudsigt for de næste 48 timer
+        title: Weather forecast for the next 48 hours
         large: true
         card: !include include/cards/local_weather_popup.yaml
       #─────────────────────────────────────────────────────────────────────────
       # Garbage collection dates
       #─────────────────────────────────────────────────────────────────────────
       calendar.garbage_collection:
-        title: Afhentning af affald og genbrug
+        title: Garbage collection
         card: !include include/cards/garbage_collection.yaml
       #─────────────────────────────────────────────────────────────────────────
       # Today's recipe and weekly food plan
       #─────────────────────────────────────────────────────────────────────────
       sensor.madplan_dagensret:
-        title: Dagens ret
+        title: Today's recipe
         large: true
         card:
           type: iframe
@@ -68,14 +75,14 @@ views:
       # Shopping list
       #─────────────────────────────────────────────────────────────────────────
       sensor.our_groceries:
-        title: Indkøbsliste
+        title: Shopping list
         large: true
         card: !include include/cards/shopping_list.yaml
       #─────────────────────────────────────────────────────────────────────────
       # TODO list
       #─────────────────────────────────────────────────────────────────────────
       dummy.TODO:
-        title: Opgaver
+        title: Tasks
         large: true
         card:
           type: shopping-list
@@ -83,18 +90,18 @@ views:
       # Last motion and door open events
       #─────────────────────────────────────────────────────────────────────────
       sensor.last_door_sensor:
-        title: Seneste hændelser
+        title: Recent events
         large: true
         card: !include include/cards/event_log.yaml
       sensor.last_motion_sensor:
-        title: Seneste hændelser
+        title: Recent motion
         large: true
         card: !include include/cards/event_log.yaml
       #─────────────────────────────────────────────────────────────────────────
       # Home state selection
       #─────────────────────────────────────────────────────────────────────────
       input_select.home_state:
-        title: Vælg tilstand for hjem
+        title: Select home state
         large: true
         card: !include include/cards/home_state_selection.yaml
     cards:
@@ -162,9 +169,10 @@ views:
                   #─────────────────────────────────────────────────────────────
                   - type: weather-forecast
                     entity: weather.hjem
-                    name: Vejrudsigt
+                    name: Weather forecast
                   #─────────────────────────────────────────────────────────────
-                  # Current weather data from Netatmo Weather Station
+                  # Current weather data from Netatmo Weather Station and
+                  # sensor
                   #─────────────────────────────────────────────────────────────
                   - !include include/cards/local_weather.yaml
 

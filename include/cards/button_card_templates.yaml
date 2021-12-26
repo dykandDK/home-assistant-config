@@ -1,0 +1,98 @@
+################################################################################
+###                   Custom button card styling templates                   ###
+################################################################################
+
+# ------------------------------------------------------------------------------
+# Custom button card with similar appearance as the standard sensor card
+# ------------------------------------------------------------------------------
+custom_sensor_card:
+  color_type: card
+  show_name: true
+  show_label: true
+  show_icon: false
+  show_state: false
+  label: >
+    [[[
+      var a = entity.state;
+      var floatValue = parseFloat(a.replace(/, /, '.'));
+      return floatValue.toFixed(1).toString().replace('.',',');
+    ]]]
+  custom_fields:
+    postfix: >
+      [[[return '°C']]]
+  state:
+    - operator: ">"
+      value: 25
+      styles:
+        card:
+          - background-color: "rgb(255,100,50)"
+        name:
+          - color: var(--card-background-color)
+        custom_fields:
+          postfix:
+            - color: var(--card-background-color)
+    - operator: ">"
+      value: 24
+      styles:
+        card:
+          - background-color: orange
+        name:
+          - color: var(--card-background-color)
+        custom_fields:
+          postfix:
+            - color: var(--card-background-color)
+    - operator: "<"
+      value: 20
+      styles:
+        card:
+          - background-color: red
+        name:
+          - color: var(--card-background-color)
+        custom_fields:
+          postfix:
+            - color: var(--card-background-color)
+    - operator: "<"
+      value: 21.5
+      styles:
+        card:
+          - background-color: orange
+        name:
+          - color: var(--card-background-color)
+        custom_fields:
+          postfix:
+            - color: var(--card-background-color)
+  styles:
+    card:
+      - background-color: var(--card-background-color)
+      - color: var(--primary-foreground-color)
+    grid:
+      - grid-template-areas: '"n" "l" "i" "s"'
+      - grid-template-rows: min-content 1fr min-content min-content
+      - grid-template-columns: 1fr
+    name:
+      - justify-self: start
+      - padding-left: 16px
+      - padding-top: 5px # 10px
+      - padding-bottom: 5px
+      - font-size: 16px
+      - font-weight: 500
+      - color: var(--paper-item-icon-active-color)
+    label:
+      - justify-self: start
+      - padding-left: 16px
+      - font-size: 28px
+    custom_fields:
+      postfix:
+        - color: var(--paper-item-icon-active-color)
+        - position: absolute
+        - left: 56%
+        - top: 65%
+        - font-size: 16px
+      vent:
+        - position: absolute
+        - left: 70%
+        - top: 10%
+      openings:
+        - position: absolute
+        - left: 85%
+        - top: 10%

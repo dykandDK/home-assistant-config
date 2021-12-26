@@ -9,6 +9,8 @@ import async_timeout
 import voluptuous as vol
 import xmltodict
 
+from http import HTTPStatus
+
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
@@ -21,7 +23,6 @@ from homeassistant.const import (
     DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_PRESSURE,
     DEVICE_CLASS_TEMPERATURE,
-    HTTP_BAD_REQUEST,
     PRESSURE_HPA,
     SPEED_METERS_PER_SECOND,
     TEMP_CELSIUS,
@@ -93,7 +94,11 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         _LOGGER.error("Latitude or longitude not set in Home Assistant config")
         return False
 
-    coordinates = {"lat": str(latitude), "lon": str(longitude), "msl": str(elevation)}
+    coordinates = {
+        "lat": str(round(float(latitude), 4)),
+        "lon": str(round(float(longitude), 4)),
+        "altitude": str(int(float(elevation))),
+    }
 
     dev = []
     for sensor_type in config[CONF_MONITORED_CONDITIONS]:
@@ -139,10 +144,7 @@ class WeatherSensor(Entity):
         """Weather symbol if type is symbol."""
         if self.type != "symbol":
             return None
-        return (
-            "https://api.met.no/weatherapi/weathericon/1.1/"
-            f"?symbol={self._state};content_type=image/png"
-        )
+        return "https://api.met.no/images/weathericons/" f"png/{self._state}.png"
 
     @property
     def device_state_attributes(self):
@@ -165,7 +167,7 @@ class WeatherData:
 
     def __init__(self, hass, coordinates, forecast, devices):
         """Initialize the data object."""
-        self._url = "https://api.met.no/weatherapi/locationforecast/1.9/"
+        self._url = "https://api.met.no/weatherapi/locationforecast/2.0/classic"
         self._urlparams = coordinates
         self._forecast = forecast
         self.devices = devices
@@ -185,7 +187,7 @@ class WeatherData:
             websession = async_get_clientsession(self.hass)
             with async_timeout.timeout(10):
                 resp = await websession.get(self._url, params=self._urlparams)
-            if resp.status >= HTTP_BAD_REQUEST:
+            if resp.status >= HTTPStatus.BAD_REQUEST:
                 try_again(f"{resp.url} returned {resp.status}")
                 return
             text = await resp.text()
@@ -249,7 +251,7 @@ class WeatherData:
                     if dev.type == "precipitation":
                         new_state = loc_data[dev.type]["@value"]
                     elif dev.type == "symbol":
-                        new_state = loc_data[dev.type]["@number"]
+                        new_state = loc_data[dev.type]["@code"]
                     elif dev.type in (
                         "temperature",
                         "pressure",

@@ -31,29 +31,37 @@ def get_alias(hass, deviceID):
 
 def get_config(hass, deviceID):
     config = hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_DEVICES, {})
-    return config.get(deviceID, config.get(deviceID.replace('-', '_'), {}))
+    return config.get(deviceID, config.get(deviceID.replace("-", "_"), {}))
 
 
 def create_entity(hass, platform, deviceID, connection):
     conf = get_config(hass, deviceID)
-    if conf and (platform in conf.get(CONFIG_DISABLE, [])
-                 or CONFIG_DISABLE_ALL in conf.get(CONFIG_DISABLE, [])):
+    if conf and (
+        platform in conf.get(CONFIG_DISABLE, [])
+        or CONFIG_DISABLE_ALL in conf.get(CONFIG_DISABLE, [])
+    ):
         return None
-    if not conf and \
-            (platform in hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_DISABLE, [])
-             or CONFIG_DISABLE_ALL in
-             hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_DISABLE, [])):
+    if not conf and (
+        platform in hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_DISABLE, [])
+        or CONFIG_DISABLE_ALL in hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_DISABLE, [])
+    ):
         return None
-    adder = hass.data[DOMAIN][DATA_ADDERS][platform]
+    adder = hass.data[DOMAIN][DATA_ADDERS].get(platform)
+    if not adder:
+        return None
     entity = adder(hass, deviceID, connection, get_alias(hass, deviceID))
     return entity
 
 
 def setup_platform(hass, config, async_add_devices, platform, cls):
+    if platform in hass.data[DOMAIN][DATA_ADDERS]:
+        return True
+
     def adder(hass, deviceID, connection, alias=None):
         entity = cls(hass, connection, deviceID, alias)
         async_add_devices([entity])
         return entity
+
     hass.data[DOMAIN][DATA_ADDERS][platform] = adder
     return True
 
@@ -63,21 +71,30 @@ def is_setup_complete(hass):
 
 
 class BrowserModEntity(Entity):
-
     def __init__(self, hass, connection, deviceID, alias=None):
         self.hass = hass
         self.connection = connection
         self.deviceID = deviceID
         self._data = {}
-        prefix = hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_PREFIX, '')
+        self._alias = alias
+        prefix = hass.data[DOMAIN][DATA_CONFIG].get(CONFIG_PREFIX, "")
         self.entity_id = async_generate_entity_id(
-            self.domain+".{}",
-            alias or f"{prefix}{deviceID}",
-            hass=hass
-            )
+            self.domain + ".{}", alias or f"{prefix}{deviceID}", hass=hass
+        )
 
     def updated(self):
         pass
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self.deviceID)},
+            "name": self._alias or self.deviceID,
+        }
+
+    @property
+    def unique_id(self):
+        return f"{self.domain}-{self.deviceID}"
 
     @property
     def data(self):

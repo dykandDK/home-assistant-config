@@ -1,0 +1,41 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Entity card for control of room specific elements such as lights and speakers
+# and display information about temperature etc. in the master bedroom
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+
+type: entities
+title: ""
+entities:
+  ### LIGHTS ###
+  ### MEDIA PLAYERS ###
+  - type: custom:mini-media-player
+    entity: media_player.lenovom8
+    name: Clockradio
+    icon: mdi:google-home
+    group: true
+    artwork: cover
+    source: icon
+    info: short
+    hide:
+      power: true
+      icon: true
+      progress: true
+      volume: true
+  ### SENSORS ###
+  - type: divider
+  - entity: sensor.temperature_8
+    name: Temperature
+  - entity: sensor.humidity_9
+    name: Humidity
+  - entity: binary_sensor.openclose_13
+    secondary_info: last-changed
+    name: Door
+  - entity: binary_sensor.openclose_12
+    secondary_info: last-changed
+    name: Window
