@@ -11,3 +11,5 @@
 /ui-lovelace.yaml
 /*.log
 /custom_components
+home-assistant_v2.db-wal
+home-assistant_v2.db-shm
