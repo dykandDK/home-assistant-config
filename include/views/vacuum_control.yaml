@@ -16,4 +16,7 @@ cards:
       - type: horizontal-stack
         cards:
           - !include ../cards/vacuum_room_select.yaml
-          - !include ../cards/vacuum_control.yaml
+          - type: vertical-stack
+            cards:
+              - !include ../cards/vacuum_control.yaml
+              - !include ../cards/vaccum_consumables.yaml

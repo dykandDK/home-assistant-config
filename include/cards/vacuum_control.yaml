@@ -15,21 +15,17 @@ vendor: xiaomi
 image: /local/assets/vacuum.png
 attributes:
   main_brush:
-    label: "Børste: "
+    label: "Main: "
     unit: " t"
   side_brush:
-    label: "Sidebørste: "
+    label: "Side: "
     unit: " t"
   filter:
     label: "Filter: "
     unit: " t"
   sensor:
-    label: "Sensorer: "
+    label: "Sensors: "
     unit: " t"
-  clean_area:
-    key: "total_cleaned_area"
-    label: "Rengjort: "
-    unit: " m2"
 buttons:
   start:
     show: true
@@ -43,4 +39,4 @@ buttons:
     show: false
   return:
     show: true
-    label: Retur til dock
+    label: Return to dock

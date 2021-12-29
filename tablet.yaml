@@ -4,7 +4,8 @@
 # Dashboard designed for viewing on tablet and optimized for 1280x800 screen
 # resolutions. Appearance may be different on other screen resolutions.
 #
-# The main dashboard is designed with a custom header and three columns.
+# The main dashboard is designed with a custom header (default header is hidden
+# using kiosk mode) and three columns.
 #
 # Custom popup dialog boxes are used to display information and control various
 # smart home devices.
@@ -172,7 +173,7 @@ views:
                     name: Weather forecast
                   #─────────────────────────────────────────────────────────────
                   # Current weather data from Netatmo Weather Station and
-                  # sensor
+                  # indoor temperature sensors
                   #─────────────────────────────────────────────────────────────
                   - !include include/cards/local_weather.yaml
 
@@ -197,3 +198,4 @@ views:
   - !include include/views/music2.yaml
 
 title: " "
+
