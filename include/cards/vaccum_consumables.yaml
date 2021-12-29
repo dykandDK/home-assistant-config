@@ -1,0 +1,196 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to display and reset consumables:
+#
+# main_brush_left
+# side_brush_left
+# filter_left
+# sensor_dirty_left
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: vertical-stack
+cards:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Row #1
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: horizontal-stack
+    cards:
+      ##########################################################################
+      ###                         TOTAL CLEANED AREA                         ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "[[[ return 'Cleaned since empty: ' + parseInt((entity.state-states['input_number.last_vaccuum_reset_m2'].state)) +' m2' ]]]"
+        icon: mdi:counter
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: sensor.xiaomi_vacuum_cleaner_total_clean_area
+        state:
+          - operator: template
+            value: >
+              [[[
+                return entity.state-states['input_number.last_vaccuum_reset_m2'].state>150;
+              ]]]
+            icon: mdi:alert
+            styles:
+              card:
+                - background-color: "rgb(255,100,50)"
+              name:
+                - color: var(--card-background-color)
+      ##########################################################################
+      ###                           EMPTY DUST BIN                           ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "Tøm støvsuger"
+        icon: mdi:delete-empty
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: vacuum.xiaomi_vacuum_cleaner
+        confirmation:
+          text: "[[[ return `Are you sure that you want to empty the dustbin now?` ]]]"
+        tap_action:
+          action: call-service
+          service: input_text.set_value
+          service_data:
+            entity_id: input_text.nodered_actions
+            value: manual_vacuum_empty
+  #─────────────────────────────────────────────────────────────────────────────
+  # Row #2
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: horizontal-stack
+    cards:
+      ##########################################################################
+      ###                           FILTER SENSOR                            ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "[[[ return 'Replace filter: ' + parseInt(entity.state/60/60) +' timer' ]]]"
+        icon: mdi:delete-variant
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: sensor.xiaomi_vacuum_cleaner_filter_left
+        state:
+          - operator: template
+            value: >
+              [[[
+                return parseInt(entity.state/60/60)<5;
+              ]]]
+            icon: mdi:alert
+            styles:
+              card:
+                - background-color: "rgb(255,100,50)"
+              name:
+                - color: var(--card-background-color)
+        confirmation:
+          text: "[[[ return `Are you sure that you want to reset the filter timer?` ]]]"
+        tap_action:
+          action: call-service
+          service: vacuum.send_command
+          service_data:
+            entity_id: vacuum.xiaomi_vacuum_cleaner
+            command: reset_consumable
+            params: filter_work_time
+      ##########################################################################
+      ###                           CLEAN SENSORS                            ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "[[[ return 'Clean sensors: ' + parseInt(entity.state/60/60) +' timer' ]]]"
+        icon: mdi:leak
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: sensor.xiaomi_vacuum_cleaner_sensor_dirty_left
+        state:
+          - operator: template
+            value: >
+              [[[
+                return parseInt(entity.state/60/60)<3;
+              ]]]
+            icon: mdi:alert
+            styles:
+              card:
+                - background-color: "rgb(255,100,50)"
+              name:
+                - color: var(--card-background-color)
+        confirmation:
+          text: "[[[ return `Are you sure that you want to reset the sensor timer?` ]]]"
+        tap_action:
+          action: call-service
+          service: vacuum.send_command
+          service_data:
+            entity_id: vacuum.xiaomi_vacuum_cleaner
+            command: reset_consumable
+            params: sensor_dirty_time
+  #─────────────────────────────────────────────────────────────────────────────
+  # Row #2
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: horizontal-stack
+    cards:
+      ##########################################################################
+      ###                         MAIN BRUSH SENSOR                          ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "[[[ return 'Replace main brush: ' + parseInt(entity.state/60/60) +' timer' ]]]"
+        icon: mdi:robot-vacuum-variant
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: sensor.xiaomi_vacuum_cleaner_main_brush_left
+        state:
+          - operator: template
+            value: >
+              [[[
+                return parseInt(entity.state/60/60)<5;
+              ]]]
+            icon: mdi:alert
+            styles:
+              card:
+                - background-color: "rgb(255,100,50)"
+              name:
+                - color: var(--card-background-color)
+        confirmation:
+          text: "[[[ return `Are you sure that you want to reset the main brush timer?` ]]]"
+        tap_action:
+          action: call-service
+          service: vacuum.send_command
+          service_data:
+            entity_id: vacuum.xiaomi_vacuum_cleaner
+            command: reset_consumable
+            params: main_brush_work_time
+      ##########################################################################
+      ###                         SIDE BRUSH SENSOR                          ###
+      ##########################################################################
+      - type: "custom:button-card"
+        color_type: card
+        name: "[[[ return 'Replace side brush: ' + parseInt(entity.state/60/60) +' timer' ]]]"
+        icon: mdi:selection-ellipse-arrow-inside
+        aspect_ratio: 1/0.45
+        show_name: true
+        entity: sensor.xiaomi_vacuum_cleaner_side_brush_left
+        state:
+          - operator: template
+            value: >
+              [[[
+                return parseInt(entity.state/60/60)<5;
+              ]]]
+            icon: mdi:alert
+            styles:
+              card:
+                - background-color: "rgb(255,100,50)"
+              name:
+                - color: var(--card-background-color)
+        confirmation:
+          text: "[[[ return `Are you sure that you want to reset the side brush timer?` ]]]"
+        tap_action:
+          action: call-service
+          service: vacuum.send_command
+          service_data:
+            entity_id: vacuum.xiaomi_vacuum_cleaner
+            command: reset_consumable
+            params: side_brush_work_time
