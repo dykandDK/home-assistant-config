@@ -3,6 +3,7 @@
 /.shopping_list.json
 /.storage
 /home-assistant.log
+/home-assistant.log.1
 /home-assistant_v2.db
 /secrets.yaml
 /scripts.yaml
@@ -13,3 +14,4 @@
 /custom_components
 home-assistant_v2.db-wal
 home-assistant_v2.db-shm
+www/community/lovelace-indego-card
