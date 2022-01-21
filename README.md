@@ -35,25 +35,18 @@ This is my current hardware setup:
 - Intel NUC i7 with 16 Gb RAM and 500 Gb SSD
 	- Running Home Assistant in Proxmox VM with 2 cores, 32 Gb HDD and 4 Gb RAM allocated
 - Conbee II Zigbee stick
-- Lenovo M10 Smart Tab tablet for dashboard display
+- Lenovo M10 Smart Tab and M8 tablets for dashboard display
 
 ## Integrated smart devices
 My current setup includes the following integrated devices:
 
-- Netatmo Weather Station and Presence camera
-- Hue bulbs, lightstrips, remotes, smart buttons and motion sensors
-- IKEA TRÅDFRI bulbs, smart plugs and remotes
-- Innr Smart plugs
-- Koogeek Smart plugs
-- Aqara sensors
-- VELUX Active gateway
-- Nordtronic Zigbee Box Dimmers and Relays
-- Broadlink RM 4 Pro
-- Roborock S5 robot vacuum
-- Bosch Indego 400 Connect robot lawnmover
-- Sonos speakers
-- Marantz SR7010 AV receiver
-- Reolink IP cameras
+|Lights                                |Sensors                  |Media                     |Other                     |
+|--------------------------------------|-------------------------|--------------------------|--------------------------|
+|Hue lights, remotes and buttons       |Hue Motion Sensors       |Apple TVs                 |Roborock S5 robot vacuum  |
+|IKEA TRÅDFRI bulbs, plugs and remotes |Aqara Door/Window sensors|Marantz SR7010 AV receiver|Bosch Indego 400 lawnmover|
+|Nordtronic Zigbee Box Dimmers & Relays|Netatmo Weather Station  |Sonos speakers            |Broadlink RM 4 Pro        |
+|Koogeek Smart plugs                   |VELUX Active Sensors     |                          |Reolink IP cameras        |
+|Innr Smart plugs                      |                         |                          |Easee  EV charging station|
 
 ## Addons
 I use the following addons:
@@ -110,7 +103,7 @@ I prefer to maintain dashboards in YAML mode and I use `!include` statements to 
 This means that the dashboards are divided into seperate files that are located in the [/include](/include) folder. 
 
 ## Custom components
-I use several custom compontents that are installed via [HACS](https://hacs.xyz/):
+I use several custom frontend compontents that are installed via [HACS](https://hacs.xyz/):
 
 - [Browser_mod](https://github.com/thomasloven/hass-browser_mod)
 - [Kiosk mode](https://github.com/maykar/kiosk-mode)
@@ -120,12 +113,15 @@ I use several custom compontents that are installed via [HACS](https://hacs.xyz/
 - [Mini media-player](https://github.com/kalkih/mini-media-player)
 - [Mini graph card](https://github.com/kalkih/mini-graph-card)
 - [Auto-entities card](https://github.com/thomasloven/lovelace-auto-entities)
+- [Multiple Entity Row](https://github.com/benct/lovelace-multiple-entity-row)
+- [Collapsable cards](https://github.com/RossMcMillan92/lovelace-collapsable-cards)
 - [Atomic Calendar Revive card](https://github.com/marksie1988/atomic-calendar-revive)
 - [Slider Entity Row](https://github.com/thomasloven/lovelace-slider-entity-row)
 - [Swipe card](https://github.com/bramkragten/swipe-card)
 - [EV Charger Card](https://github.com/tmjo/charger-card)
 - [ApexCharts Card](https://github.com/RomRider/apexcharts-card)
 - [Bar Card](https://github.com/custom-cards/bar-card)
+- [Sonos Playlist Card](https://github.com/ChrisK91/sonos-playlist-card)
 
 My lovelace dashboards would simply not be possible without these custom cards. So a special shout out and million thanks goes out to all developers for their contributions to the Home Assistant community.
 
@@ -137,7 +133,7 @@ Examples of my node-RED automations can be found [HERE](/automations/node-RED/no
 ## License
 **MIT License**
 
-Copyright (c) 2019-2021
+Copyright (c) 2019 - present
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -165,5 +161,5 @@ SOFTWARE.
 [stars-shield]: https://img.shields.io/github/stars/dykandDK/home-assistant-config.svg?style=social&label=Stars
 [forks-shield]: https://img.shields.io/github/forks/dykandDK/home-assistant-config.svg?style=social&label=Forks
 [watchers-shield]: https://img.shields.io/github/watchers/dykandDK/home-assistant-config.svg?style=social&label=Watchers
-[link-ha-version]: https://github.com/home-assistant/core/releases/tag/2021.12.7
-[img-ha-version]: https://img.shields.io/badge/Home_Assistant_release-2021.12.7-53c1f1.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIxLjgsMTNIMjBWMjFIMTNWMTcuNjdMMTUuNzksMTQuODhMMTYuNSwxNUMxNy42NiwxNSAxOC42LDE0LjA2IDE4LjYsMTIuOUMxOC42LDExLjc0IDE3LjY2LDEwLjggMTYuNSwxMC44QTIuMSwyLjEgMCAwLDAgMTQuNCwxMi45TDE0LjUsMTMuNjFMMTMsMTUuMTNWOS42NUMxMy42Niw5LjI5IDE0LjEsOC42IDE0LjEsNy44QTIuMSwyLjEgMCAwLDAgMTIsNS43QTIuMSwyLjEgMCAwLDAgOS45LDcuOEM5LjksOC42IDEwLjM0LDkuMjkgMTEsOS42NVYxNS4xM0w5LjUsMTMuNjFMOS42LDEyLjlBMi4xLDIuMSAwIDAsMCA3LjUsMTAuOEEyLjEsMi4xIDAgMCwwIDUuNCwxMi45QTIuMSwyLjEgMCAwLDAgNy41LDE1TDguMjEsMTQuODhMMTEsMTcuNjdWMjFINFYxM0gyLjI1QzEuODMsMTMgMS40MiwxMyAxLjQyLDEyLjc5QzEuNDMsMTIuNTcgMS44NSwxMi4xNSAyLjI4LDExLjcyTDExLDNDMTEuMzMsMi42NyAxMS42NywyLjMzIDEyLDIuMzNDMTIuMzMsMi4zMyAxMi42NywyLjY3IDEzLDNMMTcsN1Y2SDE5VjlMMjEuNzgsMTEuNzhDMjIuMTgsMTIuMTggMjIuNTksMTIuNTkgMjIuNiwxMi44QzIyLjYsMTMgMjIuMiwxMyAyMS44LDEzTTcuNSwxMkEwLjksMC45IDAgMCwxIDguNCwxMi45QTAuOSwwLjkgMCAwLDEgNy41LDEzLjhBMC45LDAuOSAwIDAsMSA2LjYsMTIuOUEwLjksMC45IDAgMCwxIDcuNSwxMk0xNi41LDEyQzE3LDEyIDE3LjQsMTIuNCAxNy40LDEyLjlDMTcuNCwxMy40IDE3LDEzLjggMTYuNSwxMy44QTAuOSwwLjkgMCAwLDEgMTUuNiwxMi45QTAuOSwwLjkgMCAwLDEgMTYuNSwxMk0xMiw2LjlDMTIuNSw2LjkgMTIuOSw3LjMgMTIuOSw3LjhDMTIuOSw4LjMgMTIuNSw4LjcgMTIsOC43QzExLjUsOC43IDExLjEsOC4zIDExLjEsNy44QzExLjEsNy4zIDExLjUsNi45IDEyLDYuOVoiIGZpbGw9IiNmZmZmZmYiIC8+PC9zdmc+Cg==&maxAge=21600
+[link-ha-version]: https://github.com/home-assistant/core/releases/tag/2021.12.10
+[img-ha-version]: https://img.shields.io/badge/Home_Assistant_release-2021.12.10-53c1f1.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIxLjgsMTNIMjBWMjFIMTNWMTcuNjdMMTUuNzksMTQuODhMMTYuNSwxNUMxNy42NiwxNSAxOC42LDE0LjA2IDE4LjYsMTIuOUMxOC42LDExLjc0IDE3LjY2LDEwLjggMTYuNSwxMC44QTIuMSwyLjEgMCAwLDAgMTQuNCwxMi45TDE0LjUsMTMuNjFMMTMsMTUuMTNWOS42NUMxMy42Niw5LjI5IDE0LjEsOC42IDE0LjEsNy44QTIuMSwyLjEgMCAwLDAgMTIsNS43QTIuMSwyLjEgMCAwLDAgOS45LDcuOEM5LjksOC42IDEwLjM0LDkuMjkgMTEsOS42NVYxNS4xM0w5LjUsMTMuNjFMOS42LDEyLjlBMi4xLDIuMSAwIDAsMCA3LjUsMTAuOEEyLjEsMi4xIDAgMCwwIDUuNCwxMi45QTIuMSwyLjEgMCAwLDAgNy41LDE1TDguMjEsMTQuODhMMTEsMTcuNjdWMjFINFYxM0gyLjI1QzEuODMsMTMgMS40MiwxMyAxLjQyLDEyLjc5QzEuNDMsMTIuNTcgMS44NSwxMi4xNSAyLjI4LDExLjcyTDExLDNDMTEuMzMsMi42NyAxMS42NywyLjMzIDEyLDIuMzNDMTIuMzMsMi4zMyAxMi42NywyLjY3IDEzLDNMMTcsN1Y2SDE5VjlMMjEuNzgsMTEuNzhDMjIuMTgsMTIuMTggMjIuNTksMTIuNTkgMjIuNiwxMi44QzIyLjYsMTMgMjIuMiwxMyAyMS44LDEzTTcuNSwxMkEwLjksMC45IDAgMCwxIDguNCwxMi45QTAuOSwwLjkgMCAwLDEgNy41LDEzLjhBMC45LDAuOSAwIDAsMSA2LjYsMTIuOUEwLjksMC45IDAgMCwxIDcuNSwxMk0xNi41LDEyQzE3LDEyIDE3LjQsMTIuNCAxNy40LDEyLjlDMTcuNCwxMy40IDE3LDEzLjggMTYuNSwxMy44QTAuOSwwLjkgMCAwLDEgMTUuNiwxMi45QTAuOSwwLjkgMCAwLDEgMTYuNSwxMk0xMiw2LjlDMTIuNSw2LjkgMTIuOSw3LjMgMTIuOSw3LjhDMTIuOSw4LjMgMTIuNSw4LjcgMTIsOC43QzExLjUsOC43IDExLjEsOC4zIDExLjEsNy44QzExLjEsNy4zIDExLjUsNi45IDEyLDYuOVoiIGZpbGw9IiNmZmZmZmYiIC8+PC9zdmc+Cg==&maxAge=21600

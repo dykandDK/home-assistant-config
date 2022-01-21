@@ -91,7 +91,8 @@ lovelace:
       type: module
     - url: /hacsfiles/lovelace-collapsable-cards/collapsable-cards.js
       type: module
-
+    - url: /hacsfiles/sonos-playlist-card/sonos-playlist-card.js
+      type: module
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
 #───────────────────────────────────────────────────────────────────────────────
@@ -453,7 +454,7 @@ input_boolean:
 #───────────────────────────────────────────────────────────────────────────────
 input_select:
   media_source:
-    name: Vælg kilde
+    name: Select source
     options:
       - AppleTV - Stue
       - AppleTV - Soveværelse
@@ -462,22 +463,40 @@ input_select:
     icon: mdi:exit-to-app
     initial: AppleTV - Stue
   music_source_type:
-    name: Vælg kilde
+    name: Select music source
     options:
       - spotify_playlist
       - spotify_featured
       - radio
   music_source:
-    name: Vælg kilde
+    name: Select speaker
     options:
-      - Sonos - Alrum
-      - Sonos - Stue
-      - Sonos - Isabella
+      - Sonos - Kitchen
+      - Sonos - Living room
+      - Sonos - Kid1
       - Sonos - Kontor
-      - Sonos - Stort bad
-      - Sonos - Lille bad
+      - Sonos - Bath room
+      - Sonos - Kid2
     icon: mdi:music
-    initial: Sonos - Alrum
+    initial: Sonos - Kitchen
+  music_source_type_tablet:
+    name: Select music source
+    options:
+      - spotify_playlist
+      - spotify_featured
+      - radio
+    icon: mdi:music
+  speaker_selection:
+    name: Select Sonos speaker
+    options:
+      - kitchen
+      - living
+      - kid1
+      - office
+      - bath
+      - kid2
+    icon: mdi:speaker-multiple
+    initial: kitchen
   home_state:
     name: Home State
     options:

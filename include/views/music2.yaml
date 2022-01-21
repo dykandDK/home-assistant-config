@@ -4,187 +4,269 @@ panel: true
 cards:
   - type: vertical-stack
     cards:
-      ######################################################################
-      ###                          Header row                            ###
-      ######################################################################
+      ##########################################################################
+      ###                             Header row                             ###
+      ##########################################################################
       - type: horizontal-stack
         cards:
           - !include ../cards/tablet_header.yaml
-      ######################################################################
-      ###                   Main content - 3 columns                     ###
-      ######################################################################
+      ##########################################################################
+      ###                            Main content                            ###
+      ##########################################################################
       - type: horizontal-stack
         cards:
-          ##################################################################
-          ###                         Column #1                          ###
-          ##################################################################
+          ######################################################################
+          ###                           Column #1                            ###
+          ######################################################################
           - type: vertical-stack
             cards:
-              #─────────────────────────────────────────────────────────────
-              # Spotify card - Featured
-              #─────────────────────────────────────────────────────────────
-              - type: custom:spotify-card
-                name: Featured
-                limit: 12
-                account: default
-                spotify_entity: media_player.terrasse
-                grid_covers_per_row: 6
-                hide_currently_playing: true
-                hide_playback_controls: true
-                #hide_top_header: true
-                display_style: grid
-                playlist_type: featured
-              #─────────────────────────────────────────────────────────────
+              #─────────────────────────────────────────────────────────────────
+              # Music source selection
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                show_state: false
+                show_name: true
+                layout: icon_name
+                entity: input_select.music_source_type_tablet
+                styles:
+                  grid:
+                    - grid-template-areas: '"i n"'
+                    - grid-template-columns: 10% 1fr
+                  card:
+                    - background-color: rgb(20, 216, 204)
+                    - color: var(--primary-foreground-color)
+                    - height: 65px
+                  icon:
+                    - justify-self: start
+                    - padding-left: 10px
+                  name:
+                    - font-size: 24px
+                    - justify-self: start
+                    - padding-left: 10px
+                    - align-self: left
+                    - margin-top: -5px
+                    - margin-bottom: 0px
+                  img_cell:
+                    - align-self: start
+                    - justify-self: start
+                    - margin-top: -5px
+                    - margin-bottom: 0px
+                    - height: 30px
+                state:
+                  - value: "spotify_playlist"
+                    name: Spotify - Playlists
+                    icon: mdi:spotify
+                    styles:
+                      card:
+                        - background-color: rgb(29,185,84)
+                  - value: "spotify_featured"
+                    icon: mdi:spotify
+                    name: Spotify - Featured
+                    styles:
+                      card:
+                        - background-color: rgb(29,185,84)
+                  - value: "radio"
+                    icon: mdi:radio
+                    name: TuneIn radio
+                tap_action:
+                  action: call-service
+                  service: input_select.select_next
+                  service_data:
+                    cycle: true
+                    entity_id: input_select.music_source_type_tablet
+              #─────────────────────────────────────────────────────────────────
               # Spotify card - Playlists
-              #─────────────────────────────────────────────────────────────
-              - type: custom:spotify-card
-                name: Playlister
-                limit: 12
-                account: default
-                spotify_entity: media_player.terrasse
-                grid_covers_per_row: 6
-                hide_currently_playing: true
-                hide_playback_controls: true
-                #hide_top_header: true
-                display_style: grid
-                #playlist_type: featured
-          ##################################################################
-          ###                         Column #2                          ###
-          ##################################################################
+              #─────────────────────────────────────────────────────────────────
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source_type_tablet
+                    state: "spotify_playlist"
+                card:
+                  type: "custom:sonos-playlist-card"
+                  player: media_player.dummy
+                  limit: 9
+                  gridWidth: 25
+              #─────────────────────────────────────────────────────────────────
+              # Spotify card - Featured
+              #─────────────────────────────────────────────────────────────────
+              - type: conditional
+                conditions:
+                  - entity: input_select.music_source_type_tablet
+                    state: "spotify_featured"
+                card:
+                  type: "custom:sonos-playlist-card"
+                  playlist_type: featured
+                  player: media_player.dummy
+                  limit: 9
+                  gridWidth: 28
+              #─────────────────────────────────────────────────────────────────
+              # Radio channels
+              #─────────────────────────────────────────────────────────────────
+              - !include ../cards/sonos_radio_selection.yaml
+          ######################################################################
+          ###                           Column #2                            ###
+          ######################################################################
           - type: vertical-stack
             cards:
-              #─────────────────────────────────────────────────────────────
-              # Mini media players
-              #─────────────────────────────────────────────────────────────
-              ### Alrum ###
-              - type: custom:mini-media-player
-                entity: media_player.alrum
-                icon: mdi:silverware-fork-knife
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
-              ### Stue ###
-              - type: custom:mini-media-player
-                entity: media_player.stue
-                icon: mdi:sofa
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
-              ### Kontor ###
-              - type: custom:mini-media-player
-                entity: media_player.kontor
-                icon: mdi:laptop
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
-              ### Isabella ###
-              - type: custom:mini-media-player
-                entity: media_player.bornevaerelse
-                icon: mdi:unicorn-variant
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
-              ### Stort bad ###
-              - type: custom:mini-media-player
-                entity: media_player.badevaerelse
-                icon: mdi:shower
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
-              ### Lille bad ###
-              - type: custom:mini-media-player
-                entity: media_player.terrasse
-                icon: mdi:paper-roll
-                source: full
-                artwork: cover
-                hide:
-                  power: true
-                speaker_group:
-                  platform: sonos
-                  show_group_count: true
-                  entities:
-                    - entity_id: media_player.alrum
-                      name: Alrum
-                    - entity_id: media_player.stue
-                      name: Stue
-                    - entity_id: media_player.bornevaerelse
-                      name: Isabella
-                    - entity_id: media_player.badevaerelse
-                      name: Stort bad
-                    - entity_id: media_player.terrasse
-                      name: Lille bad
+              #─────────────────────────────────────────────────────────────────
+              # Music speaker selection
+              #─────────────────────────────────────────────────────────────────
+              - type: "custom:button-card"
+                color_type: card
+                show_state: false
+                show_name: true
+                layout: icon_name
+                styles:
+                  grid:
+                    - grid-template-areas: '"i n"'
+                    - grid-template-columns: 10% 1fr
+                  card:
+                    - background-color: >
+                        [[[
+                          if (states['input_select.music_source_type_tablet'].state == 'radio')
+                            return 'rgb(20, 216, 204)';
+                          return 'rgb(29,185,84)';
+                        ]]]
+                    - color: var(--primary-foreground-color)
+                    - height: 65px
+                  icon:
+                    - justify-self: start
+                    - padding-left: 10px
+                  name:
+                    - font-size: 24px
+                    - justify-self: start
+                    - padding-left: 10px
+                    - align-self: left
+                    - margin-top: -5px
+                    - margin-bottom: 0px
+                  img_cell:
+                    - align-self: start
+                    - justify-self: start
+                    - margin-top: -5px
+                    - margin-bottom: 0px
+                    - height: 30px
+                entity: input_select.speaker_selection
+                state:
+                  - value: "kitchen"
+                    name: Sonos - Kitchen
+                    icon: mdi:chef-hat
+                  - value: "living"
+                    name: Sonos - Living room
+                    icon: mdi:sofa
+                  - value: "kid1"
+                    name: "Sonos - Kid 1"
+                    icon: mdi:unicorn
+                  - value: "office"
+                    name: "Sonos - Office"
+                    icon: mdi:laptop
+                  - value: "bath"
+                    name: "Sonos - Bath room"
+                    icon: mdi:shower
+                  - value: "kid2"
+                    name: "Sonos - Kid 2"
+                    icon: mdi:chess-queen
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    command: popup
+                    title: Select Sonos speaker
+                    auto_close: true
+                    hide_header: true
+                    large: true
+                    card: !include ../cards/speaker_selection.yaml
+                double_tap_action:
+                  action: call-service
+                  service: input_select.select_next
+                  service_data:
+                    cycle: true
+                    entity_id: input_select.speaker_selection
+              #─────────────────────────────────────────────────────────────────
+              # Speaker controls for selected speaker
+              #─────────────────────────────────────────────────────────────────
+              ### Kitchen
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "kitchen"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.kitchen
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true
+              ### Living room
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "living"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.living
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true
+              ### Kid1
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "kid1"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.kid1
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true
+              ### Kid2
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "kid2"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.kid2
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true
+              ### Office
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "office"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.office
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.kitchen
+                        name: Kitchen
+                      - entity_id: media_player.living
+                        name: Living room
+                      - entity_id: media_player.kid1
+                        name: Kid1
+                      - entity_id: media_player.kid2
+                        name: Kid2
+                      - entity_id: media_player.bath
+                        name: Bathroom
+              ### Bath
+              - type: conditional
+                conditions:
+                  - entity: input_select.speaker_selection
+                    state: "bath"
+                card:
+                  type: custom:mini-media-player
+                  entity: media_player.bath
+                  artwork: full-cover
+                  source: icon
+                  hide:
+                    power: true

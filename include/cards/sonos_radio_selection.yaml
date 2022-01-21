@@ -1,0 +1,188 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to choose between different radio stations
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: conditional
+conditions:
+  - entity: input_select.music_source_type_tablet
+    state: "radio"
+card:
+  type: vertical-stack
+  cards:
+    ### FIRST ROW
+    - type: horizontal-stack
+      cards:
+        ### DR P3
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P3_logo_2020.svg.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: DR P3 93.9 (Eurohits)
+        ### DR P4
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P4_logo_2020.svg.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: DR P4 København 96.5 (Eurohits)
+        ### Nova FM
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              #- background-image: "url(https://assets.planetradio.co.uk/img/ConfigWebListenBarLogoImageUrl/174.jpg)"
+              - background-image: "url(https://cdn-radiotime-logos.tunein.com/s87164g.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: media_player.kontor
+              source: NOVA 91.4 (Top 40-pop)
+    ### SECOND ROW
+    - type: horizontal-stack
+      cards:
+        ### Radio 100
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://www.radio.dk/images/broadcasts/d3/f9/4626/c175.png)"
+              - background-repeat: no-repeat
+              - background-size: contain
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: Radio 100 103.6 (Top 40-pop)
+        ### POP FM
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://bluesmenchannel.com/_dr/1/41682169.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: Pop FM 100.0 (Top 40-pop)
+        ### Soft
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://www.radio.dk/images/broadcasts/86/85/4659/7/c175.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: Radio Soft 95.0 (Top 40-pop)
+    ### THIRD ROW
+    - type: horizontal-stack
+      cards:
+        ### Voice
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://www.radio.dk/images/broadcasts/68/7c/10657/c175.png)"
+              - background-repeat: no-repeat
+              - background-size: cover
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: The Voice 104.9 (Top 40-pop)
+        ### NRJ
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://digitalt.tv/wp-content/uploads/2019/04/NRJ-Radio.png)"
+              - background-repeat: no-repeat
+              - background-size: contain
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: NRJ Denmark
+        ### MyROCK
+        - type: "custom:button-card"
+          color_type: card
+          styles:
+            card:
+              - background-image: "url(https://cdn-radiotime-logos.tunein.com/s216726q.png)"
+              - background-repeat: no-repeat
+              - background-size: contain
+              - background-position: center
+              - border-radius: 10px
+              - height: 206px
+          tap_action:
+            action: call-service
+            service: media_player.select_source
+            service_data:
+              entity_id: >-
+                [[[ return 'media_player.' + states['input_select.speaker_selection'].state ]]]
+              source: myROCK 92.7 (Rock)

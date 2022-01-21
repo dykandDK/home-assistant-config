@@ -1,0 +1,78 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to select speakers
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: vertical-stack
+cards:
+  - type: custom:button-card
+    name: Sonos - Kitchen
+    template: speaker_button
+    icon: mdi:silverware-fork-knife
+    entity: media_player.kitchen
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: kitchen
+  - type: "custom:button-card"
+    template: speaker_button
+    name: Sonos - Living room
+    icon: mdi:sofa
+    entity: media_player.living
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: living
+  - type: "custom:button-card"
+    template: speaker_button
+    name: Sonos - Office
+    icon: mdi:laptop
+    entity: media_player.office
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: office
+  - type: "custom:button-card"
+    template: speaker_button
+    name: Sonos - Kid1
+    icon: mdi:unicorn
+    entity: media_player.kid1
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: kid1
+  - type: "custom:button-card"
+    template: speaker_button
+    name: Sonos - Kid2
+    icon: mdi:chess-queen
+    entity: media_player.kid2
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: kid2
+  - type: "custom:button-card"
+    template: speaker_button
+    name: Sonos - Bathroom
+    icon: mdi:shower
+    entity: media_player.bath
+    tap_action:
+      action: call-service
+      service: input_select.select_option
+      service_data:
+        entity_id: input_select.speaker_selection
+        option: bath

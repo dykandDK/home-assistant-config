@@ -96,3 +96,46 @@ custom_sensor_card:
         - position: absolute
         - left: 85%
         - top: 10%
+
+speaker_button:
+  color_type: card
+  show_state: false
+  show_name: true
+  layout: icon_name
+  custom_fields:
+    status: >
+      [[[ 
+        if (entity.state=='playing')
+          return '<img src=/local/assets/music_playing.gif>';
+      ]]]
+  styles:
+    custom_fields:
+      status:
+        - margin-top: -100px
+        - left: 60%
+        - top: 0%
+        - background-size: cover
+    grid:
+      - grid-template-areas: '"i n"'
+      - grid-template-columns: 10% 1fr
+    card:
+      - background-color: var(--card-background-color)
+      - color: var(--primary-foreground-color)
+      - height: 65px
+      - background-image: '[[[ return "url(" + entity.attributes.entity_picture + ")"; ]]]'
+      - background-size: cover
+      - background-position: center
+    icon:
+      - justify-self: start
+      - padding-left: 10px
+    name:
+      - font-size: 24px
+      - justify-self: start
+      - padding-left: 10px
+      - align-self: left
+      - margin-bottom: 0px
+    img_cell:
+      - align-self: start
+      - justify-self: start
+      - margin-bottom: 0px
+      - height: 30px
