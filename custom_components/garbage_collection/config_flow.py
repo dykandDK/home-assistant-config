@@ -27,7 +27,7 @@ from .const import (
     CONF_INCLUDE_DATES,
     CONF_WEEK_ORDER_NUMBER,
     CONF_WEEKDAY_ORDER_NUMBER,
-    DAILY_FREQUENCY,
+    DAILY_BLANK_FREQUENCY,
     DOMAIN,
     GROUP_FREQUENCY,
     MONTHLY_FREQUENCY,
@@ -107,11 +107,12 @@ class garbage_collection_shared:
         elif defaults is not None:
             config_definition.reset_defaults()
             config_definition.set_defaults(1, defaults)
+            config_definition.join_list(CONF_EXCLUDE_DATES)
+            config_definition.join_list(CONF_INCLUDE_DATES)
         self.data_schema = config_definition.compile_config_flow(step=1)
         # Do not show name for Options_Flow. The name cannot be changed here
         if defaults is not None and CONF_NAME in self.data_schema:
             del self.data_schema[CONF_NAME]
-
         return False
 
     def step2_annual_group(self, user_input: Dict, defaults=None):
@@ -239,6 +240,7 @@ class garbage_collection_shared:
                 return True
         elif defaults is not None:
             config_definition.set_defaults(4, defaults)
+            config_definition.join_list(CONF_HOLIDAY_POP_NAMED)
         self.data_schema = config_definition.compile_config_flow(
             step=4, valid_for=self._data[CONF_FREQUENCY]
         )
@@ -283,7 +285,7 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
         if next_step:
             if self.shared_class.frequency in ANNUAL_GROUP_FREQUENCY:
                 return await self.async_step_annual_group()
-            elif self.shared_class.frequency in DAILY_FREQUENCY:
+            elif self.shared_class.frequency in DAILY_BLANK_FREQUENCY:
                 return await self.async_step_final()
             else:
                 return await self.async_step_detail()
@@ -386,7 +388,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if next_step:
             if self.shared_class.frequency in ANNUAL_GROUP_FREQUENCY:
                 return await self.async_step_annual_group()
-            elif self.shared_class.frequency in DAILY_FREQUENCY:
+            elif self.shared_class.frequency in DAILY_BLANK_FREQUENCY:
                 return await self.async_step_final()
             else:
                 return await self.async_step_detail()

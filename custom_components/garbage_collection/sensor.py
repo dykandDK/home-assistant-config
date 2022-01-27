@@ -38,6 +38,7 @@ from .const import (
     CONF_ICON_TOMORROW,
     CONF_INCLUDE_DATES,
     CONF_LAST_MONTH,
+    CONF_MANUAL,
     CONF_MOVE_COUNTRY_HOLIDAYS,
     CONF_OBSERVED,
     CONF_OFFSET,
@@ -60,11 +61,8 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(seconds=60)
+SCAN_INTERVAL = timedelta(seconds=10)
 THROTTLE_INTERVAL = timedelta(seconds=60)
-
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, _, async_add_entities, discovery_info=None):
@@ -105,9 +103,9 @@ def to_date(day: Any) -> date:
     """Convert datetime or text to date, if not already datetime."""
     if day is None:
         raise ValueError
-    if type(day) == date:
+    if isinstance(day, date):
         return day
-    if type(day) == datetime:
+    if isinstance(day, datetime):
         return day.date()
     return date.fromisoformat(day)
 
@@ -139,6 +137,17 @@ def to_dates(dates: List[Any]) -> List[date]:
     return converted
 
 
+def dates_to_texts(dates: List[date]) -> List[str]:
+    """Convert list of dates to texts."""
+    converted = []  # type: List[str]
+    for day in dates:
+        try:
+            converted.append(day.isoformat())
+        except ValueError:
+            continue
+    return converted
+
+
 class GarbageCollection(RestoreEntity):
     """GarbageCollection Sensor class."""
 
@@ -148,6 +157,7 @@ class GarbageCollection(RestoreEntity):
         self._name = title if title is not None else config.get(CONF_NAME)
         self._hidden = config.get(ATTR_HIDDEN, False)
         self._frequency = config.get(CONF_FREQUENCY)
+        self._manual = config.get(CONF_MANUAL)
         self._collection_days = config.get(CONF_COLLECTION_DAYS)
         first_month = config.get(CONF_FIRST_MONTH)
         if first_month in MONTH_OPTIONS:
@@ -181,6 +191,7 @@ class GarbageCollection(RestoreEntity):
             self._first_date = to_date(config.get(CONF_FIRST_DATE))
         except ValueError:
             self._first_date = None
+        self._collection_dates = []
         self._next_date = None
         self._last_updated = None
         self.last_collection = None
@@ -205,7 +216,6 @@ class GarbageCollection(RestoreEntity):
         """Load the holidays from from a date."""
         self._holidays_log = ""
         log = ""
-        year_from_today = today + relativedelta(years=1)
         self._holidays.clear()
         if self._country_holidays is not None and self._country_holidays != "":
             this_year = today.year
@@ -226,7 +236,7 @@ class GarbageCollection(RestoreEntity):
                 kwargs["prov"] = self._holiday_prov
             if (
                 self._holiday_observed is not None
-                and type(self._holiday_observed) is bool
+                and isinstance(self._holiday_observed, bool)
                 and not self._holiday_observed
             ):
                 kwargs["observed"] = self._holiday_observed  # type: ignore
@@ -238,11 +248,10 @@ class GarbageCollection(RestoreEntity):
                     except Exception as err:
                         _LOGGER.error("(%s) Holiday not removed (%s)", self._name, err)
             try:
-                for d, name in hol.items():
-                    self._holidays.append(d)
-                    log += f"\n  {d}: {name}"
-                    if d >= today and d <= year_from_today:
-                        self._holidays_log += f"\n  {d}: {name}"
+                for holiday_date, holiday_name in hol.items():
+                    self._holidays.append(holiday_date)
+                    log += f"\n  {holiday_date}: {holiday_name}"
+                    self._holidays_log += f"\n  {holiday_date}: {holiday_name}"
             except KeyError:
                 _LOGGER.error(
                     "(%s) Invalid country code (%s)",
@@ -300,7 +309,7 @@ class GarbageCollection(RestoreEntity):
         return {
             "identifiers": {(DOMAIN, self.config.get("unique_id", None))},
             "name": self.config.get("name"),
-            "manufacturer": "Garbage Collection",
+            "manufacturer": "bruxy70",
         }
 
     @property
@@ -396,11 +405,13 @@ class GarbageCollection(RestoreEntity):
             WEEKDAYS.index(self._collection_days[0]),
         )
 
-    async def _async_find_candidate_date(self, day1: date) -> date:
+    async def _async_find_candidate_date(self, day1: date):
         """Find the next possible date starting from day1.
 
         Only based on calendar, not looking at include/exclude days.
         """
+        if self._frequency == "blank":
+            return None
         week = day1.isocalendar()[1]
         weekday = day1.weekday()
         year = day1.year
@@ -475,8 +486,8 @@ class GarbageCollection(RestoreEntity):
             try:
                 for entity_id in self._entities:
                     entity = self.hass.data[DOMAIN][SENSOR_PLATFORM][entity_id]
-                    d = await entity.async_find_next_date(day1)
-                    if candidate_date is None or d < candidate_date:
+                    d = await entity.async_next_date(day1)
+                    if d is not None and (candidate_date is None or d < candidate_date):
                         candidate_date = d
             except KeyError:
                 raise ValueError
@@ -513,9 +524,7 @@ class GarbageCollection(RestoreEntity):
             date_candidate = self._skip_holiday(date_candidate)
         return date_candidate
 
-    def _insert_include_date(
-        self, day1: date, next_date: Union[date, None]
-    ) -> Union[date, None]:
+    def _insert_include_date(self, day1: date, next_date: Union[date, None]):
         """Add include dates."""
         include_dates = list(filter(lambda date: date >= day1, self._include_dates))
         if len(include_dates) > 0 and (
@@ -575,11 +584,11 @@ class GarbageCollection(RestoreEntity):
             try:
                 if self._next_date == today and (
                     (
-                        type(self.expire_after) is time
+                        isinstance(self.expire_after, time)
                         and now.time() >= self.expire_after
                     )
                     or (
-                        type(self.last_collection) is datetime
+                        isinstance(self.last_collection, datetime)
                         and self.last_collection.date() == today
                     )
                 ):
@@ -611,9 +620,11 @@ class GarbageCollection(RestoreEntity):
                 return date(year, self._first_month, 1)
         return day
 
-    async def async_find_next_date(self, first_date: date, ignore_today=False):
+    async def _async_find_next_date(self, first_date: date):
         """Get date within configured date range."""
         # Today's collection can be triggered by past collection with offset
+        if self._frequency == "blank":
+            return None
         if self._holiday_in_week_move:
             look_back = max(
                 self._offset, self._holiday_move_offset, first_date.weekday()
@@ -630,8 +641,8 @@ class GarbageCollection(RestoreEntity):
                     days=self._offset
                 )
                 next_date = await self._async_skip_holidays(next_date)
-            except ValueError:
-                raise
+            except (TypeError, ValueError):
+                return None
             # Check if the date is within the range
             new_date = self.move_to_range(next_date)
             if new_date != next_date:
@@ -641,20 +652,6 @@ class GarbageCollection(RestoreEntity):
                 # Date is before starting date
                 if next_date < first_date:
                     next_date = None
-                # Today's expiration
-                now = dt_util.now()
-                if not ignore_today and next_date == now.date():
-                    expiration = (
-                        self.expire_after
-                        if self.expire_after is not None
-                        else time(23, 59, 59)
-                    )
-                    if now.time() > expiration or (
-                        self.last_collection is not None
-                        and self.last_collection.date() == now.date()
-                        and now.time() >= self.last_collection.time()
-                    ):
-                        next_date = None
                 # Remove exclude dates
                 if next_date in self._exclude_dates:
                     _LOGGER.debug(
@@ -665,27 +662,95 @@ class GarbageCollection(RestoreEntity):
         next_date = self._insert_include_date(first_date, next_date)
         return next_date
 
-    async def async_update(self) -> None:
-        """Get the latest data and updates the states."""
-        if not await self._async_ready_for_update():
+    async def _async_load_collection_dates(self) -> None:
+        """Fill the collection dates list."""
+        if self._frequency == "blank":
             return
-        _LOGGER.debug("(%s) Calling update", self._name)
-        now = dt_util.now()
-        today = now.date()
-        self._last_updated = now
+        today = dt_util.now().date()
+        start_date = end_date = date(today.year - 1, 1, 1)
+        end_date = date(today.year + 1, 12, 31)
+
+        self._collection_dates.clear()
         try:
             await asyncio.wait_for(self.async_load_holidays(today), timeout=10)
-            self._next_date = await asyncio.wait_for(
-                self.async_find_next_date(today), timeout=10
-            )
+            d = await self._async_find_next_date(start_date)
         except asyncio.TimeoutError:
-            _LOGGER.error("(%s) Timeout looking for the new date", self._name)
-            self._next_date = None
+            _LOGGER.error("(%s) Timeout loading collection dats", self._name)
+            return
+
+        while d is not None and d >= start_date and d <= end_date:
+            self._collection_dates.append(d)
+            d = await self._async_find_next_date(d + timedelta(days=1))
+        self._collection_dates.sort()
+
+    async def add_date(self, collection_date: date) -> None:
+        """Add date to _collection_dates."""
+        if collection_date not in self._collection_dates:
+            self._collection_dates.append(collection_date)
+            self._collection_dates.sort()
+        else:
+            raise KeyError(f"{collection_date} already on the collection schedule")
+
+    async def remove_date(self, collection_date: date) -> None:
+        """Remove date from _collection dates."""
+        self._collection_dates.remove(collection_date)
+
+    async def async_next_date(
+        self, first_date: date, ignore_today=False
+    ) -> Optional[date]:
+        """Get next date from self._collection_dates."""
+        now = dt_util.now()
+        for d in self._collection_dates:
+            if d < first_date:
+                continue
+            if not ignore_today and d == now.date():
+                expiration = (
+                    self.expire_after
+                    if self.expire_after is not None
+                    else time(23, 59, 59)
+                )
+                if now.time() > expiration or (
+                    self.last_collection is not None
+                    and self.last_collection.date() == now.date()
+                    and now.time() >= self.last_collection.time()
+                ):
+                    continue
+            return d
+        return None
+
+    async def async_update(self) -> None:
+        """Get the latest data and updates the states."""
+        if not await self._async_ready_for_update() or not self.hass.is_running:
+            return
+
+        _LOGGER.debug("(%s) Calling update", self._name)
+        await self._async_load_collection_dates()
+        _LOGGER.debug(
+            "(%s) Dates loaded, firing a garbage_collection_loaded event", self._name
+        )
+        event_data = {
+            "entity_id": self.entity_id,
+            "collection_dates": dates_to_texts(self._collection_dates),
+        }
+        self.hass.bus.async_fire("garbage_collection_loaded", event_data)
+        if not self._manual and self._frequency != "blank":
+            await self.async_update_state()
+
+    async def async_update_state(self) -> None:
+        """Pick the first event from collection dates, update attributes."""
+        _LOGGER.debug("(%s) Looking for next collection", self._name)
+        now = dt_util.now()
+        today = now.date()
+        self._next_date = await self.async_next_date(today)
+        self._last_updated = now
         if self._next_date is not None:
+            _LOGGER.debug(
+                "(%s) next_date (%s), today (%s)", self._name, self._next_date, today
+            )
             self._days = (self._next_date - today).days
             next_date_txt = self._next_date.strftime(self._date_format)
             _LOGGER.debug(
-                "(%s) Found next date: %s, that is in %d days",
+                "(%s) Found next collection date: %s, that is in %d days",
                 self._name,
                 next_date_txt,
                 self._days,

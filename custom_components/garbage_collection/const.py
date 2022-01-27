@@ -31,6 +31,7 @@ DEVICE_CLASS = "garbage_collection__schedule"
 CONF_SENSOR = "sensor"
 CONF_ENABLED = "enabled"
 CONF_FREQUENCY = "frequency"
+CONF_MANUAL = "manual_update"
 CONF_ICON_NORMAL = "icon_normal"
 CONF_ICON_TODAY = "icon_today"
 CONF_ICON_TOMORROW = "icon_tomorrow"
@@ -90,6 +91,7 @@ FREQUENCY_OPTIONS = [
     "every-n-days",
     "monthly",
     "annual",
+    "blank",
     "group",
 ]
 
@@ -101,14 +103,25 @@ EXCEPT_ANNUAL_GROUP = [
     "every-n-weeks",
     "every-n-days",
     "monthly",
+    "blank",
+]
+EXCEPT_ANNUAL_GROUP_BLANK = [
+    "weekly",
+    "even-weeks",
+    "odd-weeks",
+    "every-n-weeks",
+    "every-n-days",
+    "monthly",
 ]
 WEEKLY_DAILY_MONTHLY = ["every-n-weeks", "every-n-days", "monthly"]
 WEEKLY_FREQUENCY_X = ["every-n-weeks"]
 DAILY_FREQUENCY = ["every-n-days"]
+DAILY_BLANK_FREQUENCY = ["blank", "every-n-days"]
 MONTHLY_FREQUENCY = ["monthly"]
 ANNUAL_GROUP_FREQUENCY = ["annual", "group"]
 ANNUAL_FREQUENCY = ["annual"]
 GROUP_FREQUENCY = ["group"]
+BLANK_FREQUENCY = ["blank"]
 
 MONTH_OPTIONS = [
     "jan",
@@ -235,6 +248,13 @@ class configuration(config_singularity):
             "type": bool,
             "validator": cv.boolean,
         },
+        CONF_MANUAL: {
+            "step": 1,
+            "method": vol.Optional,
+            "default": False,
+            "type": bool,
+            "validator": cv.boolean,
+        },
         CONF_FREQUENCY: {
             "step": 1,
             "method": vol.Required,
@@ -324,7 +344,7 @@ class configuration(config_singularity):
         },
         CONF_COLLECTION_DAYS: {
             "step": 3,
-            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP,
+            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP_BLANK,
             "method": vol.Optional,
             "type": [str],
             "validator": vol.All(cv.ensure_list, [vol.In(WEEKDAYS)]),
@@ -349,14 +369,14 @@ class configuration(config_singularity):
         },
         CONF_FIRST_MONTH: {
             "step": 4,
-            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP,
+            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP_BLANK,
             "method": vol.Optional,
             "default": DEFAULT_FIRST_MONTH,
             "type": vol.In(MONTH_OPTIONS),
         },
         CONF_LAST_MONTH: {
             "step": 4,
-            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP,
+            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP_BLANK,
             "method": vol.Optional,
             "default": DEFAULT_LAST_MONTH,
             "type": vol.In(MONTH_OPTIONS),
@@ -392,7 +412,7 @@ class configuration(config_singularity):
         },
         CONF_HOLIDAY_MOVE_OFFSET: {
             "step": 4,
-            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP,
+            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP_BLANK,
             "default": 1,
             "method": vol.Optional,
             "type": int,
@@ -407,7 +427,7 @@ class configuration(config_singularity):
         },
         CONF_HOLIDAY_IN_WEEK_MOVE: {
             "step": 4,
-            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP,
+            "valid_for": lambda f: f in EXCEPT_ANNUAL_GROUP_BLANK,
             "method": vol.Optional,
             "default": DEFAULT_HOLIDAY_IN_WEEK_MOVE,
             "type": bool,

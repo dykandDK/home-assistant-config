@@ -14,7 +14,7 @@ from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.entity_component import EntityComponent
 
 
-__version__ = '1.3.10'
+__version__ = '1.3.11'
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=300)
 DOMAIN = 'ourgroceries'
@@ -172,7 +172,7 @@ class OurGroceriesView(http.HomeAssistantView):
             _LOGGER.debug('web post get_list_items list_id:{}, value:{}'.format(list_id, value))
             if list_id is None or value is None:
                 return self.json({'error': 'missing list_id'}, status_code=400)
-            api_data = await self._og.add_item_to_list(list_id, value)
+            api_data = await self._og.add_item_to_list(list_id, value, None)
         
         if command == 'remove_item_from_list':
             list_id = data.get('list_id')
@@ -238,7 +238,7 @@ class OurGroceriesServices:
         internal_id = await self._lookup_list(list_id)
 
         for item in items:
-            await self._og.add_item_to_list(internal_id, item)
+            await self._og.add_item_to_list(internal_id, item, None)
 
         return True
 
@@ -267,6 +267,6 @@ class OurGroceriesServices:
             items_to_copy = [x for x in items_to_copy if x not in items_in_dest]
 
         for item in items_to_copy:
-            await self._og.add_item_to_list(internal_dest, item)
+            await self._og.add_item_to_list(internal_dest, item, None)
 
         return True
