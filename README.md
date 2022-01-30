@@ -102,6 +102,14 @@ I prefer to maintain dashboards in YAML mode and I use `!include` statements to 
 
 This means that the dashboards are divided into seperate files that are located in the [/include](/include) folder. 
 
+If you prefer to edit your Lovelace dashboard in UI mode, I've created a consolidated version of my tablet dashboard that can be used as a starting point. The file is called `tablet_ui.yaml` and includes most - but not all features - from my YAML version. However, the dashboard should be enough to get get you started.
+
+I still highly recommend to use the YAML version if you are serious about creating a personalized dashboard. The main reasoning behind my recommendation is:
+
+- The YAML version allows you to use include statements to split your file into smaller and more manageable files, which makes it easier to move stuff around or exclude certain elements of the dashboards. It also allows you to reuse code across multiple views or dashboards and just maintain the code one place. This is particularly useful for the header bar that is used in each view of the dashboard
+
+- The YAML version also supports insertion of comments in the code. This is useful to document your code but can also be use to quickly disable parts of your code without having to delete it entirely. 
+
 ## Custom components
 I use several custom frontend compontents that are installed via [HACS](https://hacs.xyz/):
 
