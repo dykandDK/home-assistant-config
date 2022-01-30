@@ -1,0 +1,2227 @@
+title: Home
+kiosk_mode:
+  hide_header: false
+button_card_templates:
+  custom_sensor_card:
+    color_type: card
+    show_name: true
+    show_label: true
+    show_icon: false
+    show_state: false
+    label: |
+      [[[
+        var a = entity.state;
+        var floatValue = parseFloat(a.replace(/, /, '.'));
+        return floatValue.toFixed(1).toString().replace('.',',');
+      ]]]
+    custom_fields:
+      postfix: |
+        [[[return '°C']]]
+    state:
+      - operator: ">"
+        value: 25
+        styles:
+          card:
+            - background-color: rgb(255,100,50)
+          name:
+            - color: var(--card-background-color)
+          custom_fields:
+            postfix:
+              - color: var(--card-background-color)
+      - operator: ">"
+        value: 24
+        styles:
+          card:
+            - background-color: orange
+          name:
+            - color: var(--card-background-color)
+          custom_fields:
+            postfix:
+              - color: var(--card-background-color)
+      - operator: <
+        value: 20
+        styles:
+          card:
+            - background-color: red
+          name:
+            - color: var(--card-background-color)
+          custom_fields:
+            postfix:
+              - color: var(--card-background-color)
+      - operator: <
+        value: 21.5
+        styles:
+          card:
+            - background-color: orange
+          name:
+            - color: var(--card-background-color)
+          custom_fields:
+            postfix:
+              - color: var(--card-background-color)
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+      grid:
+        - grid-template-areas: '"n" "l" "i" "s"'
+        - grid-template-rows: min-content 1fr min-content min-content
+        - grid-template-columns: 1fr
+      name:
+        - justify-self: start
+        - padding-left: 16px
+        - padding-top: 5px
+        - padding-bottom: 5px
+        - font-size: 16px
+        - font-weight: 500
+        - color: var(--paper-item-icon-active-color)
+      label:
+        - justify-self: start
+        - padding-left: 16px
+        - font-size: 28px
+      custom_fields:
+        postfix:
+          - color: var(--paper-item-icon-active-color)
+          - position: absolute
+          - left: 56%
+          - top: 65%
+          - font-size: 16px
+        vent:
+          - position: absolute
+          - left: 70%
+          - top: 10%
+        openings:
+          - position: absolute
+          - left: 85%
+          - top: 10%
+  speaker_button:
+    color_type: card
+    show_state: false
+    show_name: true
+    layout: icon_name
+    custom_fields:
+      status: |
+        [[[ 
+          if (entity.state=='playing')
+            return '<img src=/local/assets/music_playing.gif>';
+        ]]]
+    styles:
+      custom_fields:
+        status:
+          - margin-top: "-100px"
+          - left: 60%
+          - top: 0%
+          - background-size: cover
+      grid:
+        - grid-template-areas: '"i n"'
+        - grid-template-columns: 10% 1fr
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - height: 65px
+        - background-image: '[[[ return "url(" + entity.attributes.entity_picture + ")"; ]]]'
+        - background-size: cover
+        - background-position: center
+      icon:
+        - justify-self: start
+        - padding-left: 10px
+      name:
+        - font-size: 24px
+        - justify-self: start
+        - padding-left: 10px
+        - align-self: left
+        - margin-bottom: 0px
+      img_cell:
+        - align-self: start
+        - justify-self: start
+        - margin-bottom: 0px
+        - height: 30px
+views:
+  - icon: mdi:home
+    title: Home
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: picture-elements
+                state_filter:
+                  - null
+                image: /local/assets/blank.png
+                aspect_ratio: 5%
+                elements:
+                  - type: state-label
+                    entity: sensor.local_time
+                    style:
+                      top: 50%
+                      left: 20px
+                      width: 200px
+                      text-align: right
+                      font-size: 2.8em
+                      color: rgba(202,217,235,1)
+                  - type: state-label
+                    entity: sensor.local_weekday
+                    style:
+                      top: 34%
+                      left: 150px
+                      width: 50px
+                      text-align: left
+                      font-size: 0.8em
+                      text-transform: uppercase
+                      color: rgba(202,217,235,.75)
+                  - type: state-label
+                    entity: sensor.local_date3
+                    style:
+                      top: 64%
+                      left: 150px
+                      width: 50px
+                      text-align: left
+                      font-size: 1.3em
+                      text-transform: uppercase
+                      color: rgba(202,217,235,.75)
+                  - type: icon
+                    icon: mdi:weather-sunset-up
+                    style:
+                      top: 40%
+                      left: 28%
+                      color: rgba(202,217,235,1)
+                  - type: state-label
+                    entity: sensor.local_sunrise
+                    style:
+                      top: 40%
+                      left: 31.2%
+                      color: rgba(202,217,235,1)
+                  - type: icon
+                    icon: mdi:weather-sunset-down
+                    style:
+                      top: 75%
+                      left: 28%
+                      color: rgba(202,217,235,1)
+                  - type: state-label
+                    entity: sensor.local_sunset
+                    style:
+                      top: 75%
+                      left: 31.2%
+                      color: rgba(202,217,235,1)
+                  - type: image
+                    entity: person.anders
+                    image: /local/assets/dykand.png
+                    state_image:
+                      not_home: /local/assets/dykand_away.png
+                      home: /local/assets/dykand.png
+                    show_name: false
+                    style:
+                      top: 50%
+                      left: 44%
+                      height: 54px
+                      width: 54px
+                      border-radius: 27px
+                  - type: image
+                    entity: person.line
+                    image: /local/assets/line.png
+                    show_name: false
+                    state_image:
+                      not_home: /local/assets/line_away.png
+                      home: /local/assets/line.png
+                    style:
+                      top: 50%
+                      left: 50%
+                      height: 54px
+                      width: 54px
+                      border-radius: 27px
+                  - type: image
+                    entity: device_tracker.passat_bt
+                    image: /local/assets/vw_logo.jpg
+                    show_name: false
+                    state_image:
+                      not_home: /local/assets/vw_logo.jpg
+                      home: /local/assets/vw_logo.jpg
+                    tap_action:
+                      action: navigate
+                      navigation_path: /tablet-ui/1
+                    style:
+                      top: 50%
+                      left: 56%
+                      height: 54px
+                      width: 54px
+                      border-radius: 27px
+                  - type: state-icon
+                    entity: sensor.local_date
+                    icon: mdi:home
+                    style:
+                      top: 40%
+                      left: 78%
+                      color: var(--primary-foreground-color)
+                      "--iron-icon-height": 50px
+                      "--mdc-icon-size": 50px
+                    tap_action:
+                      action: navigate
+                      navigation_path: /tablet-ui/0
+                  - type: state-icon
+                    entity: vacuum.roborock_s5_max
+                    icon: hass:robot-vacuum
+                    style:
+                      top: 40%
+                      left: 84%
+                      color: var(--primary-foreground-color)
+                      "--mdc-icon-size": 50px
+                    tap_action:
+                      action: navigate
+                      navigation_path: /tablet-ui/2
+                  - type: state-icon
+                    entity: sensor.local_date
+                    icon: mdi:lightbulb
+                    style:
+                      top: 40%
+                      left: 90%
+                      color: var(--primary-foreground-color)
+                      "--mdc-icon-size": 50px
+                    tap_action:
+                      action: navigate
+                      navigation_path: /tablet-ui/3
+                  - type: state-icon
+                    entity: sensor.local_date
+                    icon: mdi:music
+                    style:
+                      top: 40%
+                      left: 96%
+                      color: var(--primary-foreground-color)
+                      "--mdc-icon-size": 50px
+                    tap_action:
+                      action: navigate
+                      navigation_path: /tablet-ui/4
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: vertical-stack
+                    cards:
+                      - type: custom:button-card
+                        name: Today's recipe
+                        entity: sensor.madplan_dagensret
+                        show_entity_picture: false
+                        show_state: true
+                        show_name: true
+                        show_image: false
+                        show_label: false
+                        show_icon: false
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Today's recipe
+                            large: true
+                            card:
+                              type: iframe
+                              url: https://www.opskrifter.dk/sog?query=
+                        styles:
+                          card:
+                            - background-image: >-
+                                [[[ return "url(" +
+                                states["sensor.madplan_dagensret_image"].state +
+                                ")"; ]]]
+                            - background-size: cover
+                            - height: 180px
+                          grid:
+                            - grid-template-areas: '"n" "l" "s"'
+                            - grid-template-columns: 1fr
+                            - grid-template-rows: 1fr 5fr 1fr
+                          name:
+                            - background-color: rgba(0, 0,0, 0.3)
+                            - padding-left: 35px
+                            - width: 100%
+                            - line-height: 40px
+                            - text-align: left
+                            - display: inline-block
+                            - vertical-align: middle
+                          state:
+                            - background-color: rgba(0, 0,0, 0.3)
+                            - padding-left: 35px
+                            - width: 100%
+                            - line-height: 40px
+                            - text-align: left
+                            - display: inline-block
+                            - vertical-align: middle
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:calendar-month
+                        name: Meal plan
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: dummy.madplan
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Today's recipe
+                            large: true
+                            card:
+                              type: iframe
+                              url: https://www.opskrifter.dk/sog?query=
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:format-list-checks
+                        name: TO-DO
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Tasks
+                            large: true
+                            card:
+                              type: shopping-list
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:cart
+                        name: Shopping
+                        show_label: false
+                        label: |
+                          [[[
+                            if (entity.attributes.shopping_lists[0].activeCount > 1) 
+                              var txt=' items'
+                            else 
+                              var txt=' item';
+                          ]]]
+                        custom_fields:
+                          items: >
+                            [[[return
+                            entity.attributes.shopping_lists[0].activeCount;]]]
+                        styles:
+                          grid:
+                            - position: relative
+                          custom_fields:
+                            items:
+                              - background-color: var(--paper-item-icon-active-color)
+                              - border-radius: 50%
+                              - position: absolute
+                              - left: 67%
+                              - top: 10%
+                              - height: 20px
+                              - width: 20px
+                              - font-size: 12px
+                              - line-height: 20px
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: rgb(255,255,255)
+                            - border-radius: 10px
+                        entity: sensor.our_groceries
+                        state:
+                          - operator: template
+                            value: |
+                              [[[
+                                return entity.attributes.shopping_lists[0].activeCount==0
+                              ]]]
+                            icon: mdi:cart-outline
+                            styles:
+                              card:
+                                - background-color: var(--card-background-color)
+                              custom_fields:
+                                items:
+                                  - background-color: var(--card-background-color)
+                                  - color: var(--card-background-color)
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Shopping list
+                            large: true
+                            card:
+                              type: custom:our-groceries-card
+                              title: ""
+                              show_crossed_off: false
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:delete
+                        name: Garbage
+                        custom_fields:
+                          days: >
+                            [[[var currentdate = Date.parse(new Date()); var
+                            nextdate=Date.parse(entity.attributes.start_time);
+                            var diff=Math.ceil((nextdate - currentdate) /
+                            (1000*60*60*24)); return diff;]]]
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                          custom_fields:
+                            days:
+                              - background-color: var(--paper-item-icon-active-color)
+                              - border-radius: 50%
+                              - position: absolute
+                              - left: 67%
+                              - top: 10%
+                              - height: 20px
+                              - width: 20px
+                              - font-size: 12px
+                              - line-height: 20px
+                        entity: calendar.garbage_collection
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Garbage collection
+                            card:
+                              type: custom:auto-entities
+                              card:
+                                type: entities
+                              filter:
+                                include:
+                                  - attributes:
+                                      device_class: garbage_collection__schedule
+                                      days: <40
+                              sort:
+                                method: attribute
+                                attribute: days
+                                numeric: true
+                  - type: custom:atomic-calendar-revive
+                    name: Calendar
+                    entities:
+                      - entity: calendar.faelles
+                        name: Shared
+                      - entity: calendar.garbage_collection
+                        name: Garbage
+                    initial_view: listWeek
+                    disableEventLink: true
+                    showMonth: false
+                    showWeekDay: true
+                    showLocation: true
+                    showNoEventsForToday: true
+                    dimFinishedEvents: true
+                    maxDaysToShow: 7
+              - type: vertical-stack
+                cards:
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:silverware-fork-knife
+                        name: Dinner
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: null
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: null
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:movie-roll
+                        name: Movie
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: scene.film
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.film
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:brightness-6
+                        name: Medium
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: scene.mellem
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.mellem
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:lightbulb-on
+                        name: Max
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: scene.lege
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.lege
+                      - type: custom:button-card
+                        color_type: card
+                        icon: mdi:lightbulb-off-outline
+                        name: All off
+                        styles:
+                          card:
+                            - background-color: var(--card-background-color)
+                            - color: var(--primary-foreground-color)
+                            - border-radius: 10px
+                        entity: scene.sluk_stue_alrum
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.sluk_stue_alrum
+                  - type: custom:mini-media-player
+                    entity: media_player.alrum
+                    icon: mdi:surround-sound
+                    source: full
+                    hide:
+                      power: true
+                      progress: true
+                    speaker_group:
+                      platform: sonos
+                      show_group_count: true
+                      entities:
+                        - entity_id: media_player.alrum
+                          name: Alrum
+                        - entity_id: media_player.stue
+                          name: Stue
+                        - entity_id: media_player.bornevaerelse
+                          name: Isabella
+                        - entity_id: media_player.badevaerelse
+                          name: Stort bad
+                        - entity_id: media_player.terrasse
+                          name: Lille bad
+                  - type: picture-glance
+                    title: Kids room 1
+                    image: >-
+                      https://www.home-assistant.io/images/merchandise/shirt-frontpage.png
+                    aspect_ratio: 0%
+                    camera_image: camera.reolink_e1_pro_profile000_mainstream
+                    camera_view: live
+                    entities:
+                      - entity: sun.sun
+                        name: Move left
+                        icon: mdi:arrow-left-bold-circle-outline
+                        tap_action:
+                          action: call-service
+                          service: onvif.ptz
+                          service_data:
+                            pan: LEFT
+                            entity_id: camera.reolink_e1_pro_profile000_mainstream
+                            move_mode: ContinuousMove
+                            continuous_duration: 1
+                      - entity: sun.sun
+                        name: Move right
+                        icon: mdi:arrow-right-bold-circle-outline
+                        tap_action:
+                          action: call-service
+                          service: onvif.ptz
+                          service_data:
+                            pan: RIGHT
+                            entity_id: camera.reolink_e1_pro_profile000_mainstream
+                            move_mode: ContinuousMove
+                            continuous_duration: 1
+                      - entity: light.sky
+                        name: Sky
+                        icon: mdi:led-strip-variant
+                      - entity: switch.on_off_plug_in_unit_12
+                        name: Fan
+                        icon: mdi:fan
+                  - type: entities
+                    title: Status
+                    entities:
+                      - alarm_control_panel.alarm
+                      - entity: input_select.home_state
+                        type: custom:multiple-entity-row
+                        name: Home state
+                        icon: mdi:shield-home
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Home State Selection
+                            large: true
+                            card:
+                              type: horizontal-stack
+                              cards:
+                                - type: custom:button-card
+                                  color_type: card
+                                  icon: mdi:home
+                                  name: Home
+                                  styles:
+                                    card:
+                                      - background-color: var(--card-background-color)
+                                      - color: var(--primary-foreground-color)
+                                      - border: 5px solid var(--card-background-color)
+                                  entity: input_select.home_state
+                                  state:
+                                    - value: Home
+                                      styles:
+                                        card:
+                                          - border: >-
+                                              5px solid
+                                              var(--paper-item-icon-active-color)
+                                  tap_action:
+                                    service: input_select.select_option
+                                    action: call-service
+                                    service_data:
+                                      entity_id: input_select.home_state
+                                      option: Home
+                                - type: custom:button-card
+                                  color_type: card
+                                  icon: mdi:home-outline
+                                  name: Away
+                                  styles:
+                                    card:
+                                      - background-color: var(--card-background-color)
+                                      - color: var(--primary-foreground-color)
+                                      - border: 5px solid var(--card-background-color)
+                                  entity: input_select.home_state
+                                  state:
+                                    - value: Away
+                                      styles:
+                                        card:
+                                          - border: >-
+                                              5px solid
+                                              var(--paper-item-icon-active-color)
+                                  tap_action:
+                                    service: input_select.select_option
+                                    action: call-service
+                                    service_data:
+                                      entity_id: input_select.home_state
+                                      option: Away
+                                - type: custom:button-card
+                                  color_type: card
+                                  icon: mdi:weather-night
+                                  name: Night
+                                  styles:
+                                    card:
+                                      - background-color: var(--card-background-color)
+                                      - color: var(--primary-foreground-color)
+                                      - border: 5px solid var(--card-background-color)
+                                  entity: input_select.home_state
+                                  state:
+                                    - value: Night
+                                      styles:
+                                        card:
+                                          - border: >-
+                                              5px solid
+                                              var(--paper-item-icon-active-color)
+                                  tap_action:
+                                    service: input_select.select_option
+                                    action: call-service
+                                    service_data:
+                                      entity_id: input_select.home_state
+                                      option: Night
+                                - type: custom:button-card
+                                  color_type: card
+                                  icon: mdi:party-popper
+                                  name: Guests
+                                  styles:
+                                    card:
+                                      - background-color: var(--card-background-color)
+                                      - color: var(--primary-foreground-color)
+                                      - border: 5px solid var(--card-background-color)
+                                  entity: input_select.home_state
+                                  state:
+                                    - value: Guests
+                                      styles:
+                                        card:
+                                          - border: >-
+                                              5px solid
+                                              var(--paper-item-icon-active-color)
+                                  tap_action:
+                                    service: input_select.select_option
+                                    action: call-service
+                                    service_data:
+                                      entity_id: input_select.home_state
+                                      option: Guests
+                                - type: custom:button-card
+                                  color_type: card
+                                  icon: mdi:beach
+                                  name: Holiday
+                                  styles:
+                                    card:
+                                      - background-color: var(--card-background-color)
+                                      - color: var(--primary-foreground-color)
+                                      - border: 5px solid var(--card-background-color)
+                                  entity: input_select.home_state
+                                  state:
+                                    - value: Holiday
+                                      styles:
+                                        card:
+                                          - border: >-
+                                              5px solid
+                                              var(--paper-item-icon-active-color)
+                                  tap_action:
+                                    service: input_select.select_option
+                                    action: call-service
+                                    service_data:
+                                      entity_id: input_select.home_state
+                                      option: Holiday
+                      - entity: sensor.last_motion_sensor
+                        type: custom:multiple-entity-row
+                        name: Recent motion detected
+                        icon: mdi:run
+                        secondary_info:
+                          entity: sensor.last_motion_time
+                          format: relative
+                          name: false
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Recent motion
+                            large: true
+                            card:
+                              type: horizontal-stack
+                              cards:
+                                - type: custom:auto-entities
+                                  card:
+                                    type: logbook
+                                    title: Recent events
+                                    show_header_toggle: false
+                                    positions:
+                                      icon: "off"
+                                      indicator: inside
+                                      name: outside
+                                      value: inside
+                                    height: 2vh
+                                    width: 50%
+                                    hours_to_show: 24
+                                  filter:
+                                    include:
+                                      - domain: binary_sensor
+                                        attributes:
+                                          device_class: opening
+                                        options:
+                                          secondary_info: last-changed
+                                      - domain: binary_sensor
+                                        attributes:
+                                          device_class: motion
+                                        options:
+                                          secondary_info: last-changed
+                                      - domain: person
+                                        options:
+                                          secondary_info: last-changed
+                                      - entity_id: alarm_control_panel.alarm
+                                        options:
+                                          secondary_info: last-changed
+                                    exclude:
+                                      - entity_id: person.alle
+                                    sort:
+                                      method: last_changed
+                                      numeric: true
+                      - entity: sensor.last_door_sensor
+                        type: custom:multiple-entity-row
+                        name: Recent door/window opened
+                        icon: mdi:door-open
+                        secondary_info:
+                          entity: sensor.last_door_time
+                          format: relative
+                          name: false
+                        tap_action:
+                          action: fire-dom-event
+                          browser_mod:
+                            command: popup
+                            title: Recent events
+                            large: true
+                            card:
+                              type: horizontal-stack
+                              cards:
+                                - type: custom:auto-entities
+                                  card:
+                                    type: logbook
+                                    title: Recent events
+                                    show_header_toggle: false
+                                    positions:
+                                      icon: "off"
+                                      indicator: inside
+                                      name: outside
+                                      value: inside
+                                    height: 2vh
+                                    width: 50%
+                                    hours_to_show: 24
+                                  filter:
+                                    include:
+                                      - domain: binary_sensor
+                                        attributes:
+                                          device_class: opening
+                                        options:
+                                          secondary_info: last-changed
+                                      - domain: binary_sensor
+                                        attributes:
+                                          device_class: motion
+                                        options:
+                                          secondary_info: last-changed
+                                      - domain: person
+                                        options:
+                                          secondary_info: last-changed
+                                      - entity_id: alarm_control_panel.alarm
+                                        options:
+                                          secondary_info: last-changed
+                                    exclude:
+                                      - entity_id: person.alle
+                                    sort:
+                                      method: last_changed
+                                      numeric: true
+              - type: vertical-stack
+                cards:
+                  - type: weather-forecast
+                    entity: weather.hjem
+                    name: Weather forecast
+                  - type: vertical-stack
+                    cards:
+                      - type: horizontal-stack
+                        cards:
+                          - type: sensor
+                            entity: sensor.netatmo_weather_home_ude_temperature
+                            name: Outside
+                          - type: sensor
+                            entity: sensor.ude_min_temp
+                            name: Min
+                            icon: mdi:arrow-collapse-down
+                          - type: sensor
+                            entity: sensor.ude_max_temp
+                            name: Max
+                            icon: mdi:arrow-collapse-up
+                      - type: horizontal-stack
+                        cards:
+                          - type: sensor
+                            graph: line
+                            entity: sensor.netatmo_weather_home_regn_rain
+                            name: Rain
+                          - type: sensor
+                            graph: line
+                            name: Humidity
+                            entity: sensor.netatmo_weather_home_ude_humidity
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.bornevaerelse_sensor_temperature
+                            name: Kids room 1
+                            custom_fields:
+                              vent: |
+                                [[[
+                                  if (states["switch.on_off_plug_in_unit_12"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:fan"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_14"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Kids room 1
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: history-graph
+                                      entities:
+                                        - entity: sensor.bornevaerelse_sensor_temperature
+                                          name: Temperature
+                                        - entity: binary_sensor.openclose_14
+                                          name: Window
+                                        - entity: switch.on_off_plug_in_unit_12
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file under:
+                                        include/cards/room_kids01.yaml
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.temperature_5
+                            name: Kids room 2
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_38"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Kids room 2
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: history-graph
+                                      entities:
+                                        - entity: sensor.temperature_5
+                                          name: Temperature
+                                        - entity: binary_sensor.openclose_38
+                                          name: Window
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file under:
+                                        include/cards/room_kids02.yaml
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.netatmo_weather_home_inde_temperature
+                            name: Office
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_29"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Office
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: history-graph
+                                      entities:
+                                        - entity: >-
+                                            sensor.netatmo_weather_home_inde_temperature
+                                          name: Temperature
+                                        - entity: binary_sensor.openclose_29
+                                          name: Window
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file under:
+                                        include/cards/room_office.yaml
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            name: Kitchen
+                            entity: sensor.velux_sensor_temperature
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["group.openings_alrum"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Kitchen
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: custom:collapsable-cards
+                                      title: Temperature
+                                      defaultOpen: true
+                                      buttonStyle: >-
+                                        font-size:
+                                        var(--ha-card-header-font-size,
+                                        24px);font-family:
+                                        var(--ha-card-header-font-family,
+                                        inherit);letter-spacing:
+                                        -0.012em;font-weight: normal;
+                                      cards:
+                                        - type: history-graph
+                                          entities:
+                                            - entity: sensor.velux_sensor_temperature
+                                              name: Temperature
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file:
+                                        ../cards/room_kitchen.yaml
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.temperature_8
+                            name: Bed room
+                            icon: ""
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["group.openings_sovevaerelse"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Bed room
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: history-graph
+                                      entities:
+                                        - entity: sensor.temperature_8
+                                          name: Temperature
+                                        - entity: group.openings_sovevaerelse
+                                          name: Door or Window
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file under:
+                                        include/cards/room_bed.yaml
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.temperature_14
+                            name: Hall
+                            icon: ""
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_25"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            name: Living room
+                            entity: sensor.temperature_55
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_22"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                            tap_action:
+                              action: fire-dom-event
+                              browser_mod:
+                                command: popup
+                                title: Living room
+                                large: true
+                                card:
+                                  type: vertical-stack
+                                  cards:
+                                    - type: history-graph
+                                      entities:
+                                        - entity: sensor.temperature_55
+                                          name: Temperature
+                                        - entity: binary_sensor.openclose_22
+                                          name: Door
+                                    - type: markdown
+                                      content: >-
+                                        For details, please refer to file under:
+                                        include/cards/room_living.yaml
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.temperature_61
+                            name: Bathroom
+                            icon: ""
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_26"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+                          - type: custom:button-card
+                            template: custom_sensor_card
+                            entity: sensor.temperature_66
+                            name: Toilet
+                            icon: ""
+                            custom_fields:
+                              openings: |
+                                [[[
+                                  if (states["binary_sensor.openclose_30"].state == 'on') 
+                                  return `<ha-icon
+                                    icon="mdi:window-open-variant"
+                                    style="width: 16px; height: 16px; color: white;">
+                                    </ha-icon>`
+                                ]]]
+  - icon: mdi:car
+    title: Passat
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: markdown
+                content: >-
+                  To show the header here, you should copy and insert the code
+                  from line 147-292. For details, please also refer to file
+                  under: include/cards/tablet_header.yaml
+          - type: horizontal-stack
+            cards:
+              - type: picture-elements
+                image: /local/assets/passat.JPG
+                entity_id: device_tracker.passat_bt
+                elements:
+                  - type: state-icon
+                    icon: mdi:map-outline
+                    entity: device_tracker.passat_bt
+                    title: Placering
+                    style:
+                      top: 8%
+                      left: 30px
+                      "--paper-item-icon-color": black
+                      "--iron-icon-height": 40px
+                      "--iron-icon-width": 40px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    title: Placering
+                    style:
+                      top: 8%
+                      left: 90px
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+                  - type: state-icon
+                    entity: device_tracker.passat_bt
+                    icon: mdi:counter
+                    title: Kilometerstand
+                    style:
+                      top: 8%
+                      left: 75%
+                      "--paper-item-icon-color": black
+                      "--iron-icon-height": 40px
+                      "--iron-icon-width": 40px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    title: Kilometerstand
+                    attribute: odometer
+                    suffix: " km"
+                    style:
+                      top: 8%
+                      left: 90%
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+                  - type: state-icon
+                    entity: device_tracker.passat_bt
+                    icon: mdi:gas-station
+                    title: Brændstof
+                    style:
+                      top: 90%
+                      left: 30px
+                      "--paper-item-icon-color": black
+                      "--iron-icon-height": 40px
+                      "--iron-icon-width": 40px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    attribute: fuel_level
+                    title: Brændstof
+                    suffix: " liter"
+                    style:
+                      top: 90%
+                      left: 90px
+                      font-size: 15px
+                      text-align: left
+                      width: 100px
+                      color: rgba(0,0,0,1)
+                  - type: state-icon
+                    entity: device_tracker.passat_bt
+                    icon: mdi:oil-level
+                    title: Næste olieskift
+                    style:
+                      top: 90%
+                      left: 40%
+                      "--paper-item-icon-color": black
+                      "--iron-icon-height": 40px
+                      "--iron-icon-width": 40px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    attribute: next_oilchange_days
+                    title: Dage til næste olieskift
+                    suffix: " dage"
+                    style:
+                      top: 87%
+                      left: 55%
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    attribute: next_oilchange_km
+                    title: Km til næste olieskift
+                    suffix: " km"
+                    style:
+                      top: 93%
+                      left: 55%
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+                  - type: state-icon
+                    entity: device_tracker.passat_bt
+                    icon: mdi:tools
+                    title: Næste service
+                    suffix: " dage"
+                    style:
+                      top: 90%
+                      left: 75%
+                      "--paper-item-icon-color": black
+                      "--iron-icon-height": 40px
+                      "--iron-icon-width": 40px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    attribute: next_service_days
+                    title: Dage til næste service
+                    suffix: " dage"
+                    style:
+                      top: 87%
+                      left: 90%
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+                  - type: state-label
+                    entity: device_tracker.passat_bt
+                    attribute: next_service_km
+                    title: Km til næste service
+                    suffix: " km"
+                    style:
+                      top: 93%
+                      left: 90%
+                      font-size: 15px
+                      color: rgba(0,0,0,1)
+                      text-align: left
+                      width: 100px
+              - type: map
+                entities:
+                  - entity: device_tracker.passat_bt
+                    icon: mdi:car
+                hours_to_show: 24
+                aspect_ratio: 15x10
+                default_zoom: 10
+  - icon: mdi:robot-vacuum
+    title: Støvsuger
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: markdown
+                content: >-
+                  To show the header here, you should copy and insert the code
+                  from line 147-292. For details, please also refer to file
+                  under: include/cards/tablet_header.yaml
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_24
+                        name: Utility
+                        aspect_ratio: 1/0.8
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_22
+                        aspect_ratio: 1/0.8
+                        name: Hall
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_01
+                        aspect_ratio: 1/0.8
+                        name: Toilet
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_16
+                        aspect_ratio: 1/0.8
+                        name: Office
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_23
+                        icon: mdi:chess-queen
+                        aspect_ratio: 1/0.4
+                        name: Kids room 1
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_19
+                        icon: hass:unicorn
+                        aspect_ratio: 1/0.4
+                        name: Kids room 2
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_17
+                        aspect_ratio: 1/0.4
+                        name: Kitchen
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_26
+                        aspect_ratio: 1/0.4
+                        name: Living room
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_20
+                        aspect_ratio: 1/0.4
+                        name: Bedroom
+                      - type: custom:button-card
+                        color_type: card
+                        entity: input_boolean.clean_room_21
+                        aspect_ratio: 1/0.4
+                        name: Bathroom
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:button-card
+                        color_type: card
+                        entity: scene.select_all_rooms
+                        icon: mdi:checkbox-multiple-marked-outline
+                        name: Select all
+                        aspect_ratio: 1/0.5
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.select_all_rooms
+                      - type: custom:button-card
+                        color_type: card
+                        entity: script.nodered_vacuum_test
+                        icon: mdi:broom
+                        name: Start cleaning
+                        aspect_ratio: 1/0.5
+                        tap_action:
+                          action: call-service
+                          service: script.turn_on
+                          service_data:
+                            entity_id: script.nodered_vacuum_test
+                      - type: custom:button-card
+                        color_type: card
+                        entity: scene.select_no_rooms
+                        icon: mdi:checkbox-multiple-blank-outline
+                        name: Deselect all
+                        aspect_ratio: 1/0.5
+                        tap_action:
+                          action: call-service
+                          service: scene.turn_on
+                          service_data:
+                            entity_id: scene.select_no_rooms
+              - type: vertical-stack
+                cards:
+                  - type: custom:xiaomi-vacuum-card
+                    entity: vacuum.roborock_s5_max
+                    name: false
+                    vendor: xiaomi
+                    image: /local/assets/vacuum.png
+                    attributes:
+                      main_brush:
+                        label: "Main: "
+                        unit: " t"
+                      side_brush:
+                        label: "Side: "
+                        unit: " t"
+                      filter:
+                        label: "Filter: "
+                        unit: " t"
+                      sensor:
+                        label: "Sensors: "
+                        unit: " t"
+                    buttons:
+                      start:
+                        show: true
+                      stop:
+                        show: true
+                      pause:
+                        show: true
+                      locate:
+                        show: false
+                      spot:
+                        show: false
+                      return:
+                        show: true
+                        label: Return to dock
+                  - type: vertical-stack
+                    cards:
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            color_type: card
+                            name: >-
+                              [[[ return 'Cleaned since empty: ' +
+                              parseInt((entity.state-states['input_number.last_vaccuum_reset_m2'].state))
+                              +' m2' ]]]
+                            icon: mdi:counter
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: sensor.roborock_s5_max_total_clean_area
+                            state:
+                              - operator: template
+                                value: |
+                                  [[[
+                                    return entity.state-states['input_number.last_vaccuum_reset_m2'].state>150;
+                                  ]]]
+                                icon: mdi:alert
+                                styles:
+                                  card:
+                                    - background-color: rgb(255,100,50)
+                                  name:
+                                    - color: var(--card-background-color)
+                          - type: custom:button-card
+                            color_type: card
+                            name: Empty dustbin
+                            icon: mdi:delete-empty
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: vacuum.roborock_s5_max
+                            confirmation:
+                              text: >-
+                                [[[ return `Are you sure that you want to empty
+                                the dustbin now?` ]]]
+                            tap_action:
+                              action: call-service
+                              service: input_text.set_value
+                              service_data:
+                                entity_id: input_text.nodered_actions
+                                value: manual_vacuum_empty
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            color_type: card
+                            name: >-
+                              [[[ return 'Replace filter: ' +
+                              parseInt(entity.state/60/60) +' timer' ]]]
+                            icon: mdi:delete-variant
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: sensor.roborock_s5_max_filter_left
+                            state:
+                              - operator: template
+                                value: |
+                                  [[[
+                                    return parseInt(entity.state/60/60)<5;
+                                  ]]]
+                                icon: mdi:alert
+                                styles:
+                                  card:
+                                    - background-color: rgb(255,100,50)
+                                  name:
+                                    - color: var(--card-background-color)
+                            confirmation:
+                              text: >-
+                                [[[ return `Are you sure that you want to reset
+                                the filter timer?` ]]]
+                            tap_action:
+                              action: call-service
+                              service: vacuum.send_command
+                              service_data:
+                                entity_id: vacuum.roborock_s5_max
+                                command: reset_consumable
+                                params: filter_work_time
+                          - type: custom:button-card
+                            color_type: card
+                            name: >-
+                              [[[ return 'Clean sensors: ' +
+                              parseInt(entity.state/60/60) +' timer' ]]]
+                            icon: mdi:leak
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: sensor.roborock_s5_max_sensor_dirty_left
+                            state:
+                              - operator: template
+                                value: |
+                                  [[[
+                                    return parseInt(entity.state/60/60)<3;
+                                  ]]]
+                                icon: mdi:alert
+                                styles:
+                                  card:
+                                    - background-color: rgb(255,100,50)
+                                  name:
+                                    - color: var(--card-background-color)
+                            confirmation:
+                              text: >-
+                                [[[ return `Are you sure that you want to reset
+                                the sensor timer?` ]]]
+                            tap_action:
+                              action: call-service
+                              service: vacuum.send_command
+                              service_data:
+                                entity_id: vacuum.roborock_s5_max
+                                command: reset_consumable
+                                params: sensor_dirty_time
+                      - type: horizontal-stack
+                        cards:
+                          - type: custom:button-card
+                            color_type: card
+                            name: >-
+                              [[[ return 'Replace main brush: ' +
+                              parseInt(entity.state/60/60) +' timer' ]]]
+                            icon: mdi:robot-vacuum-variant
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: sensor.roborock_s5_max_main_brush_left
+                            state:
+                              - operator: template
+                                value: |
+                                  [[[
+                                    return parseInt(entity.state/60/60)<5;
+                                  ]]]
+                                icon: mdi:alert
+                                styles:
+                                  card:
+                                    - background-color: rgb(255,100,50)
+                                  name:
+                                    - color: var(--card-background-color)
+                            confirmation:
+                              text: >-
+                                [[[ return `Are you sure that you want to reset
+                                the main brush timer?` ]]]
+                            tap_action:
+                              action: call-service
+                              service: vacuum.send_command
+                              service_data:
+                                entity_id: vacuum.roborock_s5_max
+                                command: reset_consumable
+                                params: main_brush_work_time
+                          - type: custom:button-card
+                            color_type: card
+                            name: >-
+                              [[[ return 'Replace side brush: ' +
+                              parseInt(entity.state/60/60) +' timer' ]]]
+                            icon: mdi:selection-ellipse-arrow-inside
+                            aspect_ratio: 1/0.45
+                            show_name: true
+                            entity: sensor.roborock_s5_max_side_brush_left
+                            state:
+                              - operator: template
+                                value: |
+                                  [[[
+                                    return parseInt(entity.state/60/60)<5;
+                                  ]]]
+                                icon: mdi:alert
+                                styles:
+                                  card:
+                                    - background-color: rgb(255,100,50)
+                                  name:
+                                    - color: var(--card-background-color)
+                            confirmation:
+                              text: >-
+                                [[[ return `Are you sure that you want to reset
+                                the side brush timer?` ]]]
+                            tap_action:
+                              action: call-service
+                              service: vacuum.send_command
+                              service_data:
+                                entity_id: vacuum.roborock_s5_max
+                                command: reset_consumable
+                                params: side_brush_work_time
+  - icon: mdi:floor-plan
+    title: Floorplan
+    panel: true
+    cards:
+      - type: markdown
+        content: >-
+          This view includes a picture-elements with my house floorplan to
+          control relevant entities. For details, please refer to file under:
+          include/views/floorplan.yaml
+  - icon: mdi:music
+    title: Music
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: markdown
+                content: >-
+                  To show the header here, you should copy and insert the code
+                  from line 147-292. For details, please also refer to file
+                  under: include/cards/tablet_header.yaml
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: custom:button-card
+                    color_type: card
+                    show_state: false
+                    show_name: true
+                    layout: icon_name
+                    entity: input_select.music_source_type_tablet
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n"'
+                        - grid-template-columns: 10% 1fr
+                      card:
+                        - background-color: rgb(20, 216, 204)
+                        - color: var(--primary-foreground-color)
+                        - height: 65px
+                      icon:
+                        - justify-self: start
+                        - padding-left: 10px
+                      name:
+                        - font-size: 24px
+                        - justify-self: start
+                        - padding-left: 10px
+                        - align-self: left
+                        - margin-top: "-5px"
+                        - margin-bottom: 0px
+                      img_cell:
+                        - align-self: start
+                        - justify-self: start
+                        - margin-top: "-5px"
+                        - margin-bottom: 0px
+                        - height: 30px
+                    state:
+                      - value: spotify_playlist
+                        name: Spotify - Playlists
+                        icon: mdi:spotify
+                        styles:
+                          card:
+                            - background-color: rgb(29,185,84)
+                      - value: spotify_featured
+                        icon: mdi:spotify
+                        name: Spotify - Featured
+                        styles:
+                          card:
+                            - background-color: rgb(29,185,84)
+                      - value: radio
+                        icon: mdi:radio
+                        name: TuneIn radio
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_next
+                      service_data:
+                        cycle: true
+                        entity_id: input_select.music_source_type_tablet
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.music_source_type_tablet
+                        state: spotify_playlist
+                    card:
+                      type: custom:sonos-playlist-card
+                      player: media_player.dummy
+                      limit: 9
+                      gridWidth: 25
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.music_source_type_tablet
+                        state: spotify_featured
+                    card:
+                      type: custom:sonos-playlist-card
+                      playlist_type: featured
+                      player: media_player.dummy
+                      limit: 9
+                      gridWidth: 28
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.music_source_type_tablet
+                        state: radio
+                    card:
+                      type: vertical-stack
+                      cards:
+                        - type: horizontal-stack
+                          cards:
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P3_logo_2020.svg.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: DR P3 93.9 (Eurohits)
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://www.radioguide.fm/uploads/images/radiostation/1200px-DR_P4_logo_2020.svg.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: DR P4 København 96.5 (Eurohits)
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://cdn-radiotime-logos.tunein.com/s87164g.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: media_player.kontor
+                                  source: NOVA 91.4 (Top 40-pop)
+                        - type: horizontal-stack
+                          cards:
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://www.radio.dk/images/broadcasts/d3/f9/4626/c175.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: contain
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: Radio 100 103.6 (Top 40-pop)
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://bluesmenchannel.com/_dr/1/41682169.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: Pop FM 100.0 (Top 40-pop)
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://www.radio.dk/images/broadcasts/86/85/4659/7/c175.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: Radio Soft 95.0 (Top 40-pop)
+                        - type: horizontal-stack
+                          cards:
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://www.radio.dk/images/broadcasts/68/7c/10657/c175.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: cover
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: The Voice 104.9 (Top 40-pop)
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://digitalt.tv/wp-content/uploads/2019/04/NRJ-Radio.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: contain
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: NRJ Denmark
+                            - type: custom:button-card
+                              color_type: card
+                              styles:
+                                card:
+                                  - background-image: >-
+                                      url(https://cdn-radiotime-logos.tunein.com/s216726q.png)
+                                  - background-repeat: no-repeat
+                                  - background-size: contain
+                                  - background-position: center
+                                  - border-radius: 10px
+                                  - height: 206px
+                              tap_action:
+                                action: call-service
+                                service: media_player.select_source
+                                service_data:
+                                  entity_id: >-
+                                    [[[ return 'media_player.' +
+                                    states['input_select.speaker_selection'].state
+                                    ]]]
+                                  source: myROCK 92.7 (Rock)
+              - type: vertical-stack
+                cards:
+                  - type: custom:button-card
+                    color_type: card
+                    show_state: false
+                    show_name: true
+                    layout: icon_name
+                    styles:
+                      grid:
+                        - grid-template-areas: '"i n"'
+                        - grid-template-columns: 10% 1fr
+                      card:
+                        - background-color: |
+                            [[[
+                              if (states['input_select.music_source_type_tablet'].state == 'radio')
+                                return 'rgb(20, 216, 204)';
+                              return 'rgb(29,185,84)';
+                            ]]]
+                        - color: var(--primary-foreground-color)
+                        - height: 65px
+                      icon:
+                        - justify-self: start
+                        - padding-left: 10px
+                      name:
+                        - font-size: 24px
+                        - justify-self: start
+                        - padding-left: 10px
+                        - align-self: left
+                        - margin-top: "-5px"
+                        - margin-bottom: 0px
+                      img_cell:
+                        - align-self: start
+                        - justify-self: start
+                        - margin-top: "-5px"
+                        - margin-bottom: 0px
+                        - height: 30px
+                    entity: input_select.speaker_selection
+                    state:
+                      - value: kitchen
+                        name: Sonos - Kitchen
+                        icon: mdi:chef-hat
+                      - value: living
+                        name: Sonos - Living room
+                        icon: mdi:sofa
+                      - value: kid1
+                        name: Sonos - Kid 1
+                        icon: mdi:unicorn
+                      - value: office
+                        name: Sonos - Office
+                        icon: mdi:laptop
+                      - value: bath
+                        name: Sonos - Bath room
+                        icon: mdi:shower
+                      - value: kid2
+                        name: Sonos - Kid 2
+                        icon: mdi:chess-queen
+                    tap_action:
+                      action: fire-dom-event
+                      browser_mod:
+                        command: popup
+                        title: Select Sonos speaker
+                        auto_close: true
+                        hide_header: true
+                        large: true
+                        card:
+                          type: vertical-stack
+                          cards:
+                            - type: custom:button-card
+                              name: Sonos - Kitchen
+                              template: speaker_button
+                              icon: mdi:silverware-fork-knife
+                              entity: media_player.alrum
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: kitchen
+                            - type: custom:button-card
+                              template: speaker_button
+                              name: Sonos - Living room
+                              icon: mdi:sofa
+                              entity: media_player.living
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: living
+                            - type: custom:button-card
+                              template: speaker_button
+                              name: Sonos - Office
+                              icon: mdi:laptop
+                              entity: media_player.office
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: office
+                            - type: custom:button-card
+                              template: speaker_button
+                              name: Sonos - Kid1
+                              icon: mdi:unicorn
+                              entity: media_player.kid1
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: kid1
+                            - type: custom:button-card
+                              template: speaker_button
+                              name: Sonos - Kid2
+                              icon: mdi:chess-queen
+                              entity: media_player.kid2
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: kid2
+                            - type: custom:button-card
+                              template: speaker_button
+                              name: Sonos - Bathroom
+                              icon: mdi:shower
+                              entity: media_player.bath
+                              tap_action:
+                                action: call-service
+                                service: input_select.select_option
+                                service_data:
+                                  entity_id: input_select.speaker_selection
+                                  option: bath
+                    double_tap_action:
+                      action: call-service
+                      service: input_select.select_next
+                      service_data:
+                        cycle: true
+                        entity_id: input_select.speaker_selection
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: kitchen
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.kitchen
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: living
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.living
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: kid1
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.kid1
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: kid2
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.kid2
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: office
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.office
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+                      speaker_group:
+                        platform: sonos
+                        show_group_count: true
+                        entities:
+                          - entity_id: media_player.kitchen
+                            name: Kitchen
+                          - entity_id: media_player.living
+                            name: Living room
+                          - entity_id: media_player.kid1
+                            name: Kid1
+                          - entity_id: media_player.kid2
+                            name: Kid2
+                          - entity_id: media_player.bath
+                            name: Bathroom
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.speaker_selection
+                        state: bath
+                    card:
+                      type: custom:mini-media-player
+                      entity: media_player.bath
+                      artwork: full-cover
+                      source: icon
+                      hide:
+                        power: true
+  - title: Instructions
+    path: instructions
+    icon: mdi:information-outline
+    type: panel
+    badges: []
+    cards:
+      - type: markdown
+        content: >-
+          ## Introduction
+          This is a consolidated version of my main dashboard that can be used,
+          if you prefer to edit your Lovelace dashboards in UI mode rather than
+          YAML mode.
+
+          The dashboard includes most - but not all features - from my YAML
+          version. However, the dashboard should be enough to get get you
+          started.
+
+          I still highly recommend to use the YAML version if you are serious
+          about creating a highly customized dashboard. The main reasoning
+          behind my recommendation is:
+
+          - The YAML version allows you to use include statements to split your
+          file into smaller and more manageable files, which makes it easier to
+          move stuff around or exclude certain elements of the dashboards. 
+
+          It also allows you to reuse code across multiple views or dashboards
+          and just maintain the code one place. This is particularly useful for
+          the header bar that is used in each view of the dashboard
+
+          - The YAML version also supports insertion of comments in the code.
+          This is useful to document your code but can also be use to quickly
+          disable parts of your code without having to delete it entirely. 
+
+          ## Instructions
+
+          ### 1. Install custom components
+          Before beginning to edit the dashboard, you should install the
+          following custom components that are used in my dashboard:
+
+          - [Browser_mod](https://github.com/thomasloven/hass-browser_mod)
+          - [Kiosk mode](https://github.com/maykar/kiosk-mode)
+          - [Custom button card](https://github.com/custom-cards/button-card)
+          - [Our Groceries card](https://github.com/ljmerza/our-groceries-card)
+          - [Xiaomi Vacuum
+          card](https://github.com/benct/lovelace-xiaomi-vacuum-card)
+          - [Mini media-player](https://github.com/kalkih/mini-media-player)
+          - [Multiple Entity
+          Row](https://github.com/benct/lovelace-multiple-entity-row)
+          - [Collapsable
+          cards](https://github.com/RossMcMillan92/lovelace-collapsable-cards)
+          - [Atomic Calendar Revive
+          card](https://github.com/marksie1988/atomic-calendar-revive)
+          - [Auto-entities
+          card](https://github.com/thomasloven/lovelace-auto-entities)
+          - [Sonos Playlist
+          Card](https://github.com/ChrisK91/sonos-playlist-card)
+
+          Most of the above cofrontend compontents can be found and installed
+          via [HACS](https://hacs.xyz/).
+
+          ### 2. Copy images
+          Copy relevant images from the "assets" folder to the same folder on
+          your system (create the folder, if it does not exists).
+
+          ### 3. Edit Lovelace
+          Edit each element in the dashboard to update with names on your
+          entities or delete elements that are not needed. Please note that some
+          of the custom components will require editing of the YAML code.
+
+          ### 4. Enable kiosk-mode
+          To disable the top menu and sidebar, you can add ` ?kiosk`  to your
+          Home Assistant URL.
+
+          ### Notes
+          This view can be safely deleted without affecting any other view in
+          the dashboard.
