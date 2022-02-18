@@ -39,3 +39,13 @@ Flow for doorbell automation that:
 ### **Screenshot**
 ![Doorbell](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/doorbell.png)
 
+## EV Charging
+This flow automates control over charging of my EV at home using our Easee EV charger. The flow provides the following functionality:
+
+* Send notrification with reminder to plug-in cable when both electricity prices and current SoC are low
+* Use actionable notification to ask if charging should continue or be postponed to a time where electricity prices are lowest, when the car is plugged into the EV charger
+* Start charging at scheduled time
+
+### **Screenshot**
+![EV Charging](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/EV_charging.png)
+

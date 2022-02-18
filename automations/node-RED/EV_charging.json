@@ -1,0 +1,691 @@
+[
+    {
+        "id": "93e85c182978b7e1",
+        "type": "tab",
+        "label": "EV Charging",
+        "disabled": false,
+        "info": "## **Flow for automation of EV Charging**\n**By Anders Lukic**\n\n---\n\n### **Functionality**\n\n---\n\nThis flow automates control over EV Charging of my Skoda ENYAQ at home using our Easee EV charger. The flow provides the following functionality:\n\n* Send notrification with reminder to plug-in cable when both electricity prices and current SoC are low\n* Use actionable notification to ask if charging should continue or be postponed to a time where electricity prices are lowest, when the car is plugged into the EV charger\n* Start charging at scheduled time\n\n---\n### **Requirements**\n---\nThis flow requires the following additional integrations and configuration to work:\n\n* Installation of Skoda Connect integration: https://github.com/lendy007/homeassistant-skodaconnect\n* Installation of Easee EV Charger integration: https://github.com/fondberg/easee_hass\n* Installation of Nordpool integration: https://github.com/custom-components/nordpool\n* Definition of input datetime helper (input_datetime.car_charge_time) for scheduled charging time",
+        "env": []
+    },
+    {
+        "id": "06aba1167220e253",
+        "type": "inject",
+        "z": "93e85c182978b7e1",
+        "name": "Test",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 150,
+        "wires": [
+            [
+                "8e55fc4ac8ca407e"
+            ]
+        ]
+    },
+    {
+        "id": "1fd848b83a06c66c",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "Get rates",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "sensor.nordpool_kwh_dk2_dkk_3_10_025",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "rates",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 690,
+        "y": 90,
+        "wires": [
+            [
+                "640af9fb6d6ad96d"
+            ]
+        ]
+    },
+    {
+        "id": "46293d0bb4bbe968",
+        "type": "delay",
+        "z": "93e85c182978b7e1",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "15",
+        "rateUnits": "minute",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1050,
+        "y": 150,
+        "wires": [
+            [
+                "a5a6ac3786e47479"
+            ]
+        ]
+    },
+    {
+        "id": "1adc31f8e610df47",
+        "type": "api-call-service",
+        "z": "93e85c182978b7e1",
+        "name": "Set charge start time",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "input_datetime",
+        "service": "set_datetime",
+        "entityId": "input_datetime.car_charge_time",
+        "data": "{\"datetime\":\"{{payload.charge_start_time}}\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1310,
+        "y": 90,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4ccbd9b56e7ebd1b",
+        "type": "inject",
+        "z": "93e85c182978b7e1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "string"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "ec62374e0843e2da"
+            ]
+        ]
+    },
+    {
+        "id": "ec62374e0843e2da",
+        "type": "function",
+        "z": "93e85c182978b7e1",
+        "name": "Time to start charging?",
+        "func": "const states = global.get('homeassistant').homeAssistant.states;\nconst now = new Date();\nconst timeToCharge = states['input_datetime.car_charge_time'].attributes;\n\nif(now.getFullYear()===timeToCharge.year && now.getMonth()+1===timeToCharge.month && now.getDate()===timeToCharge.day && now.getHours() === timeToCharge.hour && now.getMinutes() === timeToCharge.minute) {\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 440,
+        "wires": [
+            [
+                "500e26462fde9da1"
+            ]
+        ]
+    },
+    {
+        "id": "ecfbf4f58f764066",
+        "type": "switch",
+        "z": "93e85c182978b7e1",
+        "name": "Min. saving",
+        "property": "payload.price_diff",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1060,
+        "y": 90,
+        "wires": [
+            [
+                "1adc31f8e610df47",
+                "46293d0bb4bbe968"
+            ]
+        ]
+    },
+    {
+        "id": "17267c6e347c8ed0",
+        "type": "comment",
+        "z": "93e85c182978b7e1",
+        "name": "Respond to actions",
+        "info": "",
+        "x": 110,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "0cfaa7b9244f7beb",
+        "type": "server-events",
+        "z": "93e85c182978b7e1",
+        "name": "IOS Action?",
+        "server": "49e64ea71c5ef4d9",
+        "event_type": "mobile_app_notification_action",
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "waitForRunning": true,
+        "x": 90,
+        "y": 290,
+        "wires": [
+            [
+                "6e6cef1d59949227"
+            ]
+        ]
+    },
+    {
+        "id": "6e6cef1d59949227",
+        "type": "switch",
+        "z": "93e85c182978b7e1",
+        "name": "Resonse to action?",
+        "property": "payload.event.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "CHARGE_NOW",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "CHARGE_LATER",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 280,
+        "y": 290,
+        "wires": [
+            [],
+            [
+                "2f59c8a474da3342"
+            ]
+        ],
+        "outputLabels": [
+            "Continue charging",
+            "Postpone charging"
+        ]
+    },
+    {
+        "id": "2f59c8a474da3342",
+        "type": "api-call-service",
+        "z": "93e85c182978b7e1",
+        "name": "Pause charging",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "debugenabled": true,
+        "service_domain": "easee",
+        "service": "stop",
+        "entityId": "",
+        "data": "{\"charger_id\":\"EHXXXXXX\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 480,
+        "y": 290,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "500e26462fde9da1",
+        "type": "api-call-service",
+        "z": "93e85c182978b7e1",
+        "name": "Start charging",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "debugenabled": true,
+        "service_domain": "easee",
+        "service": "start",
+        "entityId": "",
+        "data": "{\"charger_id\":\"EHXXXXXX\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 500,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "99b84ea6a3c0ce68",
+        "type": "comment",
+        "z": "93e85c182978b7e1",
+        "name": "Check prices when car is plugged in",
+        "info": "",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "5652575a482a93c1",
+        "type": "comment",
+        "z": "93e85c182978b7e1",
+        "name": "Start scheduled charging",
+        "info": "",
+        "x": 130,
+        "y": 390,
+        "wires": []
+    },
+    {
+        "id": "2dd09b8ee737f9f8",
+        "type": "server-state-changed",
+        "z": "93e85c182978b7e1",
+        "name": "ENYAQ status",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "binary_sensor.tmbjcXXXXXXXXXX_charging_cable_connected",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "str",
+        "haltifstate": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "output_only_on_state_change": true,
+        "for": 0,
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "x": 90,
+        "y": 90,
+        "wires": [
+            [
+                "8e55fc4ac8ca407e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "8e55fc4ac8ca407e",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "Get SoC",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "sensor.tmbjcXXXXXXXXXX_battery_level",
+        "state_type": "str",
+        "state_location": "SoC",
+        "override_payload": "msg",
+        "entity_location": "cardata",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 250,
+        "y": 90,
+        "wires": [
+            [
+                "9ce157dbd88845b0"
+            ]
+        ]
+    },
+    {
+        "id": "9ce157dbd88845b0",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "Get target",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "sensor.tmbjcXXXXXXXXXX_minimum_charge_level",
+        "state_type": "str",
+        "state_location": "target",
+        "override_payload": "msg",
+        "entity_location": "cardata",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 390,
+        "y": 90,
+        "wires": [
+            [
+                "cb172a5a621cda64"
+            ]
+        ]
+    },
+    {
+        "id": "cb172a5a621cda64",
+        "type": "change",
+        "z": "93e85c182978b7e1",
+        "name": "Set battery",
+        "rules": [
+            {
+                "t": "set",
+                "p": "battery",
+                "pt": "msg",
+                "to": "77",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "car",
+                "pt": "msg",
+                "to": "ENYAQ",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 540,
+        "y": 90,
+        "wires": [
+            [
+                "1fd848b83a06c66c"
+            ]
+        ]
+    },
+    {
+        "id": "a5a6ac3786e47479",
+        "type": "api-call-service",
+        "z": "93e85c182978b7e1",
+        "name": "Notification - Start charging?",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"message\":\"Opladning af {{payload.car_model}} fra {{payload.currentSOC}}% til {{payload.targetSOC}}% er startet og varer max. {{payload.charge_time_hours}} time(r). \\n\\nNuværende elpris er {{payload.current_rate}} kr. inkl. afgifter. \\n\\nLaveste pris er {{payload.min_rate}} kr. {{payload.min_rate_day}}, kl. {{payload.min_rate_hour}}. \\n\\nDu kan spare {{payload.price_diff}} kr. ved at udskyde opladningen til senere. \\n\\nVil du fortsætte opladning?\",\"title\":\"Fortsæt opladning?\",\"data\":{\"actions\":[{\"action\":\"CHARGE_NOW\",\"title\":\"Ja - fortsæt opladning nu\"},{\"action\":\"CHARGE_LATER\",\"title\":\"Udskyd opladning til senere\"}]}}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1330,
+        "y": 150,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "099e5e29bcbeca73",
+        "type": "comment",
+        "z": "93e85c182978b7e1",
+        "name": "Remind to charge EV notification",
+        "info": "",
+        "x": 150,
+        "y": 530,
+        "wires": []
+    },
+    {
+        "id": "d4043486123aea87",
+        "type": "inject",
+        "z": "93e85c182978b7e1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "15 19 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "c0d617fb470baed9"
+            ]
+        ]
+    },
+    {
+        "id": "d0ff1d96b9a7396d",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "ENYAQ Not plugged in?",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 2,
+        "halt_if": "off",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "binary_sensor.tmbjcXXXXXXXXXX_charging_cable_connected",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 850,
+        "y": 580,
+        "wires": [
+            [
+                "99a9392dd382dca0"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "99a9392dd382dca0",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "ENYAQ low battery?",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 2,
+        "halt_if": "60",
+        "halt_if_type": "num",
+        "halt_if_compare": "lt",
+        "override_topic": false,
+        "entity_id": "sensor.tmbjcXXXXXXXXXX_battery_level",
+        "state_type": "num",
+        "state_location": "car_battery",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 1080,
+        "y": 580,
+        "wires": [
+            [
+                "7c79b0eb13e624fe"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c0d617fb470baed9",
+        "type": "api-current-state",
+        "z": "93e85c182978b7e1",
+        "name": "Get rates",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "override_topic": false,
+        "entity_id": "sensor.nordpool_kwh_dk2_dkk_3_10_025",
+        "state_type": "str",
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "rates",
+        "override_data": "msg",
+        "blockInputOverrides": false,
+        "x": 270,
+        "y": 580,
+        "wires": [
+            [
+                "5acce6cb70555e39"
+            ]
+        ]
+    },
+    {
+        "id": "7c79b0eb13e624fe",
+        "type": "api-call-service",
+        "z": "93e85c182978b7e1",
+        "name": "Notification - Charge ENYAQ?",
+        "server": "49e64ea71c5ef4d9",
+        "version": 1,
+        "debugenabled": false,
+        "service_domain": "notify",
+        "service": "notify",
+        "entityId": "",
+        "data": "{\"message\":\"Der er {{car_battery}}% batteri på din ENYAQ.\\n\\nElprisen er {{rates.min_rate}} kr. {{rates.min_rate_day}}, kl. {{rates.min_rate_hour}}, så du bør overveje at starte opladning der.\",\"title\":\"Tid til opladning?\"}",
+        "dataType": "json",
+        "mergecontext": "",
+        "output_location": "payload",
+        "output_location_type": "none",
+        "mustacheAltTags": false,
+        "x": 1330,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "640af9fb6d6ad96d",
+        "type": "function",
+        "z": "93e85c182978b7e1",
+        "name": "Charge time and rates",
+        "func": "var battery_capacity=msg.battery;\nvar chargetime = Math.ceil((msg.target-msg.SoC)/100*battery_capacity/9)\nvar dt = new Date();\nvar hour = dt.getHours();\nvar currenthour = hour;\nvar currentrate = msg.rates.attributes.today[hour-1]\nvar min_rate_today = currentrate;\nvar min_rate_today_hour = hour;\nvar min_rate_tomorrow = 99999999;\nvar min_rate = currentrate;\nvar min_rate_day = 'i dag';\nvar min_rate_hour = hour;\nvar min_rate_tomorrow_hour=null;\nvar charge_time_start = new Date();\nfor (let i = hour; i < 25; i++) {\n  if (msg.rates.attributes.today[i] < min_rate_today) \n    { \n        min_rate_today=msg.rates.attributes.today[i];\n        min_rate_today_hour=i\n    }\n}\nfor (let i = 0; i < 25; i++) {\n  if (msg.rates.attributes.tomorrow[i] < min_rate_tomorrow) \n    { \n        min_rate_tomorrow=msg.rates.attributes.tomorrow[i];\n        min_rate_tomorrow_hour=i\n    }\n}\nif (min_rate_today < min_rate_tomorrow) \n{\n    min_rate_day = 'i dag';\n    min_rate_hour = min_rate_today_hour;\n    min_rate = min_rate_today;\n} else {\n    min_rate_day = 'i morgen';\n    min_rate_hour = min_rate_tomorrow_hour;\n    min_rate = min_rate_tomorrow;\n    dt.setDate(dt.getDate() + 1)\n}\nvar dd = String(dt.getDate()).padStart(2, '0');\nvar mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!\nvar yyyy = dt.getFullYear();\ncharge_start_time = yyyy + '-' + mm + '-' + dd + ' '+String(min_rate_hour).padStart(2, '0')+':01:00';\n\nvar price_diff=Math.ceil((msg.target-msg.SoC)/100*battery_capacity)*(currentrate-min_rate);\n\n// Return payload with relevant attributes\nmsg.payload = {\n    \"car_model\": msg.car,\n    \"current_rate\": Math.round(currentrate * 1e2) / 1e2,\n    \"current_hour\": currenthour,\n    \"min_rate_today\": Math.round(min_rate_today* 1e2) / 1e2,\n    \"min_rate_today_hour\": min_rate_today_hour,\n    \"min_rate_tomorrow\": Math.round(min_rate_tomorrow* 1e2) / 1e2,\n    \"min_rate_tomorrow_hour\": min_rate_tomorrow_hour,\n    \"min_rate_day\": min_rate_day,\n    \"min_rate_hour\": min_rate_hour,\n    \"min_rate\":  Math.round(min_rate* 1e2) / 1e2,\n    \"currentSOC\": msg.SoC,\n    \"targetSOC\": msg.target,\n    \"charge_kwh\": Math.ceil((msg.target-msg.SoC)/100*battery_capacity),\n    \"charge_time_hours\": chargetime,\n    \"price_diff\": Math.round(price_diff * 1e2) / 1e2,\n    \"charge_start_time\": charge_start_time\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 90,
+        "wires": [
+            [
+                "ecfbf4f58f764066"
+            ]
+        ]
+    },
+    {
+        "id": "5acce6cb70555e39",
+        "type": "function",
+        "z": "93e85c182978b7e1",
+        "name": "Low price tonight?",
+        "func": "var dt = new Date();\nvar hour = dt.getHours();\nvar currenthour = hour;\nvar currentrate = msg.rates.attributes.today[hour]\nvar min_rate_today = currentrate;\nvar min_rate_today_hour = hour;\nvar min_rate_tomorrow = 99999999;\nvar min_rate = currentrate;\nvar min_rate_day = 'i dag';\nvar min_rate_hour = hour;\nvar min_rate_tomorrow_hour=null;\nfor (let i = hour; i < 25; i++) {\n  if (msg.rates.attributes.today[i] < min_rate_today) \n    { \n        min_rate_today=msg.rates.attributes.today[i];\n        min_rate_today_hour=i\n    }\n}\nfor (let i = 0; i < 7; i++) {\n  if (msg.rates.attributes.tomorrow[i] < min_rate_tomorrow) \n    { \n        min_rate_tomorrow=msg.rates.attributes.tomorrow[i];\n        min_rate_tomorrow_hour=i\n    }\n}\nif (min_rate_today < min_rate_tomorrow) \n{\n    min_rate_day = 'i dag';\n    min_rate_hour = min_rate_today_hour;\n    min_rate = min_rate_today;\n} else {\n    min_rate_day = 'i morgen';\n    min_rate_hour = min_rate_tomorrow_hour;\n    min_rate = min_rate_tomorrow;\n}\n\n// Return payload with relevant attributes\nmsg.rates = {\n    \"current_rate\": Math.round(currentrate * 1e2) / 1e2,\n    \"current_hour\": currenthour,\n    \"min_rate_today\": Math.round(min_rate_today* 1e2) / 1e2,\n    \"min_rate_today_hour\": min_rate_today_hour,\n    \"min_rate_tomorrow\": Math.round(min_rate_tomorrow* 1e2) / 1e2,\n    \"min_rate_tomorrow_hour\": min_rate_tomorrow_hour,\n    \"min_rate_day\": min_rate_day,\n    \"min_rate_hour\": min_rate_hour,\n    \"min_rate\":  Math.round(min_rate* 1e2) / 1e2\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 580,
+        "wires": [
+            [
+                "3c8a6da2fd6508f2"
+            ]
+        ]
+    },
+    {
+        "id": "3c8a6da2fd6508f2",
+        "type": "switch",
+        "z": "93e85c182978b7e1",
+        "name": "Rate <2.2 DKK? ",
+        "property": "rates.min_rate",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "2.2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 640,
+        "y": 580,
+        "wires": [
+            [
+                "d0ff1d96b9a7396d"
+            ]
+        ]
+    }
+]
