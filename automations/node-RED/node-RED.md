@@ -13,7 +13,7 @@ Use the following steps to import a specific automation example:
 Below you will find an overview and short description of each flow.
 
 ## Vacuum Control
-This flow automates control over my S5 robot vacuum cleaner. It does the following:
+This [flow](vacuum_control.json) automates control over my S5 robot vacuum cleaner. It does the following:
 
  * Starts cleaning of selected rooms when cleaning is started from Lovelace
  * Use actionable notification to ask if cleaning should start when nobody is home
@@ -24,7 +24,7 @@ This flow automates control over my S5 robot vacuum cleaner. It does the followi
 ![Vacuum Control](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/vacuum_control.png)
 
 ### **Requirements**
-This [flow](vacuum_control.json) requires the following additional configuration to work:
+This flow requires the following additional configuration to work:
 
  * Definition of IOS push categories for actionable notifications
  * Definition of input booleans for room selection
