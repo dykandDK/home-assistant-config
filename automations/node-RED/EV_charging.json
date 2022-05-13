@@ -1,6 +1,6 @@
 [
     {
-        "id": "93e85c182978b7e1",
+        "id": "503ae82d3f18da0f",
         "type": "tab",
         "label": "EV Charging",
         "disabled": false,
@@ -8,9 +8,9 @@
         "env": []
     },
     {
-        "id": "06aba1167220e253",
+        "id": "0d3986d369643c43",
         "type": "inject",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Test",
         "props": [
             {
@@ -31,14 +31,14 @@
         "y": 150,
         "wires": [
             [
-                "8e55fc4ac8ca407e"
+                "ad52fcd0653fcbc2"
             ]
         ]
     },
     {
-        "id": "1fd848b83a06c66c",
+        "id": "6503f18df435794f",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Get rates",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -58,14 +58,14 @@
         "y": 90,
         "wires": [
             [
-                "640af9fb6d6ad96d"
+                "ff86e54f77b3c13d"
             ]
         ]
     },
     {
-        "id": "46293d0bb4bbe968",
+        "id": "feef0f764c6e0ce7",
         "type": "delay",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "",
         "pauseType": "rate",
         "timeout": "5",
@@ -83,14 +83,14 @@
         "y": 150,
         "wires": [
             [
-                "a5a6ac3786e47479"
+                "2791a060156e015f"
             ]
         ]
     },
     {
-        "id": "1adc31f8e610df47",
+        "id": "811a077cad09a90e",
         "type": "api-call-service",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Set charge start time",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -111,9 +111,9 @@
         ]
     },
     {
-        "id": "4ccbd9b56e7ebd1b",
+        "id": "f24ab7b49d827f01",
         "type": "inject",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "",
         "props": [
             {
@@ -138,14 +138,14 @@
         "y": 440,
         "wires": [
             [
-                "ec62374e0843e2da"
+                "3461ce1e57e5088e"
             ]
         ]
     },
     {
-        "id": "ec62374e0843e2da",
+        "id": "3461ce1e57e5088e",
         "type": "function",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Time to start charging?",
         "func": "const states = global.get('homeassistant').homeAssistant.states;\nconst now = new Date();\nconst timeToCharge = states['input_datetime.car_charge_time'].attributes;\n\nif(now.getFullYear()===timeToCharge.year && now.getMonth()+1===timeToCharge.month && now.getDate()===timeToCharge.day && now.getHours() === timeToCharge.hour && now.getMinutes() === timeToCharge.minute) {\n    return msg;\n}",
         "outputs": 1,
@@ -157,14 +157,14 @@
         "y": 440,
         "wires": [
             [
-                "500e26462fde9da1"
+                "e40c5b4085457f34"
             ]
         ]
     },
     {
-        "id": "ecfbf4f58f764066",
+        "id": "c4a60248c1481dfb",
         "type": "switch",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Min. saving",
         "property": "payload.price_diff",
         "propertyType": "msg",
@@ -182,15 +182,15 @@
         "y": 90,
         "wires": [
             [
-                "1adc31f8e610df47",
-                "46293d0bb4bbe968"
+                "811a077cad09a90e",
+                "feef0f764c6e0ce7"
             ]
         ]
     },
     {
-        "id": "17267c6e347c8ed0",
+        "id": "c31cd4531c6cfc30",
         "type": "comment",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Respond to actions",
         "info": "",
         "x": 110,
@@ -198,9 +198,9 @@
         "wires": []
     },
     {
-        "id": "0cfaa7b9244f7beb",
+        "id": "98fdda493d40d5f0",
         "type": "server-events",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "IOS Action?",
         "server": "49e64ea71c5ef4d9",
         "event_type": "mobile_app_notification_action",
@@ -220,14 +220,14 @@
         "y": 290,
         "wires": [
             [
-                "6e6cef1d59949227"
+                "37aeb794a46cacde"
             ]
         ]
     },
     {
-        "id": "6e6cef1d59949227",
+        "id": "37aeb794a46cacde",
         "type": "switch",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Resonse to action?",
         "property": "payload.event.action",
         "propertyType": "msg",
@@ -251,7 +251,7 @@
         "wires": [
             [],
             [
-                "2f59c8a474da3342"
+                "8f5710c972cc71af"
             ]
         ],
         "outputLabels": [
@@ -260,9 +260,9 @@
         ]
     },
     {
-        "id": "2f59c8a474da3342",
+        "id": "8f5710c972cc71af",
         "type": "api-call-service",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Pause charging",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -283,9 +283,9 @@
         ]
     },
     {
-        "id": "500e26462fde9da1",
+        "id": "e40c5b4085457f34",
         "type": "api-call-service",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Start charging",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -306,9 +306,9 @@
         ]
     },
     {
-        "id": "99b84ea6a3c0ce68",
+        "id": "990d71a8127eb3f6",
         "type": "comment",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Check prices when car is plugged in",
         "info": "",
         "x": 160,
@@ -316,9 +316,9 @@
         "wires": []
     },
     {
-        "id": "5652575a482a93c1",
+        "id": "f053912c28431249",
         "type": "comment",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Start scheduled charging",
         "info": "",
         "x": 130,
@@ -326,9 +326,9 @@
         "wires": []
     },
     {
-        "id": "2dd09b8ee737f9f8",
+        "id": "c20f0cdffdc22598",
         "type": "server-state-changed",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "ENYAQ status",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -364,15 +364,15 @@
         "y": 90,
         "wires": [
             [
-                "8e55fc4ac8ca407e"
+                "ad52fcd0653fcbc2"
             ],
             []
         ]
     },
     {
-        "id": "8e55fc4ac8ca407e",
+        "id": "ad52fcd0653fcbc2",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Get SoC",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -392,14 +392,14 @@
         "y": 90,
         "wires": [
             [
-                "9ce157dbd88845b0"
+                "ef193ac32c5a9b90"
             ]
         ]
     },
     {
-        "id": "9ce157dbd88845b0",
+        "id": "ef193ac32c5a9b90",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Get target",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -419,14 +419,14 @@
         "y": 90,
         "wires": [
             [
-                "cb172a5a621cda64"
+                "6825e40851038edd"
             ]
         ]
     },
     {
-        "id": "cb172a5a621cda64",
+        "id": "6825e40851038edd",
         "type": "change",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Set battery",
         "rules": [
             {
@@ -453,14 +453,14 @@
         "y": 90,
         "wires": [
             [
-                "1fd848b83a06c66c"
+                "6503f18df435794f"
             ]
         ]
     },
     {
-        "id": "a5a6ac3786e47479",
+        "id": "2791a060156e015f",
         "type": "api-call-service",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Notification - Start charging?",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -481,9 +481,9 @@
         ]
     },
     {
-        "id": "099e5e29bcbeca73",
+        "id": "b2b076375d79add4",
         "type": "comment",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Remind to charge EV notification",
         "info": "",
         "x": 150,
@@ -491,9 +491,9 @@
         "wires": []
     },
     {
-        "id": "d4043486123aea87",
+        "id": "2c8e595dc3d2d18e",
         "type": "inject",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "",
         "props": [
             {
@@ -515,14 +515,14 @@
         "y": 580,
         "wires": [
             [
-                "c0d617fb470baed9"
+                "0861a1eb4a3ee946"
             ]
         ]
     },
     {
-        "id": "d0ff1d96b9a7396d",
+        "id": "781bc58d7af03f8c",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "ENYAQ Not plugged in?",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -542,15 +542,15 @@
         "y": 580,
         "wires": [
             [
-                "99a9392dd382dca0"
+                "745fac28427a5463"
             ],
             []
         ]
     },
     {
-        "id": "99a9392dd382dca0",
+        "id": "745fac28427a5463",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "ENYAQ low battery?",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -570,15 +570,15 @@
         "y": 580,
         "wires": [
             [
-                "7c79b0eb13e624fe"
+                "af2b424ad03fbbe1"
             ],
             []
         ]
     },
     {
-        "id": "c0d617fb470baed9",
+        "id": "0861a1eb4a3ee946",
         "type": "api-current-state",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Get rates",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -598,14 +598,14 @@
         "y": 580,
         "wires": [
             [
-                "5acce6cb70555e39"
+                "555f01b42ba60e8d"
             ]
         ]
     },
     {
-        "id": "7c79b0eb13e624fe",
+        "id": "af2b424ad03fbbe1",
         "type": "api-call-service",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Notification - Charge ENYAQ?",
         "server": "49e64ea71c5ef4d9",
         "version": 1,
@@ -626,11 +626,11 @@
         ]
     },
     {
-        "id": "640af9fb6d6ad96d",
+        "id": "ff86e54f77b3c13d",
         "type": "function",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Charge time and rates",
-        "func": "var battery_capacity=msg.battery;\nvar chargetime = Math.ceil((msg.target-msg.SoC)/100*battery_capacity/9)\nvar dt = new Date();\nvar hour = dt.getHours();\nvar currenthour = hour;\nvar currentrate = msg.rates.attributes.today[hour-1]\nvar min_rate_today = currentrate;\nvar min_rate_today_hour = hour;\nvar min_rate_tomorrow = 99999999;\nvar min_rate = currentrate;\nvar min_rate_day = 'i dag';\nvar min_rate_hour = hour;\nvar min_rate_tomorrow_hour=null;\nvar charge_time_start = new Date();\nfor (let i = hour; i < 25; i++) {\n  if (msg.rates.attributes.today[i] < min_rate_today) \n    { \n        min_rate_today=msg.rates.attributes.today[i];\n        min_rate_today_hour=i\n    }\n}\nfor (let i = 0; i < 25; i++) {\n  if (msg.rates.attributes.tomorrow[i] < min_rate_tomorrow) \n    { \n        min_rate_tomorrow=msg.rates.attributes.tomorrow[i];\n        min_rate_tomorrow_hour=i\n    }\n}\nif (min_rate_today < min_rate_tomorrow) \n{\n    min_rate_day = 'i dag';\n    min_rate_hour = min_rate_today_hour;\n    min_rate = min_rate_today;\n} else {\n    min_rate_day = 'i morgen';\n    min_rate_hour = min_rate_tomorrow_hour;\n    min_rate = min_rate_tomorrow;\n    dt.setDate(dt.getDate() + 1)\n}\nvar dd = String(dt.getDate()).padStart(2, '0');\nvar mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!\nvar yyyy = dt.getFullYear();\ncharge_start_time = yyyy + '-' + mm + '-' + dd + ' '+String(min_rate_hour).padStart(2, '0')+':01:00';\n\nvar price_diff=Math.ceil((msg.target-msg.SoC)/100*battery_capacity)*(currentrate-min_rate);\n\n// Return payload with relevant attributes\nmsg.payload = {\n    \"car_model\": msg.car,\n    \"current_rate\": Math.round(currentrate * 1e2) / 1e2,\n    \"current_hour\": currenthour,\n    \"min_rate_today\": Math.round(min_rate_today* 1e2) / 1e2,\n    \"min_rate_today_hour\": min_rate_today_hour,\n    \"min_rate_tomorrow\": Math.round(min_rate_tomorrow* 1e2) / 1e2,\n    \"min_rate_tomorrow_hour\": min_rate_tomorrow_hour,\n    \"min_rate_day\": min_rate_day,\n    \"min_rate_hour\": min_rate_hour,\n    \"min_rate\":  Math.round(min_rate* 1e2) / 1e2,\n    \"currentSOC\": msg.SoC,\n    \"targetSOC\": msg.target,\n    \"charge_kwh\": Math.ceil((msg.target-msg.SoC)/100*battery_capacity),\n    \"charge_time_hours\": chargetime,\n    \"price_diff\": Math.round(price_diff * 1e2) / 1e2,\n    \"charge_start_time\": charge_start_time\n}\n\nreturn msg;",
+        "func": "var battery_capacity=msg.battery;\nvar chargetime = Math.ceil((msg.target-msg.SoC)/100*battery_capacity/9)\nvar dt = new Date();\nvar hour = dt.getHours();\nvar currenthour = hour;\nvar currentrate = msg.rates.attributes.today[hour-1]\nvar min_rate_today = currentrate;\nvar min_rate_today_hour = hour;\nvar min_rate_tomorrow = 99999999;\nvar min_rate = currentrate;\nvar min_rate_day = 'i dag';\nvar min_rate_hour = hour;\nvar min_rate_tomorrow_hour=null;\nvar charge_time_start = new Date();\nfor (let i = hour; i < 25; i++) {\n  if (msg.rates.attributes.today[i] < min_rate_today) \n    { \n        min_rate_today=msg.rates.attributes.today[i];\n        min_rate_today_hour=i\n    }\n}\nif (msg.rates.attributes.tomorrow_valid==true) {\n    for (let i = 0; i < 25; i++) {\n      if (msg.rates.attributes.tomorrow[i] < min_rate_tomorrow) \n        { \n            min_rate_tomorrow=msg.rates.attributes.tomorrow[i];\n            min_rate_tomorrow_hour=i\n        }\n    }\n}\nif (min_rate_today < min_rate_tomorrow) \n{\n    min_rate_day = 'i dag';\n    min_rate_hour = min_rate_today_hour;\n    min_rate = min_rate_today;\n} else {\n    min_rate_day = 'i morgen';\n    min_rate_hour = min_rate_tomorrow_hour;\n    min_rate = min_rate_tomorrow;\n    dt.setDate(dt.getDate() + 1)\n}\nvar dd = String(dt.getDate()).padStart(2, '0');\nvar mm = String(dt.getMonth() + 1).padStart(2, '0'); //January is 0!\nvar yyyy = dt.getFullYear();\ncharge_start_time = yyyy + '-' + mm + '-' + dd + ' '+String(min_rate_hour).padStart(2, '0')+':01:00';\n\nvar price_diff=Math.ceil((msg.target-msg.SoC)/100*battery_capacity)*(currentrate-min_rate);\n\n// Return payload with relevant attributes\nmsg.payload = {\n    \"car_model\": msg.car,\n    \"current_rate\": Math.round(currentrate * 1e2) / 1e2,\n    \"current_hour\": currenthour,\n    \"min_rate_today\": Math.round(min_rate_today* 1e2) / 1e2,\n    \"min_rate_today_hour\": min_rate_today_hour,\n    \"min_rate_tomorrow\": Math.round(min_rate_tomorrow* 1e2) / 1e2,\n    \"min_rate_tomorrow_hour\": min_rate_tomorrow_hour,\n    \"min_rate_day\": min_rate_day,\n    \"min_rate_hour\": min_rate_hour,\n    \"min_rate\":  Math.round(min_rate* 1e2) / 1e2,\n    \"currentSOC\": msg.SoC,\n    \"targetSOC\": msg.target,\n    \"charge_kwh\": Math.ceil((msg.target-msg.SoC)/100*battery_capacity),\n    \"charge_time_hours\": chargetime,\n    \"price_diff\": Math.round(price_diff * 1e2) / 1e2,\n    \"charge_start_time\": charge_start_time\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -640,14 +640,14 @@
         "y": 90,
         "wires": [
             [
-                "ecfbf4f58f764066"
+                "c4a60248c1481dfb"
             ]
         ]
     },
     {
-        "id": "5acce6cb70555e39",
+        "id": "555f01b42ba60e8d",
         "type": "function",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Low price tonight?",
         "func": "var dt = new Date();\nvar hour = dt.getHours();\nvar currenthour = hour;\nvar currentrate = msg.rates.attributes.today[hour]\nvar min_rate_today = currentrate;\nvar min_rate_today_hour = hour;\nvar min_rate_tomorrow = 99999999;\nvar min_rate = currentrate;\nvar min_rate_day = 'i dag';\nvar min_rate_hour = hour;\nvar min_rate_tomorrow_hour=null;\nfor (let i = hour; i < 25; i++) {\n  if (msg.rates.attributes.today[i] < min_rate_today) \n    { \n        min_rate_today=msg.rates.attributes.today[i];\n        min_rate_today_hour=i\n    }\n}\nfor (let i = 0; i < 7; i++) {\n  if (msg.rates.attributes.tomorrow[i] < min_rate_tomorrow) \n    { \n        min_rate_tomorrow=msg.rates.attributes.tomorrow[i];\n        min_rate_tomorrow_hour=i\n    }\n}\nif (min_rate_today < min_rate_tomorrow) \n{\n    min_rate_day = 'i dag';\n    min_rate_hour = min_rate_today_hour;\n    min_rate = min_rate_today;\n} else {\n    min_rate_day = 'i morgen';\n    min_rate_hour = min_rate_tomorrow_hour;\n    min_rate = min_rate_tomorrow;\n}\n\n// Return payload with relevant attributes\nmsg.rates = {\n    \"current_rate\": Math.round(currentrate * 1e2) / 1e2,\n    \"current_hour\": currenthour,\n    \"min_rate_today\": Math.round(min_rate_today* 1e2) / 1e2,\n    \"min_rate_today_hour\": min_rate_today_hour,\n    \"min_rate_tomorrow\": Math.round(min_rate_tomorrow* 1e2) / 1e2,\n    \"min_rate_tomorrow_hour\": min_rate_tomorrow_hour,\n    \"min_rate_day\": min_rate_day,\n    \"min_rate_hour\": min_rate_hour,\n    \"min_rate\":  Math.round(min_rate* 1e2) / 1e2\n}\n\nreturn msg;",
         "outputs": 1,
@@ -659,14 +659,14 @@
         "y": 580,
         "wires": [
             [
-                "3c8a6da2fd6508f2"
+                "bcfca047e57efd84"
             ]
         ]
     },
     {
-        "id": "3c8a6da2fd6508f2",
+        "id": "bcfca047e57efd84",
         "type": "switch",
-        "z": "93e85c182978b7e1",
+        "z": "503ae82d3f18da0f",
         "name": "Rate <2.2 DKK? ",
         "property": "rates.min_rate",
         "propertyType": "msg",
@@ -684,7 +684,7 @@
         "y": 580,
         "wires": [
             [
-                "d0ff1d96b9a7396d"
+                "781bc58d7af03f8c"
             ]
         ]
     }
