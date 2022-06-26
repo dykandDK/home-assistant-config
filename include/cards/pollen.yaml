@@ -1,0 +1,66 @@
+########################################################################################################################
+# Markdown kort med oversigt over dagens pollental og 5 døgnsprognose
+#
+# Baseret på data fra Astma-Allergi Danmark's pollental: https://www.astma-allergi.dk/dagens-pollental/
+#
+# Credit: Anvender HA custom integration, der er udarbejdet af Jacob Henriksen: https://github.com/J-Lindvig/Pollen_DK
+########################################################################################################################
+
+type: markdown
+title: Pollental
+content: >-
+  {% set weekdaynames_dk= ['MAN','TIR','ONS','TOR','FRE','LØR','SØN'] -%}
+  {% set ns = namespace(found=false,firstname='') %}
+  {% for ps in integration_entities('pollen_dk') -%}
+    {% if state_attr(ps,'in_season')==true -%}
+       {% set ns.found = true %}
+       {% if state_attr(ps, "predictions")!=[]  -%}
+         {% set ns.firstname = ps %}
+       {% endif -%}
+    {% endif -%}
+  {% endfor -%}
+  {% if ns.found==true -%}
+    <table>
+    <thead>
+    <tr>
+    <th align='left'>Type</th><th align='right'>Pollen</th>
+    {% for pollen in state_attr(ns.firstname, "predictions") -%}
+      <th>{{ weekdaynames_dk[strptime(pollen.date, '%d-%m-%Y').isoweekday()-1] }}</th>
+    {% endfor -%}
+    </tr>
+    </thead>
+    <tbody>
+    {% for ps in integration_entities('pollen_dk') -%}
+      {% if state_attr(ps,'in_season')==true -%}
+        <tr>
+        <td>{{ state_attr(ps,'friendly_name') | regex_replace(find='Pollen ', replace='') }}</td>
+        <td align='right'>{{ states(ps) }}</td>
+        {% if state_attr(ps, "predictions")!=[]  -%}
+          {% for pollen in state_attr(ps, "predictions") -%}
+          <td align='center'>
+            {% if pollen.level==3 -%}<ha-alert alert-type="error"></ha-alert>
+            {% elif pollen.level==2 -%}<ha-alert alert-type="warning"></ha-alert>
+            {% elif pollen.level==1 -%}<ha-alert alert-type="success"></ha-alert>
+            {% else -%}
+            {% endif -%}</td>
+          {% endfor -%}
+        {% else -%}
+          <td colspan="5" align=center><ha-alert alert-type="info">Ingen prognose tilgængelig</ha-alert></td>
+        {% endif -%}
+        </tr>
+      {% endif -%}
+    {% endfor -%}
+    </tbody>
+    </table>
+  {% else -%}
+    <ha-alert alert-type="info">Der er ingen pollen i sæson</ha-alert>
+  {% endif -%}
+  <br>Data er opdateret pr. {{
+  state_attr(integration_entities('pollen_dk')[0],'last_update') }}
+  {% if ns.found==true -%}
+    <br><br><h3>Symbolforklaring:</h3>
+    <ha-alert alert-type="error">Pollentallet er højt</ha-alert>
+    <ha-alert alert-type="warning">Pollentallet er moderat</ha-alert>
+    <ha-alert alert-type="success">Pollentallet er lavt</ha-alert>
+    Kilde: <a href="https://www.astma-allergi.dk/dagens-pollental/">Astma Allergi Danmark
+  {% endif -%}
