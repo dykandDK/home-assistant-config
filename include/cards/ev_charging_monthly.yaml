@@ -1,0 +1,129 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom Apex bar chart with monthly EV charging consumption
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  dataLabels:
+    enabled: true
+    style:
+      colors:
+        - "#fff"
+      fontSize: 11px
+    distributed: true
+    offsetY: -9
+    background:
+      enabled: false
+  plotOptions:
+    bar:
+      borderRadius: 10
+      columnWidth: 75%
+      dataLabels:
+        position: top
+  chart:
+    height: 300px
+    zoom:
+      enabled: true
+    toolbar:
+      show: true
+      tools:
+        zoom: false
+        zoomin: true
+        zoomout: true
+        pan: false
+        reset: false
+        download: false
+    defaultLocale: da
+    locales:
+      - name: da
+        options:
+          months:
+            - Januar
+            - Februar
+            - Marts
+            - April
+            - Maj
+            - Juni
+            - Juli
+            - August
+            - September
+            - Oktober
+            - November
+            - December
+          shortMonths:
+            - Jan
+            - Feb
+            - Mar
+            - Apr
+            - Maj
+            - Jun
+            - Jul
+            - Aug
+            - Sep
+            - Okt
+            - Nov
+            - Dec
+          days:
+            - Søndag
+            - Mandag
+            - Tirsdag
+            - Onsdag
+            - Torsdag
+            - Fredag
+            - Lørdag
+          shortDays:
+            - SØN
+            - MAN
+            - TIR
+            - ONS
+            - TOR
+            - FRE
+            - LØR
+  tooltip:
+    x:
+      format: MMMM yyyy
+header:
+  show: true
+  title: Opladning af elbil
+  show_states: false
+  colorize_states: false
+  standard_format: true
+graph_span: 1year
+span:
+  end: month
+experimental:
+  color_threshold: true
+series:
+  - entity: sensor.xxxxxxxx_lifetime_energy
+    type: column
+    name: Opladt kWh
+    float_precision: 0
+    extend_to: now
+    show:
+      in_chart: true
+      datalabels: true
+      legend_value: false
+    statistics:
+      type: sum
+      period: day
+      align: end
+    group_by:
+      func: diff
+      duration: 1month
+      fill: "null"
+      start_with_last: true
+    color_threshold:
+      - value: 200
+        color: green
+      - value: 300
+        color: orange
+      - value: 350
+        color: red
+      - value: 400
+        color: darkred
