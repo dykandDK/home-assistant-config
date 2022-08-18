@@ -275,51 +275,7 @@ sensor:
         value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'opening') | sort(attribute='last_changed',reverse=true) | map(attribute='last_changed') | first }}"
         friendly_name: Tidspunkt for senest åbning af dør
         device_class: timestamp
-      #─────────────────────────────────────────────────────────────────────────
-      # Fix Indego date formats and add countdown to next mow
-      #─────────────────────────────────────────────────────────────────────────
-      # indego_last_mow:
-      #   value_template: "{{ as_timestamp(states('sensor.indego_706601174_last_completed')) | timestamp_custom('%d.%m.%y %H:%M') }}"
-      #   #entity_id: sensor.indego_706601174_last_completed
-      # indego_next_mow:
-      #   value_template: "{{ states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) | timestamp_custom('%d.%m.%y %H:%M')}}"
-      #   #entity_id: sensor.indego_706601174_next_mow
-      # indego_next_mow_countdown:
-      #   value_template: >-
-      #     {% set day_diff = (( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) )/ (3600*24)) | int %}
-      #     {% set hour_diff =(( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) - (24*day_diff*3600) )/ (3600)) | int %}
-      #     {% set min_diff =(( states('sensor.time') and as_timestamp(states('sensor.indego_706601174_next_mow')) - as_timestamp(now()) - (24*day_diff*3600) - (3600*hour_diff) )/ (60)) | int %}
-      #     {% if day_diff>1 %} {{ day_diff }} dage, {% elif day_diff==1 %}{{ day_diff }} dag, {% endif %}{% if hour_diff>1 %}{{ hour_diff }} timer og {{ min_diff }} min. {% elif hour_diff==1 %}{{ hour_diff }} time og {{ min_diff }} min.{% else %}{{ min_diff }} min.{% endif %}
-
-  #─────────────────────────────────────────────────────────────────────────────
-  # HA database size in MB
-  #─────────────────────────────────────────────────────────────────────────────
-  - platform: sql
-    db_url: !secret db_url
-    #scan_interval: 3600 #once per hour
-    scan_interval: 900 #once every 15 mins.
-    queries:
-      - name: "HA database size"
-        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="HA" GROUP BY table_schema;'
-        column: "value"
-        unit_of_measurement: MB
-      - name: ude_min_temp
-        query: "SELECT MIN(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_ude_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
-        unit_of_measurement: "°C"
-        column: "value"
-      - name: ude_max_temp
-        query: "SELECT MAX(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_ude_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
-        unit_of_measurement: "°C"
-        column: "value"
-      - name: inde_min_temp
-        query: "SELECT MIN(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_inde_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
-        unit_of_measurement: "°C"
-        column: "value"
-      - name: inde_max_temp
-        query: "SELECT MAX(CAST(state as Decimal(8,1))) AS value FROM `states` WHERE entity_id='sensor.netatmo_weather_home_inde_temperature' AND DATE(DATE_ADD(created, INTERVAL 1 hour)) = CURRENT_DATE"
-        unit_of_measurement: "°C"
-        column: "value"
-
+  
   #─────────────────────────────────────────────────────────────────────────────
   # Weather forecast from YR.NO
   #─────────────────────────────────────────────────────────────────────────────
@@ -370,6 +326,170 @@ sensor:
   - platform: filesize
     file_paths:
       - /config/home-assistant.log
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Carnot.dk REST sensor
+  #─────────────────────────────────────────────────────────────────────────────
+
+  - platform: rest
+    resource: https://whale-app-dquqw.ondigitalocean.app/openapi/get_predict
+    name: elprognose_carnotdk
+    scan_interval: 3600
+    headers:
+      Accept: application/json
+      apikey: !secret carnotdk_token
+      username: !secret carnotdk_username
+    params:
+      daysahead: 7
+      energysource: spotprice
+      region: dk2
+    json_attributes:
+      - predictions
+    value_template: "{% if value_json is not none %}OK {{value_json.predictions[0].addedtime}}{% else %}Unavailable{% endif %}"
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Mealie REST (API) sensors
+  #─────────────────────────────────────────────────────────────────────────────
+
+  # Today
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day0
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ now().strftime('%Y-%m-%d') }}
+      limit: >
+        {{ now().strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Tomorrow
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day1
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 1)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 1)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Day 2
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day2
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 2)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 2)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Day 3
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day3
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 3)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 3)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Day 4
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day4
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 4)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 4)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Day 5
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day5
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 5)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 5)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
+  # Day 6
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_day6
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    params:
+      start: >
+        {{ (now() + timedelta(days = 6)).strftime('%Y-%m-%d') }}
+      limit: >
+        {{ (now() + timedelta(days = 6)).strftime('%Y-%m-%d') }}
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
 
 #───────────────────────────────────────────────────────────────────────────────
 # System monitoring
@@ -640,10 +760,10 @@ netatmo:
 #───────────────────────────────────────────────────────────────────────────────
 # Xiaomi Roborock integration
 #───────────────────────────────────────────────────────────────────────────────
-vacuum:
-  - platform: xiaomi_miio
-    host: 192.168.2.40
-    token: !secret roborock_token
+# vacuum:
+#   - platform: xiaomi_miio
+#     host: 192.168.2.40
+#     token: !secret roborock_token
 
 #───────────────────────────────────────────────────────────────────────────────
 # Our Groceries custom component
@@ -655,11 +775,11 @@ ourgroceries:
 #───────────────────────────────────────────────────────────────────────────────
 # Synology SRM integration
 #───────────────────────────────────────────────────────────────────────────────
-device_tracker:
-  - platform: bluetooth_tracker
-    consider_home: 180
-    new_device_defaults:
-      track_new_devices: false
+# device_tracker:
+#   - platform: bluetooth_tracker
+#     consider_home: 180
+#     new_device_defaults:
+#       track_new_devices: false
 
 #───────────────────────────────────────────────────────────────────────────────
 # Spotify integration
@@ -673,3 +793,30 @@ spotify:
 # spotcast:
 #   sp_dc: !secret sp_dc
 #   sp_key: !secret sp_key
+
+#───────────────────────────────────────────────────────────────────────────────
+# Nordpool integration
+#───────────────────────────────────────────────────────────────────────────────
+sensor nordpool:
+  - platform: nordpool
+    VAT: True
+    low_price_cutoff: 0.00
+    region: "DK2"
+    precision: 3
+    price_type: kWh
+    friendly_name: "Nordpool timepris inkl. moms og afgifter"
+    additional_costs: '{% set s = {
+      "elafgift": 1.125,
+      "transport_lavlast": 0.2954,
+      "transport_spidslast": 0.7884,
+      "abonnement": 0.00
+      } %}
+      {% if now().month >= 10 or now().month <4 %}
+      {% if now().hour >=17 and now().hour <21 %}
+      {{s.elafgift+s.transport_spidslast+s.abonnement}}
+      {% else %}
+      {{s.elafgift+s.transport_lavlast+s.abonnement}}
+      {% endif %}
+      {% else %}
+      {{s.elafgift+s.transport_lavlast+s.abonnement}}
+      {% endif %}'
