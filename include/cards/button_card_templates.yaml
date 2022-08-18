@@ -2,9 +2,9 @@
 ###                   Custom button card styling templates                   ###
 ################################################################################
 
-# ------------------------------------------------------------------------------
+#───────────────────────────────────────────────────────────────────────────────
 # Custom button card with similar appearance as the standard sensor card
-# ------------------------------------------------------------------------------
+#───────────────────────────────────────────────────────────────────────────────
 custom_sensor_card:
   color_type: card
   show_name: true
@@ -97,11 +97,20 @@ custom_sensor_card:
         - left: 85%
         - top: 10%
 
+#───────────────────────────────────────────────────────────────────────────────
+# Custom button card for Sonos speaker selection
+#───────────────────────────────────────────────────────────────────────────────
 speaker_button:
   color_type: card
   show_state: false
   show_name: true
-  layout: icon_name
+  show_label: true
+  layout: icon_name_state2nd
+  label: >-
+    [[[ if (entity.attributes.media_artist !=undefined) 
+          return entity.attributes.media_artist + " - " + entity.attributes.media_title 
+      else 
+          return entity.attributes.media_title ]]]
   custom_fields:
     status: >
       [[[ 
@@ -116,8 +125,8 @@ speaker_button:
         - top: 0%
         - background-size: cover
     grid:
-      - grid-template-areas: '"i n"'
-      - grid-template-columns: 10% 1fr
+      - grid-template-areas: '"i n" "i l"'
+      - grid-template-columns: 100px 1fr
     card:
       - background-color: var(--card-background-color)
       - color: var(--primary-foreground-color)
@@ -127,15 +136,106 @@ speaker_button:
       - background-position: center
     icon:
       - justify-self: start
-      - padding-left: 10px
+      - align-self: start
     name:
+      - font-weight: bold
       - font-size: 24px
       - justify-self: start
-      - padding-left: 10px
       - align-self: left
       - margin-bottom: 0px
+    label:
+      - font-size: 18px
+      - color: white
+      - align-self: middle
+      - justify-self: start
     img_cell:
       - align-self: start
       - justify-self: start
+      - margin-top: -5px
       - margin-bottom: 0px
       - height: 30px
+
+#───────────────────────────────────────────────────────────────────────────────
+# Custom button card for Media-player
+#───────────────────────────────────────────────────────────────────────────────
+now_playing_button:
+  color_type: card
+  show_state: false
+  show_name: false
+  show_label: true
+  icon: mdi:play
+  show_icon: true
+  state:
+    - value: "paused"
+      icon: mdi:play
+    - value: "playing"
+      icon: mdi:pause
+  label: >-
+    [[[ if (entity.attributes.media_artist !=undefined) 
+          return entity.attributes.media_artist + " - " + entity.attributes.media_title
+      else 
+          return entity.attributes.media_title ]]]
+  styles:
+    grid:
+      - grid-template-areas: '"l" "i" "n"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr 5fr 1fr
+    card:
+      - background-color: var(--card-background-color)
+      - color: var(--primary-foreground-color)
+      - height: 160px
+      - background-image: '[[[ return "url(" + entity.attributes.entity_picture + ")"; ]]]'
+      - background-size: cover
+      - background-position: center
+    icon:
+      - color: rgba(255, 255, 255, 0.3)
+      - margin-top: 20px
+    label:
+      - font-size: 14px
+      - color: white
+      - justify-self: start
+      - background-color: rgba(0, 0,0, 0.3)
+      - padding-left: 20px
+      - margin-top: -10px
+      - width: 100%
+      - line-height: 40px
+      - text-align: left
+      - display: inline-block
+      - vertical-align: top
+
+#───────────────────────────────────────────────────────────────────────────────
+# Custom button card for Recipe display
+#───────────────────────────────────────────────────────────────────────────────
+recipe_button:
+  entity: sensor.todays_recipe
+  show_entity_picture: false
+  show_state: true
+  show_name: true
+  show_image: false
+  show_label: false
+  show_icon: false
+  styles:
+    card:
+      - background-size: cover
+      - background-position: center
+      - height: 177px
+    grid:
+      - grid-template-areas: '"n" "l" "s"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr 5fr 1fr
+    name:
+      - background-color: rgba(0, 0,0, 0.3)
+      - padding-left: 35px
+      - width: 100%
+      - line-height: 40px
+      - text-align: left
+      - display: inline-block
+      - vertical-align: middle
+    state:
+      - background-color: rgba(0, 0,0, 0.3)
+      - padding-left: 35px
+      - width: 100%
+      - line-height: 40px
+      - text-align: left
+      - display: inline-block
+      - vertical-align: middle
