@@ -1,0 +1,140 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom apex chart with electricity spot price predictions from Grønnere
+#  Elforbrug and Carnot.dk
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  tooltip:
+    x:
+      format: dddd d. MMMM yyyy, kl. HH
+  xaxis:
+    labels:
+      format: ddd
+  chart:
+    height: 550px
+    defaultLocale: da
+    locales:
+      - name: da
+        options:
+          months:
+            - januar
+            - februar
+            - marts
+            - april
+            - maj
+            - juni
+            - juli
+            - august
+            - september
+            - oktober
+            - november
+            - december
+          shortMonths:
+            - Jan
+            - Feb
+            - Mar
+            - Apr
+            - Maj
+            - Jun
+            - Jul
+            - Aug
+            - Sep
+            - Okt
+            - Nov
+            - Dec
+          days:
+            - Søndag
+            - Mandag
+            - Tirsdag
+            - Onsdag
+            - Torsdag
+            - Fredag
+            - Lørdag
+          shortDays:
+            - SØN
+            - MAN
+            - TIR
+            - ONS
+            - TOR
+            - FRE
+            - LØR
+all_series_config:
+  unit: " kr."
+experimental:
+  color_threshold: true
+header:
+  title: Prognoser for spotpriser (kr/kWh)
+  show: true
+  standard_format: true
+  show_states: false
+  colorize_states: true
+graph_span: 150h
+span:
+  start: day
+  offset: +12h
+yaxis:
+  - min: 0
+    apex_config:
+      tickAmount: 5
+series:
+  - entity: sensor.elprognose
+    name: Grønnere Elforbrug
+    type: line
+    color: green
+    stroke_width: 4
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: true
+      legend_value: false
+    data_generator: |
+      var data = entity.attributes.prognose.map((start, index) => {
+        return [new Date(start["date"]).getTime(), entity.attributes.prognose[index]["value"]/100];
+      });
+      return data;
+  - entity: sensor.elpriser_excl_afgifter
+    name: Carnot.dk
+    type: line
+    color: 03a9f4
+    stroke_width: 4
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: true
+      legend_value: false
+    data_generator: |
+      var data = entity.attributes.forecast.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.forecast[index]["price"]];
+      });
+      return data;
+  - entity: sensor.elpriser_excl_afgifter
+    name: Nordpool
+    type: area
+    stroke_width: 0
+    color: grey
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: false
+      legend_value: false
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), entity.attributes.raw_tomorrow[index]["price"]/1.25];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;

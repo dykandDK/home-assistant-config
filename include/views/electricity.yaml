@@ -1,0 +1,44 @@
+icon: mdi:lightning-bolt-circle
+title: El
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      ######################################################################
+      ###                          Header row                            ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/tablet_header.yaml
+      ######################################################################
+      ###                         Details row(s)                         ###
+      ######################################################################
+      - type: vertical-stack
+        cards:
+          - !include ../cards/energy_type_selection.yaml
+          - type: conditional
+            conditions:
+              - entity: input_select.energy_type
+                state: "price"
+            card:
+              type: vertical-stack
+              cards:
+                - !include ../cards/energy_price_graph.yaml
+                - !include ../cards/energy_price_info.yaml
+          - type: conditional
+            conditions:
+              - entity: input_select.energy_type
+                state: "predictions"
+            card:
+              type: vertical-stack
+              cards:
+                - !include ../cards/energy_predictions.yaml
+          - type: conditional
+            conditions:
+              - entity: input_select.energy_type
+                state: "actual"
+            card:
+              type: vertical-stack
+              cards:
+                - type: energy-date-selection
+                - type: energy-usage-graph

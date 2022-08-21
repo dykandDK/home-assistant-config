@@ -85,6 +85,44 @@ elements:
       left: 31.2%
       color: rgba(202,217,235,1)
   #─────────────────────────────────────────────────────────────────────────────
+  ### Electricity prices ###
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:lightning-bolt-circle
+    style:
+      top: 50%
+      left: 30%
+      color: rgba(202,217,235,1)
+      font-size: 55px
+  - type: custom:button-card
+    entity: sensor.elpriser_inkl_afgifter
+    show_icon: false
+    show_name: false
+    show_state: true
+    units: kr.
+    state_display: |
+      [[[
+        return Number(entity.state).toFixed(2);
+      ]]]
+    styles:
+      state:
+        - color: |
+            [[[
+              if (entity.state < 2.5) return 'green';
+              if (entity.state >= 2.5 && entity.state < 3) return 'orange';
+              else return 'red';
+            ]]]
+    style:
+      font-size: 2em
+      top: 50%
+      left: 33.2%
+      color: rgba(202,217,235,1)
+      suffix: kr.
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/5"
+
+  #─────────────────────────────────────────────────────────────────────────────
   ### Home/Away status ###
   #─────────────────────────────────────────────────────────────────────────────
   - type: image

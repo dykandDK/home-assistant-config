@@ -1,0 +1,92 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom apex chart with energy prices excl. and incl. taxes
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  chart:
+    height: 350px
+all_series_config:
+  unit: " kr."
+experimental:
+  color_threshold: true
+header:
+  title: Hourly electricity prices (DKK/kWh)
+  show: true
+  standard_format: true
+  show_states: false
+  colorize_states: true
+graph_span: 2d
+span:
+  start: day
+  offset: +0h
+now:
+  show: true
+  label: Nu
+yaxis:
+  - min: 0
+    apex_config:
+      tickAmount: 5
+series:
+  ############## Med afgifter ##############
+  - entity: sensor.elpriser_inkl_afgifter
+    type: column
+    name: Incl. VAT and taxes
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), entity.attributes.raw_tomorrow[index]["price"]];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;
+    float_precision: 2
+    color_threshold:
+      - value: 0
+        color: green
+      - value: 2
+        color: orange
+      - value: 3.5
+        color: red
+      - value: 5
+        color: darkred
+    show:
+      extremas: time
+      legend_value: false
+  ############## Uden afgifter ##############
+  - entity: sensor.elpriser_excl_afgifter
+    name: Excl. VAT and taxes
+    type: line
+    color: 03a9f4
+    stroke_width: 4
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: true
+      legend_value: false
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), entity.attributes.raw_tomorrow[index]["price"]];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;

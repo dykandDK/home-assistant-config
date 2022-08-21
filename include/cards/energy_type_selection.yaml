@@ -1,0 +1,81 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to select type of data for energy data display
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+type: horizontal-stack
+cards:
+  ### price
+  - type: "custom:button-card"
+    color_type: card
+    show_icon: false
+    entity: input_select.energy_type
+    name: Price
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 2px solid var(--card-background-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: price
+    state:
+      - value: "price"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+  ### predictions
+  - type: "custom:button-card"
+    color_type: card
+    entity: input_select.energy_type
+    show_icon: false
+    name: Predicitions
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 2px solid var(--card-background-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: predictions
+    state:
+      - value: "predictions"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+  ### actual
+  - type: "custom:button-card"
+    color_type: card
+    entity: input_select.energy_type
+    show_icon: false
+    name: Consumption
+    styles:
+      card:
+        - background-color: var(--card-background-color)
+        - color: var(--primary-foreground-color)
+        - border: 2px solid var(--card-background-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: actual
+    state:
+      - value: "actual"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)

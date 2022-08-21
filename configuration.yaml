@@ -93,6 +93,8 @@ lovelace:
       type: module
     - url: /hacsfiles/sonos-playlist-card/sonos-playlist-card.js
       type: module
+    - url: /hacsfiles/apexcharts-card/apexcharts-card.js
+      type: module
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
 #───────────────────────────────────────────────────────────────────────────────
@@ -275,7 +277,7 @@ sensor:
         value_template: "{{ states.binary_sensor | selectattr('attributes.device_class', 'eq', 'opening') | sort(attribute='last_changed',reverse=true) | map(attribute='last_changed') | first }}"
         friendly_name: Tidspunkt for senest åbning af dør
         device_class: timestamp
-  
+
   #─────────────────────────────────────────────────────────────────────────────
   # Weather forecast from YR.NO
   #─────────────────────────────────────────────────────────────────────────────
@@ -650,6 +652,19 @@ input_select:
       - Gang
     icon: mdi:floor-plan
     initial: Isabella's værelse
+  energy_type:
+    name: Select to show electricity prices, prediction or actual consumption
+    options:
+      - price
+      - predictions
+      - actual
+  energy_range:
+    name: Select time range for electricity consumption
+    options:
+      - day
+      - week
+      - month
+      - year
 
 #───────────────────────────────────────────────────────────────────────────────
 # Input number

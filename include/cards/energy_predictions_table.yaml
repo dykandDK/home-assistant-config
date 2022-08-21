@@ -1,0 +1,93 @@
+########################################################################################################################
+# Markdown card with electricity spot price prediction summary table
+########################################################################################################################
+
+type: markdown
+title: " "
+content: >-
+  {% set prices = state_attr("sensor.elpriser_excl_afgifter", "forecast") | list -%}
+  {% set current_time = now().hour -%}
+  {% set weekdaynames_dk= ['MAN','TIR','ONS','TOR','FRE','LØR','SØN'] -%}
+  {% set data = namespace(day=[],date=[],max=[],min=[],avg=[], max_td=[], min_td=[]) -%}
+  {% set ns = namespace(prices = []) -%}
+
+  {% set start_index = 0 -%}
+  {% set end_index = ([ prices | length] | min ) | int  -%}
+  {% set ns.current_total = 0 -%}
+  {% set ns.min_price = 9999 -%}
+  {% set ns.max_price = 0 -%}
+  {% set ns.min_index = -1 -%}
+  {% set ns.max_index = -1 -%}
+  {% set ns.hours = 0 -%}
+  {% set ns.curday = strptime(( prices[0].hour | truncate(10, false, '')), '%Y-%m-%d') -%}
+
+  {% for index in range(start_index, end_index) %}
+      {%- set price = prices[index].price | float -%}
+      {%- set dateval = strptime(( prices[index].hour | truncate(10, false, '')), '%Y-%m-%d')  -%}
+      {%- if dateval != ns.curday -%}
+          {% set ns.curday = dateval -%}
+          {% set data.day = data.day + [weekdaynames_dk[strptime(( prices[ns.min_index].hour | truncate(10, false, '')), '%Y-%m-%d').isoweekday()-1]] -%}
+          {% set data.date = data.date + [strptime(( prices[ns.min_index].hour | truncate(10, false, '')), '%Y-%m-%d')] -%}
+          {% set data.min = data.min + [ns.min_price] -%}
+          {% set data.min_td = data.min_td + [prices[ns.min_index].hour] -%}
+          {% set data.max = data.max + [ns.max_price] -%}
+          {% set data.max_td = data.max_td + [prices[ns.max_index].hour] -%}
+          {% set data.avg = data.avg + [(ns.current_total/(ns.hours))] -%}
+          {% set ns.current_total = 0 -%}
+          {% set ns.min_price = 9999 -%}
+          {% set ns.max_price = 0 -%}
+          {% set ns.min_index = -1 -%}
+          {% set ns.max_index = -1 -%}
+          {% set ns.hours = 0 -%}
+      {% else %}
+          {%- set ns.current_total = ns.current_total + price -%}
+          {%- set ns.hours = ns.hours + 1 -%}
+          {% if (price < ns.min_price) -%}{% set ns.min_price = price -%}{% set ns.min_index = index -%}{% endif-%}
+          {% if (price > ns.max_price) -%}{% set ns.max_price = price -%}{% set ns.max_index = index -%}{% endif-%}
+      {% endif-%}
+      {% endfor -%}
+      {% set avg_price = ns.current_total / (end_index - start_index) %}
+
+      <table>
+      <thead>
+      <tr>
+      <th align='left'></th>
+      {%- for index in range(0, ([ data.min | length] | min ) | int) -%}
+        <th>{{ data.day[index] }}</th>
+      {% endfor -%}
+      </tr>
+      </thead>
+      <tbody>
+          <tr>
+          <td>Vurdering</td>
+          {%- for index in range(0, ([ data.min | length] | min ) | int) -%}
+            <td align='center'>
+              {% if data.min[index]>2 -%}<ha-alert alert-type="error"></ha-alert>
+              {% elif data.min[index]>=1 -%}<ha-alert alert-type="warning"></ha-alert>
+              {% elif data.min[index]<1 -%}<ha-alert alert-type="success"></ha-alert>
+              {% else -%}
+              {% endif -%}</td>
+          {% endfor -%}
+          </tr>
+          <tr>
+          <td>Gns. pris</td>
+          {%- for index in range(0, ([ data.min | length] | min ) | int) -%}
+            <td align='center'>{{ "%.2f"|format(data.avg[index]) }}</td>
+          {% endfor -%}
+          </tr>
+          <tr>
+          <td>Min. pris</td>
+          {%- for index in range(0, ([ data.min | length] | min ) | int) -%}
+            <td align='center'>{{ "%.2f"|format(data.min[index]) }}</td>
+          {% endfor -%}
+          </tr>
+          <tr>
+          <td>Tidspunkt</td>
+          {%- for index in range(0, ([ data.min | length] | min ) | int) -%}
+            <td align='center'>{{ data.min_td[index] | as_timestamp | timestamp_custom('%H.%M', local=false) }}</td>
+          {% endfor -%}
+          </tr>
+      </tbody>
+      </table>
+
+  Kilde: https://www.carnot.dk

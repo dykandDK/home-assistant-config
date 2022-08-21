@@ -1,0 +1,46 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Markdown card with energy price information
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: markdown
+content: >+
+  <ha-icon icon="mdi:power-plug"></ha-icon>
+  {% set current_time = now().hour -%}
+  {% set ns = namespace(prices = []) -%}
+  {% set prices = state_attr("sensor.elpriser_inkl_afgifter", "today") | list + state_attr("sensor.elpriser_inkl_afgifter", "tomorrow") | list if state_attr("sensor.elpriser_inkl_afgifter", "tomorrow_valid") and states.sensor.elpriser_inkl_afgifter.attributes.tomorrow[0] | float >0 else state_attr("sensor.elpriser_inkl_afgifter", "today") -%}
+
+  {% set start_index = current_time | int -%}
+  {% set end_index = ([ prices | length] | min ) | int  -%}
+  {% set ns.current_total = 0 -%}
+  {% set ns.min_price = 9999 -%}
+  {% set ns.max_price = 0 -%}
+  {% set ns.min_index = -1 -%}
+  {% set ns.max_index = -1 -%}
+
+  {% for index in range(start_index, end_index) -%}
+  {%- set price = prices[index] | float -%}
+  {%- set ns.current_total = ns.current_total + price -%}
+  {%- set ns.prices = ns.prices + [ns.current_total] -%}
+  {% if (price < ns.min_price) -%}{% set ns.min_price = price -%}{% set ns.min_index = index -%}{% endif-%}
+  {% if (price > ns.max_price) -%}{% set ns.max_price = price -%}{% set ns.max_index = index -%}{% endif-%}
+  {% endfor -%}
+  {% set avg_price = ns.current_total / (end_index - start_index) -%}
+
+  {% if ns.prices | length  > 0 -%}
+
+  Elprisen er lige nu <font size=5em>{{ "%.2f"|format(prices[start_index]) }}</font> kr./kWh, hvilket er <font size=5em color={% if (prices[start_index]) > avg_price -%}red{% else %}green{% endif %}>{{ "%.1f"| format(((ns.prices[0]-avg_price)|abs) / avg_price * 100) }}%</font> {% if (ns.prices[0]) > avg_price -%}<font color=red>højere</font>{% else %}<font color=green>lavere</font>{% endif %} end gennemsnittet for de næste {{end_index - start_index}} timer på {{ "%.2f"|format(avg_price) }} kr./kWh.
+
+
+  {% if ns.min_index > start_index -%}
+  <ha-icon icon="mdi:clock-check"></ha-icon>
+  Om <font size=5em>{{ ns.min_index - start_index }}</font> timer er prisen <font size=5em>{{ "%.2f"|format(ns.min_price) }}</font> kr./kWh, hvilket er lavest for de næste {{end_index - start_index}} timer. Den vil være <font color=green><font size=5em>{{"%.1f"| format(((ns.min_price)-(ns.prices[0]))/(prices[start_index])*100*-1) }}%</font> lavere</font> end nu.
+  {% else -%}
+  <font color=green>Prisen er den laveste i de næste {{end_index - start_index}} timer. Den er <font size=5em>{{"%.1f"| format(((ns.max_price-ns.prices[0])/ns.max_price)*100) }}%</font> lavere end den højeste pris i perioden.</font>
+  {% endif %}
+  {% endif %}
