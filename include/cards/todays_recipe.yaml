@@ -1,7 +1,7 @@
 #───────────────────────────────────────────────────────────────────────────────
 # Description:
 #───────────────────────────────────────────────────────────────────────────────
-# Markdown card with name and link to today's receipe
+# Custom:button-card with name and link to today's receipe
 #
 # Data is collected by a node-RED flow from a custom-developed website
 #
@@ -14,7 +14,8 @@ type: vertical-stack
 cards:
   - type: custom:button-card
     name: Dagens ret
-    entity: sensor.madplan_dagensret
+    state_display: "[[[ return entity.attributes.name; ]]]"
+    entity: sensor.mealie_mealplan_day0
     show_entity_picture: false
     show_state: true
     show_name: true
@@ -23,7 +24,10 @@ cards:
     show_icon: false
     styles:
       card:
-        - background-image: '[[[ return "url(" + states["sensor.madplan_dagensret_image"].state + ")"; ]]]'
+        - background-image: >-
+            [[[ return "url(http://[HA_IP_adresse]:9925/api/media/recipes/"
+            +entity.attributes.id +
+            "/images/original.webp)"; ]]]
         - background-size: cover
         - height: 180px
       grid:
@@ -46,3 +50,13 @@ cards:
         - text-align: left
         - display: inline-block
         - vertical-align: middle
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        title: Dagens ret
+        hide_header: false
+        large: true
+        card:
+          type: iframe
+          url: '[[[ return "http://[HA_IP_adresse]:9925/recipe/" + entity.attributes.slug ]]]'
