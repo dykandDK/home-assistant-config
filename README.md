@@ -40,13 +40,14 @@ This is my current hardware setup:
 ## Integrated smart devices
 My current setup includes the following integrated devices:
 
-|Lights                                |Sensors                  |Media                     |Other                     |
-|--------------------------------------|-------------------------|--------------------------|--------------------------|
-|Hue lights, remotes and buttons       |Hue Motion Sensors       |Apple TVs                 |Roborock S5 robot vacuum  |
-|IKEA TRÅDFRI bulbs, plugs and remotes |Aqara Door/Window sensors|Marantz SR7010 AV receiver|Bosch Indego 400 lawnmover|
-|Nordtronic Zigbee Box Dimmers & Relays|Netatmo Weather Station  |Sonos speakers            |Broadlink RM 4 Pro        |
-|Koogeek Smart plugs                   |VELUX Active Sensors     |                          |Reolink IP cameras        |
-|Innr Smart plugs                      |                         |                          |Easee  EV charging station|
+|Lights                                |Sensors                       |Media                     |Other                           |
+|--------------------------------------|------------------------------|--------------------------|--------------------------------|
+|Hue lights, remotes and buttons       |Hue Motion Sensors            |Apple TVs                 |Roborock S5 Max robot vacuum    |
+|IKEA TRÅDFRI bulbs, plugs and remotes |Aqara Door/Window sensors     |Marantz SR7010 AV receiver|Bosch Indego 400 lawnmover      |
+|Nordtronic Zigbee Box Dimmers & Relays|Aqara Multi sensors           |Sonos speakers            |Ubiquiti Unifi network equipment|
+|Koogeek Smart plugs                   |Netatmo Weather Station       |                          |Reolink IP cameras              |
+|Innr Smart plugs                      |VELUX Active Sensors          |                          |Easee  EV charging station      |
+|Shelly S Smart plugs                  |Sonoff TH16 og DS18B20 sensors|                          |Smart-me energy meter           |
 
 ## Addons
 I use the following addons:
@@ -60,6 +61,7 @@ I use the following addons:
 - Samba Backup
 - Check Home Assistant configuration
 - phpMyAdmin
+- Mealie
 
 ## Lovelace dashboards
 I use different Lovelace dashboards:
