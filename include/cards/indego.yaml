@@ -1,0 +1,169 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Picture elements card for control of Bosch Indego lawn mover robot.
+#
+# Inspired by: https://community.home-assistant.io/t/bosch-indego/25196/116
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+
+type: picture-elements
+image: /local/assets/indego.jpg
+elements:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Lawn completion percentage
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:progress-check
+    title: Plæne klippet
+    style:
+      top: 12%
+      left: 20px
+      "--iron-icon-fill-color": "#FFFFFF"
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  - type: state-label
+    entity: sensor.indego_706601174_lawn_mowed
+    style:
+      top: 12%
+      left: 50px
+      font-size: 15px
+      max-width: 50px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Remaining battery percentage
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:battery-80
+    style:
+      top: 12%
+      left: 90px
+  - type: state-label
+    entity: sensor.indego_706601174_battery_percentage
+    style:
+      top: 12%
+      left: 120px
+      font-size: 15px
+      max-width: 50px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Total mow time
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:update
+    style:
+      top: 12%
+      left: 160px
+  - type: state-label
+    entity: sensor.indego_706601174_runtime_total
+    style:
+      top: 12%
+      left: 170px
+      font-size: 15px
+      max-width: 1px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Start mow command
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    title: Mow
+    icon: "mdi:play"
+    entity: input_boolean.indego_mow
+    tap_action:
+      action: call-service
+      service: indego.command
+      service_data:
+        command: mow
+    style:
+      top: 12%
+      left: 60%
+      "--iron-icon-fill-color": "#FFFFFF"
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Pause mow command
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    title: Pause
+    icon: "mdi:pause"
+    entity: input_boolean.indego_pause
+    tap_action:
+      action: call-service
+      service: indego.command
+      service_data:
+        command: pause
+    style:
+      top: 12%
+      left: 73%
+      "--iron-icon-fill-color": "#FFFFFF"
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Dock command
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    title: Home
+    icon: "mdi:home"
+    entity: input_boolean.indego_home
+    tap_action:
+      action: call-service
+      service: indego.command
+      service_data:
+        command: returnToDock
+    style:
+      top: 12%
+      left: 85%
+      "--iron-icon-fill-color": "#FFFFFF"
+      "--iron-icon-height": 40px
+      "--iron-icon-width": 40px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Current status / state
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.indego_706601174_mower_state_detail
+    style:
+      top: 26%
+      left: 5px
+      font-size: 15px
+      max-width: 1px
+      text-align: left
+  #─────────────────────────────────────────────────────────────────────────────
+  # Moving mode
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: state-label
+    entity: sensor.indego_706601174_mowing_mode
+    style:
+      top: 26%
+      left: 60%
+      font-size: 15px
+      max-width: 30px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Last mow completion date/time
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:calendar-check
+    style:
+      top: 68%
+      left: 5%
+  - type: state-label
+    entity: sensor.indego_last_mow
+    style:
+      top: 68%
+      left: 30px
+      font-size: 15px
+      max-width: 1px
+  #─────────────────────────────────────────────────────────────────────────────
+  # Next scheduled mow date/time
+  #─────────────────────────────────────────────────────────────────────────────
+  - type: icon
+    icon: mdi:calendar-arrow-right
+    style:
+      top: 82%
+      left: 5%
+  - type: state-label
+    entity: sensor.indego_next_mow_countdown
+    style:
+      top: 82%
+      left: 30px
+      font-size: 15px
+      max-width: 1px
