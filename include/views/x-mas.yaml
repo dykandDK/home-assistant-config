@@ -1,0 +1,218 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# View to choose between different x-mas sound clips to play at after a delayed
+# time
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+icon: mdi:pine-tree
+title: Juledril
+subview: true
+badges: []
+cards:
+  - type: vertical-stack
+    cards:
+      #─────────────────────────────────────────────────────────────────────────
+      # Select time to delay action
+      #─────────────────────────────────────────────────────────────────────────
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: input_number.countdown_select
+                name: Antal min.
+                icon: mdi:timer-sand
+      #─────────────────────────────────────────────────────────────────────────
+      # Select action to perform
+      #─────────────────────────────────────────────────────────────────────────
+      - type: horizontal-stack
+        cards:
+          ### Play X-MAS music
+          - type: "custom:button-card"
+            color_type: card
+            icon: mdi:music
+            name: "Julemusik"
+            styles:
+              card:
+                - background-color: var(--card-background-color)
+                - border-radius: 20px
+                - color: var(--primary-foreground-color)
+                - border: 5px solid var(--card-background-color)
+            entity: input_select.countdown_actions
+            tap_action:
+              service: input_select.select_option
+              action: call-service
+              service_data:
+                entity_id: input_select.countdown_actions
+                option: music
+            state:
+              - value: "music"
+                styles:
+                  card:
+                    - border: 5px solid red
+          ### Flash lights
+          - type: "custom:button-card"
+            color_type: card
+            icon: mdi:alarm-light
+            name: "Blink lys"
+            styles:
+              card:
+                - background-color: var(--card-background-color)
+                - border-radius: 20px
+                - color: var(--primary-foreground-color)
+                - border: 5px solid var(--card-background-color)
+            entity: input_select.countdown_actions
+            tap_action:
+              service: input_select.select_option
+              action: call-service
+              service_data:
+                entity_id: input_select.countdown_actions
+                option: blink
+            state:
+              - value: "blink"
+                styles:
+                  card:
+                    - border: 5px solid red
+          ### Imitate doorbell
+          - type: "custom:button-card"
+            color_type: card
+            icon: mdi:bell-ring
+            name: Dørklokke
+            styles:
+              card:
+                - background-color: var(--card-background-color)
+                - border-radius: 20px
+                - color: var(--primary-foreground-color)
+                - border: 5px solid var(--card-background-color)
+            entity: input_select.countdown_actions
+            tap_action:
+              service: input_select.select_option
+              action: call-service
+              service_data:
+                entity_id: input_select.countdown_actions
+                option: doorbell
+            state:
+              - value: "doorbell"
+                styles:
+                  card:
+                    - border: 5px solid red
+      - type: horizontal-stack
+        cards:
+          ### Play toilet sounds
+          - type: "custom:button-card"
+            color_type: card
+            icon: mdi:toilet
+            name: Toilet
+            styles:
+              card:
+                - background-color: var(--card-background-color)
+                - border-radius: 20px
+                - color: var(--primary-foreground-color)
+                - border: 5px solid var(--card-background-color)
+            entity: input_select.countdown_actions
+            tap_action:
+              service: input_select.select_option
+              action: call-service
+              service_data:
+                entity_id: input_select.countdown_actions
+                option: toilet
+            state:
+              - value: "toilet"
+                styles:
+                  card:
+                    - border: 5px solid red
+          ### Play drum solo
+          - type: "custom:button-card"
+            color_type: card
+            icon: mdi:music-circle
+            name: "Trommer"
+            styles:
+              card:
+                - background-color: var(--card-background-color)
+                - border-radius: 20px
+                - color: var(--primary-foreground-color)
+                - border: 5px solid var(--card-background-color)
+            entity: input_select.countdown_actions
+            tap_action:
+              service: input_select.select_option
+              action: call-service
+              service_data:
+                entity_id: input_select.countdown_actions
+                option: drum
+            state:
+              - value: "drum"
+                styles:
+                  card:
+                    - border: 5px solid red
+          - type: "custom:button-card"
+            color_type: blank-card
+      #─────────────────────────────────────────────────────────────────────────
+      # Start countdown
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: timer.automation_countdown
+            state_not: "active"
+        card:
+          type: "custom:button-card"
+          color_type: card
+          icon: mdi:timer-outline
+          layout: icon_name_state
+          name: Start nedtælling
+          styles:
+            card:
+              - background-color: green
+              - border-radius: 20px
+              - color: "rgb(255,255,255)"
+            name:
+              - justify-self: start
+          tap_action:
+            action: call-service
+            service: timer.start
+            service_data:
+              entity_id: timer.automation_countdown
+              duration: >
+                [[[ return parseInt(states['input_number.countdown_select'].state)*60; ]]]
+      #─────────────────────────────────────────────────────────────────────────
+      # Stop countdown
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: timer.automation_countdown
+            state: "active"
+        card:
+          type: "custom:button-card"
+          color_type: card
+          icon: mdi:stop
+          entity: timer.automation_countdown
+          layout: icon_name_state
+          name: Stop nedtælling
+          styles:
+            card:
+              - background-color: red
+              - border-radius: 20px
+              - color: "rgb(255,255,255)"
+            name:
+              - justify-self: start
+          tap_action:
+            action: call-service
+            service: timer.cancel
+            service_data:
+              entity_id: timer.automation_countdown
+      #─────────────────────────────────────────────────────────────────────────
+      # Show count down (if started)
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: timer.automation_countdown
+            state: "active"
+        card:
+          type: entities
+          entities:
+            - entity: timer.automation_countdown
+              name: Nedtælling
+              icon: mdi:history
