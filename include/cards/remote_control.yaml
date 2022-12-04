@@ -7,6 +7,7 @@
 # Custom components required:
 #───────────────────────────────────────────────────────────────────────────────
 # - custom:button-card: https://github.com/custom-cards/button-card
+# - custom:mini-media-player: https://github.com/kalkih/mini-media-player
 
 #─────────────────────────────────────────────────────────────────────────
 # Select type of remote
@@ -134,6 +135,134 @@ cards:
       cards:
         - type: horizontal-stack
           cards:
+            - type: "custom:button-card"
+              color_type: card
+              name: DRTV
+              aspect_ratio: 1/1
+              show_name: false
+              styles:
+                card:
+                  - background-image: "url(/local/assets/DRTV_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "dk.dr.tv"
+                  media_content_type: "app"
+            - type: "custom:button-card"
+              color_type: card
+              name: Netflix
+              show_name: false
+              aspect_ratio: 1/1
+              styles:
+                card:
+                  - background-image: "url(/local/assets/Netflix_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "com.netflix.Netflix"
+                  media_content_type: "app"
+            - type: "custom:button-card"
+              color_type: card
+              name: YouTube
+              aspect_ratio: 1/1
+              show_name: false
+              styles:
+                card:
+                  - background-image: "url(/local/assets/YouTube_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "com.google.ios.youtube"
+                  media_content_type: "app"
+            - type: "custom:button-card"
+              color_type: card
+              name: Disney+
+              aspect_ratio: 1/1
+              show_name: false
+              styles:
+                card:
+                  - background-image: "url(/local/assets/Disney_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "com.disney.disneyplus"
+                  media_content_type: "app"
+            - type: "custom:button-card"
+              color_type: card
+              name: ViaPlay
+              aspect_ratio: 1/1
+              show_name: false
+              styles:
+                card:
+                  - background-image: "url(/local/assets/Viaplay_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "se.harbourfront.viasatondemand"
+                  media_content_type: "app"
+            - type: "custom:button-card"
+              color_type: card
+              name: HBO Max
+              aspect_ratio: 1/1
+              show_name: false
+              styles:
+                card:
+                  - background-image: "url(/local/assets/HBO_Max_logo.png)"
+                  - background-repeat: no-repeat
+                  - background-size: cover
+                  - background-position: center
+                  - background-color: "rgb(0,0,0)"
+                  - border-radius: 10px
+                  - color: "rgb(255,255,255)"
+              tap_action:
+                action: call-service
+                service: media_player.play_media
+                service_data:
+                  entity_id: media_player.atvstue
+                  media_content_id: "com.hbo.hbonow"
+                  media_content_type: "app"
+        - type: horizontal-stack
+          cards:
             # R1C1: Power Off
             - type: "custom:button-card"
               color_type: card
@@ -168,7 +297,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - up
             # R1C3: Top-menu
@@ -185,14 +314,14 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - top_menu
               hold_action:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - home_hold
         - type: horizontal-stack
@@ -211,7 +340,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - left
             # R2C2: Select / OK
@@ -228,7 +357,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - select
             # R2C3: Right
@@ -245,7 +374,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - right
         - type: horizontal-stack
@@ -264,7 +393,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - menu
             # R3C2: Down
@@ -281,7 +410,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - down
             # R3C3: Play/Pause
@@ -298,7 +427,7 @@ cards:
                 action: call-service
                 service: media_player.media_play_pause
                 service_data:
-                  entity_id: media_player.apple_tv_stue
+                  entity_id: media_player.atvstue
         - type: horizontal-stack
           cards:
             # R4C1: Volume down
@@ -313,7 +442,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - volume_down
 
@@ -333,7 +462,7 @@ cards:
                 action: call-service
                 service: remote.send_command
                 service_data:
-                  entity_id: remote.apple_tv_stue
+                  entity_id: remote.atvstue
                   command:
                     - home_hold
             # R4C2: Volume up
@@ -364,7 +493,37 @@ cards:
                 play_pause: true
                 play_stop: true
                 progress: true
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              name: ATVStue
+              template: now_playing_button
+              entity: media_player.atvstue
+              tap_action:
+                action: call-service
+                service: media_player.media_play_pause
+                service_data:
+                  entity_id: media_player.atvstue
 
+  #        - type: horizontal-stack
+  #          cards:
+  #            - type: custom:mini-media-player
+  #              entity: media_player.atvstue
+  #              artwork: cover-full
+  #              scale: 1
+  #              hide:
+  #                runtime_remaining: false
+  #                name: true
+  #                icon: true
+  #                # info: true
+  #                power: true
+  #                source: true
+  #                sound_mode: true
+  #                volume: true
+  #                controls: true
+  #                play_pause: true
+  #                play_stop: true
+  #                # progress: true
   #─────────────────────────────────────────────────────────────────────────
   # PS4 remote - living room
   #─────────────────────────────────────────────────────────────────────────
@@ -376,7 +535,7 @@ cards:
       type: markdown
       content: <h3>Integration currrently disabled</h3>
 
-  #─────────────────────────────────────────────────────────────────────────
+    #─────────────────────────────────────────────────────────────────────────
   # Sonos remote - living room
   #─────────────────────────────────────────────────────────────────────────
   - type: conditional

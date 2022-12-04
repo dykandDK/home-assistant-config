@@ -3,11 +3,11 @@
     "name": "Our Groceries",
     "documentation": "https://www.home-assistant.io/components/our-groceries",
     "requirements": [
-        "ourgroceries==1.3.9"
+        "ourgroceries==1.3.10"
     ],
     "dependencies": [],
     "codeowners": [
         "@ljmerza"
     ],
-    "version": "1.3.10"
+    "version": "1.3.13"
 }

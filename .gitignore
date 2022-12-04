@@ -14,4 +14,7 @@
 /custom_components
 home-assistant_v2.db-wal
 home-assistant_v2.db-shm
-www/community/lovelace-indego-card
+www/community
+home-assistant.log.fault
+home-assistant_v2.db-shm
+/SQL

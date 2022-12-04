@@ -4,6 +4,6 @@
   "documentation": "https://www.home-assistant.io/integrations/yr",
   "requirements": ["xmltodict==0.12.0"],
   "issue_tracker": "https://github.com/Danielhiversen/home_assistant_weather_data/issues",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "codeowners": ["@danielhiversen"]
 }

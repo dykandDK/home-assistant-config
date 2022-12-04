@@ -61,13 +61,13 @@ elements:
     icon: mdi:weather-sunset-up
     style:
       top: 40%
-      left: 28%
+      left: 20%
       color: rgba(202,217,235,1)
   - type: state-label
     entity: sensor.local_sunrise
     style:
       top: 40%
-      left: 31.2%
+      left: 23.2%
       color: rgba(202,217,235,1)
   #─────────────────────────────────────────────────────────────────────────────
   ### SUNSET ###
@@ -76,13 +76,13 @@ elements:
     icon: mdi:weather-sunset-down
     style:
       top: 75%
-      left: 28%
+      left: 20%
       color: rgba(202,217,235,1)
   - type: state-label
     entity: sensor.local_sunset
     style:
       top: 75%
-      left: 31.2%
+      left: 23.2%
       color: rgba(202,217,235,1)
   #─────────────────────────────────────────────────────────────────────────────
   ### Electricity prices ###
@@ -94,6 +94,9 @@ elements:
       left: 30%
       color: rgba(202,217,235,1)
       font-size: 55px
+    tap_action:
+      action: navigate
+      navigation_path: "/tablet-yaml/5"
   - type: custom:button-card
     entity: sensor.elpriser_inkl_afgifter
     show_icon: false
@@ -183,7 +186,7 @@ elements:
       action: navigate
       navigation_path: "/tablet-yaml/0"
   - type: state-icon
-    entity: vacuum.xiaomi_vacuum_cleaner
+    entity: vacuum.roborock_s5_max
     icon: hass:robot-vacuum #mdi:robot-vacuum
     style:
       top: 40%

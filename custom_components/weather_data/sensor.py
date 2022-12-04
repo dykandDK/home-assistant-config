@@ -4,6 +4,8 @@ import logging
 from random import randrange
 from xml.parsers.expat import ExpatError
 
+from homeassistant.const import MAJOR_VERSION, MINOR_VERSION
+
 import aiohttp
 import async_timeout
 import voluptuous as vol
@@ -124,6 +126,12 @@ class WeatherSensor(Entity):
         self._unit_of_measurement = SENSOR_TYPES[self.type][1]
         self._device_class = SENSOR_TYPES[self.type][2]
 
+        # changed property name since 2021.12
+        if MAJOR_VERSION >= 2022 or (MAJOR_VERSION == 2021 and MINOR_VERSION == 12):
+            WeatherSensor.extra_state_attributes = property(lambda self: {ATTR_ATTRIBUTION: ATTRIBUTION})
+        else:
+            WeatherSensor.device_state_attributes = property(lambda self: {ATTR_ATTRIBUTION: ATTRIBUTION})
+
     @property
     def name(self):
         """Return the name of the sensor."""
@@ -145,11 +153,6 @@ class WeatherSensor(Entity):
         if self.type != "symbol":
             return None
         return "https://api.met.no/images/weathericons/" f"png/{self._state}.png"
-
-    @property
-    def device_state_attributes(self):
-        """Return the state attributes."""
-        return {ATTR_ATTRIBUTION: ATTRIBUTION}
 
     @property
     def unit_of_measurement(self):

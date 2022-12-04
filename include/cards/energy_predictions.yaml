@@ -18,7 +18,7 @@ apex_config:
     labels:
       format: ddd
   chart:
-    height: 550px
+    height: 350px
     defaultLocale: da
     locales:
       - name: da

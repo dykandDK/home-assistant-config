@@ -1,0 +1,773 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Dashboard designed for viewing on mobile. Appearance may different on other
+# devices and screen resolutions.
+
+# Uses custom popup dialog boxes to display information and control various
+# smart home devices.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# Browser-mod:  https://github.com/thomasloven/hass-browser_mod
+#
+# Additional custom cards are used for some of the cards included below
+
+################################################################################
+###                   Custom button card styling templates                   ###
+################################################################################
+button_card_templates: !include include/cards/button_card_templates.yaml
+
+views:
+  ##############################################################################
+  ###                          FRONT PAGE VIEW                               ###
+  ##############################################################################
+  # Specify a tab icon if you want the view tab to be an icon.
+  - icon: mdi:home-outline
+    title: Home
+    badges: []
+    ############################################################################
+    ###       Popup card configuration for browser_mod custom component      ###
+    ############################################################################
+    popup_cards:
+      #─────────────────────────────────────────────────────────────────────────
+      # Last motion and door open events
+      #─────────────────────────────────────────────────────────────────────────
+      sensor.last_door_sensor:
+        title: Seneste hændelser
+        large: true
+        card: !include include/cards/event_log.yaml
+      sensor.last_motion_sensor:
+        title: Seneste hændelser
+        large: true
+        card: !include include/cards/event_log.yaml
+    cards:
+      #─────────────────────────────────────────────────────────────────────────
+      # Mobile header
+      #─────────────────────────────────────────────────────────────────────────
+      - !include include/cards/mobile_header.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Info selection
+      #─────────────────────────────────────────────────────────────────────────
+      - !include include/cards/info_select.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Light scene selection
+      #─────────────────────────────────────────────────────────────────────────
+      - !include include/cards/light_scene_selection.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room selection
+      #─────────────────────────────────────────────────────────────────────────
+      - !include include/cards/room_selection.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Kid's room 1
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Kid's room 1"
+        card:
+          type: vertical-stack
+          cards:
+            - !include include/cards/camera_feed01.yaml
+            - !include include/cards/room_kids01.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Kid's room 2
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Kid's room 2's værelse"
+        card:
+          type: vertical-stack
+          cards:
+            - !include include/cards/camera_feed02.yaml
+            - !include include/cards/room_kids02.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Kitchen
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Køkken/alrum"
+        card: !include include/cards/room_kitchen.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Livingroom
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Stue"
+        card: !include include/cards/room_living.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Office
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Kontor"
+        card: !include include/cards/room_office.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Master bedroom
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Soveværelse"
+        card: !include include/cards/room_bed.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Outdoors
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Ude"
+        card:
+          type: vertical-stack
+          cards:
+            - !include include/cards/room_outside.yaml
+      #─────────────────────────────────────────────────────────────────────────
+      # Room: Other rooms
+      #─────────────────────────────────────────────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: input_select.room_selection
+            state: "Øvrige"
+        card: !include include/cards/room_other.yaml
+
+  ##############################################################################
+  # 01                          REMOTE CONTROL TAB                             #
+  ##############################################################################
+
+  - icon: mdi:remote
+    title: Remote
+
+    cards:
+      - !include include/cards/remote_control.yaml
+
+  ##############################################################################
+  # 02                          SYSTEM STATUS TAB                              #
+  ##############################################################################
+  - !include include/views/status.yaml
+
+  ##############################################################################
+  # 03                              MUSIC TAB                                  #
+  ##############################################################################
+
+  - icon: mdi:music
+    title: Music
+    visible: false
+    cards:
+      - !include include/cards/mobile_music.yaml
+
+  ##############################################################################
+  # 04                          VACUUM CONTROL TAB                             #
+  ##############################################################################
+  - icon: mdi:broom
+    title: Vacuum
+    badges: []
+    cards:
+      - !include include/cards/vacuum_room_select.yaml
+      - type: vertical-stack
+        cards:
+          - !include include/cards/vacuum_control.yaml
+          - !include include/cards/vaccum_consumables.yaml
+
+  ##############################################################################
+  # 05                             OTHER VIEWS                                 #
+  ##############################################################################
+  - icon: mdi:dots-horizontal
+    title: Other
+    badges: []
+    cards:
+      ###  Energy prices
+      - type: vertical-stack
+        cards:
+          - type: "custom:button-card"
+            layout: icon_name_state2nd
+            show_state: true
+            entity: sensor.elpriser_inkl_afgifter
+            icon: mdi:tag-outline
+            color_type: label-card
+            color: var(--paper-listbox-color)
+            name: Electricity prices
+            units: DKK/kWh
+            styles:
+              name:
+                - font-weight: bold
+                - color: white
+                - justify-self: start
+              state:
+                - justify-self: start
+            tap_action:
+              action: navigate
+              navigation_path: "/mobile-yaml/9"
+      ### Energy usage
+      - type: vertical-stack
+        cards:
+          - type: "custom:button-card"
+            layout: icon_name_state2nd
+            icon: mdi:gauge
+            color_type: label-card
+            color: var(--secondary-text-color)
+            name: Electricity usage
+            entity: sensor.elpriser_maned_til_dags_dato
+            show_state: true
+            styles:
+              name:
+                - font-weight: bold
+                - color: white
+                - justify-self: start
+              state:
+                - justify-self: start
+            tap_action:
+              action: navigate
+              navigation_path: "/mobile-yaml/10"
+      ### Corona statistik
+      - type: vertical-stack
+        cards:
+          - type: "custom:button-card"
+            layout: icon_name_state2nd
+            #icon: mdi:chart-areaspline
+            icon: mdi:virus
+            color_type: label-card
+            #color: var(--primary-color)
+            color: red
+            name: Corona-smitte
+            entity: sensor.corona_greve
+            show_state: true
+            units: " "
+            styles:
+              name:
+                - font-weight: bold
+                - color: white
+                - justify-self: start
+              state:
+                - justify-self: start
+            tap_action:
+              action: navigate
+              navigation_path: "/mobile-yaml/11"
+      ### NFL Games
+      - type: conditional
+        conditions:
+          - entity: sensor.nfl
+            state: IN
+        card:
+          type: vertical-stack
+          cards:
+            - type: "custom:button-card"
+              layout: icon_name_state2nd
+              #icon: mdi:chart-areaspline
+              icon: mdi:football
+              color_type: label-card
+              color: "#204E32"
+              name: |
+                [[[ return entity.attributes.team_abbr +'  vs  ' + entity.attributes.opponent_abbr;]]]
+              entity: sensor.nfl
+              show_state: true
+              state_display: |
+                [[[ return entity.attributes.team_score + ' - ' + entity.attributes.opponent_score + ', Q' + entity.attributes.quarter + ' - ' + entity.attributes.clock;]]]
+              units: " "
+              styles:
+                name:
+                  - font-weight: bold
+                  - color: white
+                  - justify-self: start
+                state:
+                  - justify-self: start
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.popup
+                  data:
+                    title: "NFL"
+                    size: fullscreen
+                    content:
+                      type: vertical-stack
+                      cards:
+                        - type: custom:nfl-card
+                          entity: sensor.nfl
+      ### Lawn mower
+      - type: conditional
+        conditions:
+          - entity: sensor.season_dk
+            state_not: vinter
+          - entity: sensor.season_dk
+            state_not: jul
+        card:
+          type: vertical-stack
+          cards:
+            - type: "custom:button-card"
+              layout: icon_name_state2nd
+              #icon: mdi:chart-areaspline
+              icon: mdi:robot-mower
+              color_type: label-card
+              color: green
+              name: Plæneklipper
+              entity: sensor.indego_next_mow_countdown
+              show_state: true
+              units: " "
+              styles:
+                name:
+                  - font-weight: bold
+                  - color: white
+                  - justify-self: start
+                state:
+                  - justify-self: start
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.popup
+                  data:
+                    title: "Robotplæneklipper"
+                    #auto_close: true
+                    size: fullscreen
+                    content:
+                      type: vertical-stack
+                      cards:
+                        - !include include/cards/indego_control.yaml
+                        - type: picture-glance
+                          title: Have
+                          aspect_ratio: "16x9"
+                          camera_image: camera.have
+                          camera_view: live
+                          entities:
+                            - entity: binary_sensor.have_person_detected
+                              name: Person
+                              icon: mdi:walk
+                            - entity: binary_sensor.have_motion
+                              name: Øvrig bevægelse
+                              icon: mdi:motion-outline
+
+                      # - !include include/cards/camera_feed07.yaml
+                      #- !include indego_map.yaml
+      ### Meater
+      - type: conditional
+        conditions:
+          - entity: sensor.meater_probe_cook_state
+            state_not: unavailable
+        card:
+          type: vertical-stack
+          cards:
+            - type: "custom:button-card"
+              layout: icon_name_state2nd
+              #icon: mdi:chart-areaspline
+              icon: mdi:gas-burner
+              color_type: label-card
+              color: white
+              name: Grill
+              entity: sensor.meater_probe_internal
+              show_state: true
+              units: " "
+              styles:
+                name:
+                  - font-weight: bold
+                  - color: red
+                  - justify-self: start
+                icon:
+                  - color: red
+                state:
+                  - justify-self: start
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.popup
+                  data:
+                    title: "Grill / stegning"
+                    #auto_close: true
+                    size: fullscreen
+                    content:
+                      type: vertical-stack
+                      cards:
+                        - !include include/cards/meater_grill.yaml
+      ### Juledril
+      - type: conditional
+        conditions:
+          - entity: sensor.season_dk
+            state: jul
+        card:
+          type: vertical-stack
+          cards:
+            - type: "custom:button-card"
+              color_type: label-card
+              color: darkred
+              layout: icon_name_state
+              icon: mdi:pine-tree
+              name: Juledril
+              styles:
+                name:
+                  - font-weight: bold
+                  - color: white
+                  - justify-self: start
+              tap_action:
+                action: navigate
+                navigation_path: "/mobile-yaml/12"
+      ### Indstillinger
+      - type: vertical-stack
+        cards:
+          - type: "custom:button-card"
+            color_type: label-card
+            color: var(--primary-color)
+            layout: icon_name_state
+            icon: mdi:cog
+            name: Indstillinger
+            styles:
+              name:
+                - font-weight: bold
+                - color: white
+                - justify-self: start
+            tap_action:
+              action: navigate
+              navigation_path: "/mobile-yaml/8"
+
+  ##############################################################################
+  # 06                             VW INFO VIEW                                #
+  ##############################################################################
+  - !include include/views/car_info_mobile.yaml
+
+  ##############################################################################
+  # 07                               Madplan                                   #
+  ##############################################################################
+  - icon: mdi:chef-hat
+    title: Madplan
+    visible: false
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: picture-elements
+            state_filter:
+              - null
+            image: /local/assets/blank.png
+            elements:
+              ### Import icon ###
+              - type: icon
+                entity: input_boolean.recipe_import
+                icon: mdi:import
+                style:
+                  top: 20px
+                  left: 80%
+                  color: var(--primary-foreground-color)
+                  --mdc-icon-size: 30px
+                tap_action:
+                  action: call-service
+                  service: input_boolean.toggle
+                  service_data:
+                    entity_id: input_boolean.recipe_import
+              ### Save icon ###
+              - type: state-icon
+                entity: input_boolean.recipe_save
+                icon: mdi:content-save
+                style:
+                  top: 20px
+                  left: 90%
+                  color: var(--primary-foreground-color)
+                  --mdc-icon-size: 30px
+                tap_action:
+                  action: call-service
+                  service: input_boolean.toggle
+                  service_data:
+                    entity_id: input_boolean.recipe_save
+              ### Error text ###
+              - type: state-label
+                entity: sensor.local_date
+                style:
+                  top: 50px
+                  left: 10%
+          - type: vertical-stack
+            cards:
+              - type: entity
+                entity: input_text.madplan_opskrift_link
+              - type: entity
+                entity: input_select.madplan_type
+              - type: entity
+                entity: input_select.madplan_serveresmed
+              - type: markdown
+                content: |
+                  <font color=red>{{ states.input_text.madplan_error.state}}</font>
+                  {% if states.input_text.madplan_error.state=='' -%}
+                  <h2>{{ states.input_text.madplan_opskrift_navn.state}}</h2>
+                  <img src={{states.sensor.madplan_fremgang.attributes.image}}>
+                  <h4>Tilberedningstid: {{ states.sensor.madplan_fremgang.attributes.time}} minutter</h4>
+                  <h4>Fremgangsmåde</h4>
+                  {{ states.sensor.madplan_fremgang.attributes.process}}
+                  {% endif -%}
+
+  ##############################################################################
+  # 08                             CONFIG VIEW                                 #
+  ##############################################################################
+  - !include include/views/config.yaml
+
+  ##############################################################################
+  # 09                              EL-PRISER                                  #
+  ##############################################################################
+  - icon: mdi:cash
+    title: Elpriser
+    visible: false
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:swipe-card
+            reset_after: 30
+            cards:
+              - type: vertical-stack
+                cards:
+                  - !include include/cards/energy_price_graph.yaml
+                  - !include include/cards/energy_price_info.yaml
+                  - type: "custom:button-card"
+                    color_type: label-card
+                    #color: var(--primary-color)
+                    color: var(--secondary-text-color)
+                    aspect_ratio: 7.5/1
+                    layout: icon_name_state
+                    show_state: false
+                    icon: mdi:sync
+                    name: Hent seneste priser
+                    styles:
+                      name:
+                        #- font-weight: bold
+                        - color: white
+                        - justify-self: start
+                      icon:
+                        #- font-weight: bold
+                        - color: white
+                        - justify-self: start
+                    tap_action:
+                      action: call-service
+                      service: homeassistant.reload_config_entry
+                      target:
+                      service_data:
+                        entity_id:
+                          - sensor.nordpool_kwh_dk2_dkk_3_00_025
+                          - sensor.nordpool_kwh_dk2_dkk_2_10_025
+                          - sensor.elpriser_excl_afgifter
+                          - sensor.elpriser_inkl_afgifter
+              - type: vertical-stack
+                cards:
+                  - !include include/cards/energy_predictions_mobile.yaml
+                  - !include include/cards/electricity_price_prediction_table.yaml
+              - type: vertical-stack
+                cards:
+                  - !include include/cards/electricity_forward_prices.yaml
+
+          #- !include include/cards/ev_charging_month.yaml
+
+  ##############################################################################
+  # 10                              EL-FORBRUG                                 #
+  ##############################################################################
+  - icon: mdi:cash
+    title: Elforbrug
+    visible: false
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:swipe-card
+            reset_after: 30
+            cards:
+              # Home-made graphs
+              - type: vertical-stack
+                cards:
+                  - !include include/cards/energy_range_selection.yaml
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_range
+                        state: "day"
+                    card:
+                      type: vertical-stack
+                      cards:
+                        - !include include/cards/energy_graph_daily.yaml
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_range
+                        state: "week"
+                    card:
+                      type: vertical-stack
+                      cards:
+                        - !include include/cards/energy_graph_weekly.yaml
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_range
+                        state: "month"
+                    card:
+                      type: vertical-stack
+                      cards:
+                        - !include include/cards/energy_usage.yaml
+                        #- !include include/cards/energy_daily.yaml
+                        - !include include/cards/energy_graph_monthly.yaml
+              # Standard dashboard components
+              - type: vertical-stack
+                cards:
+                  - type: energy-date-selection
+                  - type: energy-usage-graph
+                  - type: energy-sources-table
+
+  ##############################################################################
+  # 11                            CORONA STATISTIK                             #
+  ##############################################################################
+  - !include include/views/corona_stat.yaml
+
+  ##############################################################################
+  # 12                         CHRISMAS SPECIAL TAB                            #
+  ##############################################################################
+  - icon: mdi:pine-tree
+    title: Juledril
+    visible: false
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          ###   Select time   ###
+          - type: horizontal-stack
+            cards:
+              - type: entities
+                entities:
+                  - entity: input_number.countdown_select
+                    name: Antal min.
+                    icon: mdi:timer-sand
+          ###   Select action   ###
+          - type: horizontal-stack
+            cards:
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:music
+                name: "Julemusik"
+                styles:
+                  card:
+                    - background-color: "rgb(0,0,0)"
+                    - border-radius: 20px
+                    - color: "rgb(255,255,255)"
+                    - border: 5px solid black
+                entity: input_select.countdown_actions
+                tap_action:
+                  service: input_select.select_option
+                  action: call-service
+                  service_data:
+                    entity_id: input_select.countdown_actions
+                    option: music
+                state:
+                  - value: "music"
+                    styles:
+                      card:
+                        - border: 5px solid red
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:alarm-light
+                name: "Blink lys"
+                styles:
+                  card:
+                    - background-color: "rgb(0,0,0)"
+                    - border-radius: 20px
+                    - color: "rgb(255,255,255)"
+                    - border: 5px solid black
+                entity: input_select.countdown_actions
+                tap_action:
+                  service: input_select.select_option
+                  action: call-service
+                  service_data:
+                    entity_id: input_select.countdown_actions
+                    option: blink
+                state:
+                  - value: "blink"
+                    styles:
+                      card:
+                        - border: 5px solid red
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:bell-ring
+                name: Dørklokke
+                styles:
+                  card:
+                    - background-color: "rgb(0,0,0)"
+                    - border-radius: 20px
+                    - color: "rgb(255,255,255)"
+                    - border: 5px solid black
+                entity: input_select.countdown_actions
+                tap_action:
+                  service: input_select.select_option
+                  action: call-service
+                  service_data:
+                    entity_id: input_select.countdown_actions
+                    option: doorbell
+                state:
+                  - value: "doorbell"
+                    styles:
+                      card:
+                        - border: 5px solid red
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:toilet
+                name: Toilet
+                styles:
+                  card:
+                    - background-color: "rgb(0,0,0)"
+                    - border-radius: 20px
+                    - color: "rgb(255,255,255)"
+                    - border: 5px solid black
+                entity: input_select.countdown_actions
+                tap_action:
+                  service: input_select.select_option
+                  action: call-service
+                  service_data:
+                    entity_id: input_select.countdown_actions
+                    option: toilet
+                state:
+                  - value: "toilet"
+                    styles:
+                      card:
+                        - border: 5px solid red
+              - type: "custom:button-card"
+                color_type: card
+                icon: mdi:music-circle
+                name: "Trommer"
+                styles:
+                  card:
+                    - background-color: "rgb(0,0,0)"
+                    - border-radius: 20px
+                    - color: "rgb(255,255,255)"
+                    - border: 5px solid black
+                entity: input_select.countdown_actions
+                tap_action:
+                  service: input_select.select_option
+                  action: call-service
+                  service_data:
+                    entity_id: input_select.countdown_actions
+                    option: drum
+                state:
+                  - value: "drum"
+                    styles:
+                      card:
+                        - border: 5px solid red
+          ###   Start countdown   ####
+          - type: horizontal-stack
+            cards:
+              - type: entities
+                entities:
+                  - entity: script.start_timer
+                    name: Start nedtælling
+                    icon: mdi:timer-outline
+          ###   Show count down   ####
+          - type: horizontal-stack
+            cards:
+              - type: conditional
+                conditions:
+                  - entity: timer.automation_countdown
+                    state: "active"
+                card:
+                  type: entities
+                  entities:
+                    - entity: timer.automation_countdown
+                      name: Nedtælling
+                      icon: mdi:history
+
+  ##############################################################################
+  # 13                         Home Surveillance                               #
+  ##############################################################################
+  - icon: mdi:camera
+    title: Overvågning
+    visible: false
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - !include include/cards/event_log.yaml
+title: " "

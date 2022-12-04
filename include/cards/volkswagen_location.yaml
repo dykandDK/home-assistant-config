@@ -16,3 +16,28 @@ hours_to_show: 24
 aspect_ratio: 15x10
 #default_zoom: 6
 default_zoom: 10
+
+
+
+type: custom:apexcharts-card
+graph_span: 14d
+span:
+  end: day
+show:
+  last_updated: true
+header:
+  show: true
+  show_states: true
+  colorize_states: true
+  title: Elforbrug - seneste uge
+series:
+  - entity: sensor.kamstrup_total_import_filter
+    type: column
+    group_by:
+      func: max
+      duration: 1d
+  - entity:  sensor.elforbrug_maned
+    type: column
+    group_by:
+      func: max
+      duration: 1d

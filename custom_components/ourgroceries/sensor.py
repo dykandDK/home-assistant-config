@@ -34,13 +34,30 @@ class OurGroceriesSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
+        _LOGGER.debug('get og state')
         shopping_lists = len(self._lists.get('shoppingLists', []))
         recipes = len(self._lists.get('recipes', []))
         return shopping_lists + recipes
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
+        _LOGGER.debug({
+            ATTR_RECIPES: self._lists.get('recipes'),
+            ATTR_SHOPPING_LISTS: self._lists.get('shoppingLists')
+        })
+        return {
+            ATTR_RECIPES: self._lists.get('recipes'),
+            ATTR_SHOPPING_LISTS: self._lists.get('shoppingLists')
+        }
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes (depricated)."""
+        _LOGGER.debug({
+            ATTR_RECIPES: self._lists.get('recipes'),
+            ATTR_SHOPPING_LISTS: self._lists.get('shoppingLists')
+        })
         return {
             ATTR_RECIPES: self._lists.get('recipes'),
             ATTR_SHOPPING_LISTS: self._lists.get('shoppingLists')

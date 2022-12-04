@@ -33,6 +33,7 @@ cards:
               type: vertical-stack
               cards:
                 - !include ../cards/energy_predictions.yaml
+                - !include ../cards/energy_predictions_table.yaml
           - type: conditional
             conditions:
               - entity: input_select.energy_type

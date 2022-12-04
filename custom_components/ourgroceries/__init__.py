@@ -14,7 +14,7 @@ from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.entity_component import EntityComponent
 
 
-__version__ = '1.3.11'
+__version__ = '1.3.13'
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=300)
 DOMAIN = 'ourgroceries'
