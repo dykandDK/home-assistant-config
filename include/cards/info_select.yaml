@@ -26,6 +26,14 @@ cards:
         - color: var(--primary-foreground-color)
         - border-radius: 10px
     entity: dummy.madplan
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: "Ugens madplan"
+          size: fullscreen
+          content: !include week_recipes.yaml
   #─────────────────────────────────────────────────────────────────────────────
   # TODO list selection
   #─────────────────────────────────────────────────────────────────────────────
@@ -39,6 +47,15 @@ cards:
         - color: var(--primary-foreground-color)
         - border-radius: 10px
     entity: dummy.TODO
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: "Opgaver"
+          size: fullscreen
+          content:
+            type: shopping-list
   #─────────────────────────────────────────────────────────────────────────────
   # Shopping list selection
   #─────────────────────────────────────────────────────────────────────────────
@@ -91,6 +108,15 @@ cards:
             items:
               - background-color: var(--card-background-color)
               - color: var(--card-background-color)
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: "Indkøbsliste"
+          size: fullscreen
+          content: !include shopping_list.yaml
+
   #─────────────────────────────────────────────────────────────────────────────
   # Garbage collection information selection
   #─────────────────────────────────────────────────────────────────────────────
@@ -125,3 +151,11 @@ cards:
           - font-size: 12px
           - line-height: 20px #- grid-template-columns: 1fr 70%
     entity: calendar.garbage_collection
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: "Afhentning af affald og genbrug"
+          size: fullscreen
+          content: !include garbage_collection2.yaml
