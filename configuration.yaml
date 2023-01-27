@@ -19,7 +19,8 @@ homeassistant:
     - /config
   media_dirs:
     media: /media
-
+  unit_system: metric
+  currency: DKK
 #───────────────────────────────────────────────────────────────────────────────
 # Allow external access via DuckDNS.org
 #───────────────────────────────────────────────────────────────────────────────
@@ -359,6 +360,20 @@ sensor:
   # Mealie REST (API) sensors
   #─────────────────────────────────────────────────────────────────────────────
 
+  - platform: rest
+    resource: !secret mealie_api_URL_mealplan
+    name: mealie_mealplan_all
+    scan_interval: 3600
+    headers:
+      Authorization: !secret mealie_api_token
+    json_attributes_path: "$.[0].recipe"
+    json_attributes:
+      - id
+      - name
+      - slug
+      - image
+    value_template: "{{ value_json.date }}"
+
   # Today
   - platform: rest
     resource: !secret mealie_api_URL_mealplan
@@ -367,9 +382,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ now().strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ now().strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -387,9 +402,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 1)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 1)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -407,9 +422,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 2)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 2)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -427,9 +442,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 3)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 3)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -447,9 +462,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 4)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 4)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -467,9 +482,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 5)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 5)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
@@ -487,9 +502,9 @@ sensor:
     headers:
       Authorization: !secret mealie_api_token
     params:
-      start: >
+      start_date: >
         {{ (now() + timedelta(days = 6)).strftime('%Y-%m-%d') }}
-      limit: >
+      end_date: >
         {{ (now() + timedelta(days = 6)).strftime('%Y-%m-%d') }}
     json_attributes_path: "$.[0].recipe"
     json_attributes:
