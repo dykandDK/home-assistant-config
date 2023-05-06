@@ -1,0 +1,58 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom apex chart with daily energy consumption
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  dataLabels:
+    enabled: true
+    offsetY: -10
+graph_span: 1day
+span:
+  start: day
+show:
+  last_updated: false
+experimental:
+  color_threshold: true
+header:
+  show: true
+  title: Dagens elforbrug
+  standard_format: true
+series:
+  - entity: sensor.kamstrup_total_import_filter
+    name: Totalt elforbrug
+    type: column
+    unit: kWh
+    float_precision: 1
+    group_by:
+      func: diff
+      duration: 1hour
+    show:
+      #datalabels: true
+      legend_value: false
+      extremas: true
+    color_threshold:
+      - value: 0.4
+        color: '#17DD1B'
+        opacity: 1
+      - value: 0.5
+        color: '#f39c12'
+      - value: 1
+        color: '#c0392b'
+  - entity: sensor.ehmawz7t_lifetime_energy
+    name: Opladning af elbiler
+    type: column
+    unit: kWh
+    float_precision: 1
+    group_by:
+      func: diff
+      duration: 1hour
+    show:
+      #datalabels: true
+      legend_value: false

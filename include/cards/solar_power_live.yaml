@@ -1,0 +1,87 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display live solar production and grid consumption flow
+#
+# Inverter data is collected via the Solarman integration:
+#
+# https://github.com/StephanJoubert/home_assistant_solarman
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:swipe-card - https://github.com/bramkragten/custom-ui/tree/master/swipe-card
+# - custom:mini-graph-card - https://github.com/kalkih/mini-graph-card
+
+type: custom:swipe-card
+title: null
+card_width: 100%
+start_card: 1
+#reset_after: 10
+parameters:
+  #effect: coverflow
+  grabCursor: true
+  centeredSlides: true
+  slidesPerView: auto
+  # coverflowEffect:
+  #   rotate: 110
+  #   stretch: 90
+  #   depth: 633
+  #   modifier: 1
+  #   slideShadows: true
+  pagination:
+    type: bullets
+cards:
+  ##############################################################################
+  # Four gauges with current solar production and grid power (buy or sell)
+  ##############################################################################
+  - !include solar_power_gauges.yaml
+    # - type: horizontal-stack
+    #   cards:
+    #     - !include solar_battery_overview.yaml
+  ##############################################################################
+  # Live power flows
+  ##############################################################################
+  - !include solar_power_flow.yaml
+
+  ##############################################################################
+  # Default energy dashboard - energy distribution flow
+  ##############################################################################
+  - type: energy-distribution
+    #link_dashboard: true
+  ##############################################################################
+  # Two graphs with daily solar production and grid power (buy or sell)
+  ##############################################################################
+  - type: vertical-stack
+    cards:
+      - type: custom:mini-graph-card
+        name: Daglig produktion
+        entities:
+          - sensor.solarman_deye_daily_production
+        line_color: orange
+        line_width: 3
+        font_size: 75
+      - type: custom:mini-graph-card
+        name: Dagligt køb fra og salg til nettet
+        icon: mdi:transmission-tower
+        line_color:
+          - red
+          - green
+        entities:
+          - entity: sensor.solarman_deye_daily_energy_bought
+            name: Køb
+          - entity: sensor.solarman_deye_daily_energy_sold
+            name: Salg
+        line_width: 3
+        font_size: 75
+# type: custom:tesla-style-solar-power-card
+# grid_consumption_entity: sensor.solarman_deye_total_grid_power
+# house_consumption_entity: sensor.kamstrup_total_watt
+# grid_to_house_entity: sensor.solarman_deye_total_grid_power
+# generation_to_house_entity: sensor.total_solar_production
+# appliance1_consumption_entity: sensor.ehmawz7t_power
+# generation_to_battery_entity: sensor.house_battery_charging
+# battery_to_house_entity: sensor.house_battery_decharging
+# battery_extra_entity: sensor.deyemodbus_deye_battery_capacity
+# speed_factor: 0.015
+# show_gap: true

@@ -1,0 +1,114 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display solar production forecast versus actual production
+#
+# Solar forecast is based on the Solcast integration:
+#
+# https://github.com/oziee/ha-solcast-solar
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  chart:
+    height: 330px
+all_series_config:
+  unit: " kWh"
+header:
+  title: Solproduktion pr. time
+  show: true
+  standard_format: true
+  show_states: true
+  colorize_states: true
+graph_span: 2d
+span:
+  start: day
+  offset: "-0h"
+now:
+  show: true
+  label: Nu
+yaxis:
+  - id: kwh
+    min: 0
+    apex_config:
+      tickAmount: 5
+  - id: header_only
+    show: false
+series:
+  - entity: sensor.solarman_deye_daily_production
+    name: Faktisk
+    type: line
+    color: 03A9F4
+    unit: kWh
+    float_precision: 2
+    stroke_width: 3
+    yaxis_id: kwh
+    group_by:
+      func: diff
+      duration: 1hour
+    extend_to: now
+    show:
+      legend_value: false
+      in_header: raw
+  - entity: sensor.solcast_forecast_today
+    yaxis_id: kwh
+    type: area
+    name: Estimeret
+    color: orange
+    data_generator: |
+      var today = entity.attributes.forecast.map((start, index) => {
+        return [new Date(start["period_start"]).getTime(), entity.attributes.forecast[index]["pv_estimate"]];
+      });
+      var data = today
+      return data;
+    show:
+      legend_value: false
+      in_header: raw
+    stroke_width: 3
+    float_precision: 1
+    extend_to: false
+  - entity: sensor.solcast_forecast_tomorrow
+    yaxis_id: kwh
+    type: area
+    name: I morgen
+    color: grey
+    data_generator: |
+      var today = entity.attributes.forecast.map((start, index) => {
+        return [new Date(start["period_start"]).getTime(), entity.attributes.forecast[index]["pv_estimate"]];
+      });
+      var data = today
+      return data;
+    show:
+      legend_value: false
+      in_header: raw
+    stroke_width: 3
+    float_precision: 1
+    extend_to: false
+  - entity: sensor.solcast_forecast_remaining_today
+    yaxis_id: header_only
+    type: line
+    name: Rest i dag
+    color: orange
+    show:
+      legend_value: true
+      in_header: true
+      in_chart: false
+  - entity: sensor.solcast_api_last_polled
+    yaxis_id: header_only
+    name: Sidst opdateret
+    unit: " min."
+    transform: return ((Date.now()) - (new Date(x).getTime())) / 60 / 60 / 24
+    show:
+      legend_value: true
+      in_header: true
+      in_chart: false
+    header_actions:
+      double_tap_action:
+        action: call-service
+        service: solcast_solar.update_forecasts
+        confirmation:
+          text: Vil du opdatere prognosen?

@@ -1,0 +1,200 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom apex chart with energy prices excl. and incl. taxes
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  chart:
+    height: 450px
+    defaultLocale: da
+    locales:
+      - name: da
+        options:
+          months:
+            - januar
+            - februar
+            - marts
+            - april
+            - maj
+            - juni
+            - juli
+            - august
+            - september
+            - oktober
+            - november
+            - december
+          shortMonths:
+            - Jan
+            - Feb
+            - Mar
+            - Apr
+            - Maj
+            - Jun
+            - Jul
+            - Aug
+            - Sep
+            - Okt
+            - Nov
+            - Dec
+          days:
+            - Søndag
+            - Mandag
+            - Tirsdag
+            - Onsdag
+            - Torsdag
+            - Fredag
+            - Lørdag
+          shortDays:
+            - SØN
+            - MAN
+            - TIR
+            - ONS
+            - TOR
+            - FRE
+            - LØR
+  dataLabels:
+    enabled: true
+    style:
+      fontSize: 14px
+      colors:
+        - "#fff"
+    distributed: true
+    background:
+      enabled: false
+  tooltip:
+    x:
+      format: dddd, kl. H
+  xaxis:
+    labels:
+      format: HH
+    group:
+      groups:
+        - title: "I dag"
+          cols: 24
+        - title: "I morgen"
+          cols: 24
+    axisBorder:
+      show: true
+      color: grey
+  plotOptions:
+    bar:
+      dataLabels:
+        position: bottom
+        maxItems: 32
+        hideOverflowingLabels: true
+        orientation: vertical
+      columnWidth: 90%
+all_series_config:
+  unit: " kr."
+experimental:
+  color_threshold: true
+header:
+  title: Elpriser pr. time (kr/kWh)
+  show: true
+  standard_format: true
+  show_states: false
+  colorize_states: true
+graph_span: 2d
+span:
+  start: day
+  offset: +0h
+now:
+  show: true
+  label: Nu
+yaxis:
+  - min: 0
+    max: ~2
+    apex_config:
+      tickAmount: 5
+      title:
+        text: Pris i kr. / kWh
+        rotate: "-90"
+      axisBorder:
+        show: true
+        color: grey
+series:
+  ############## Med afgifter ##############
+  - entity: sensor.elpriser_inkl_afgifter
+    type: column
+    name: Inkl. afgifter
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), entity.attributes.raw_tomorrow[index]["price"]];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;
+    float_precision: 2
+    color_threshold:
+      - value: 0
+        color: green
+      - value: 2
+        color: orange
+      - value: 3.5
+        color: red
+      - value: 5
+        color: darkred
+    show:
+      datalabels: true
+      legend_value: false
+  ############## Uden afgifter ##############
+  - entity: sensor.elpriser_excl_afgifter
+    name: Excl. afgifter
+    type: line
+    color: 03a9f4
+    stroke_width: 4
+    float_precision: 2
+    extend_to: false
+    show:
+      legend_value: false
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), entity.attributes.raw_tomorrow[index]["price"]];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;
+  - entity: sensor.elpriser_inkl_afgifter
+    type: line
+    name: Refusion
+    color: violet
+    stroke_width: 3
+    float_precision: 2
+    data_generator: |
+      var today = entity.attributes.raw_today.map((start, index) => {
+        return [new Date(start["hour"]).getTime(), 0.86];
+      });
+      if (entity.attributes.tomorrow_valid) {
+        var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
+          return [new Date(start["hour"]).getTime(), 0.86];
+        });
+
+        var data = today.concat(tomorrow);
+      } else {
+        var data = today
+      }
+      return data;
+    show:
+      legend_value: false
+      in_header: false
+    extend_to: false

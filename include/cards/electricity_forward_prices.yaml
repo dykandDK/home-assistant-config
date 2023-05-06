@@ -1,0 +1,85 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom apex chart with electricity forward spot prices
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
+type: custom:apexcharts-card
+apex_config:
+  subtitle:
+    text: Alle priser er excl. moms, afgifter og tariffer
+    offsetY: -75
+    offsetX: 6
+    margin: 0
+    align: left
+  dataLabels:
+    enabled: true
+    offsetY: -12
+    distributed: true
+  chart:
+    height: "450px"
+  xaxis:
+    axisBorder:
+      show: true
+      color: grey
+header:
+  show: true
+  title: Udvikling i terminspriser
+  show_states: true
+  colorize_states: true
+  standard_format: true
+graph_span: 2week
+span:
+  end: hour
+yaxis: # only 1 yaxis, no need for id or yaxis_id
+  - min: 0
+    max: "|+0.5|"
+    apex_config:
+      tickAmount: 10
+      title:
+        text: Pris i kr. / kWh
+        rotate: "-90"
+      axisBorder:
+        show: true
+        color: grey
+series:
+  #──────────────────────────  Forward price Q3 2023  ─────────────────────────#
+  - entity: sensor.el_terminspris_q3_23
+    type: line
+    fill_raw: last
+    name: Q3 23
+    float_precision: 2
+    extend_to: now
+    show:
+      in_chart: true
+      datalabels: false
+      legend_value: false
+      extremas: false
+  #─────────────────────────  Forward price all 2024  ─────────────────────────#
+  - entity: sensor.el_terminspris_2024
+    type: line
+    fill_raw: last
+    name: "2024"
+    float_precision: 2
+    extend_to: now
+    show:
+      in_chart: true
+      datalabels: false
+      legend_value: false
+      extremas: false
+  #─────────────────────────  EWII 1 year fixed price  ────────────────────────#
+  - entity: sensor.ewii_fastpris_1_aar
+    type: line
+    fill_raw: last
+    name: "EWII fastpris"
+    float_precision: 2
+    extend_to: now
+    show:
+      in_chart: true
+      datalabels: false
+      legend_value: false
+      extremas: false

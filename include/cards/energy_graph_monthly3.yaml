@@ -1,0 +1,163 @@
+type: custom:apexcharts-card
+experimental:
+  brush: true
+  color_threshold: true
+brush:
+  selection_span: 2weeks
+apex_config:
+  chart:
+    height: 290px
+  dataLabels:
+    enabled: true
+    style:
+      fontSize: 9px
+      colors:
+        - "#fff"
+    distributed: true
+    background:
+      enabled: false
+  tooltip:
+    x:
+      format: dd. MMM
+  xaxis:
+    labels:
+      format: d
+  plotOptions:
+    bar:
+      dataLabels:
+        position: bottom
+        maxItems: 32
+        hideOverflowingLabels: true
+        orientation: vertical
+      columnWidth: 90%
+graph_span: 1month
+span:
+  start: month
+show:
+  last_updated: false
+header:
+  show: true
+  title: Månedens elforbrug
+  standard_format: true
+  show_states: false
+  colorize_states: false
+yaxis:
+  - id: kwh
+    min: 0
+    decimals: 1
+    apex_config:
+      tickAmount: 10
+      title:
+        text: Forbrug i kWh
+        rotate: "-90"
+      axisBorder:
+        show: false
+        color: "#fff"
+  - id: pris
+    min: 0
+    opposite: true
+    decimals: 2
+    apex_config:
+      tickAmount: 10
+      title:
+        text: Pris i kr.
+        rotate: "-90"
+      axisBorder:
+        show: false
+        color: "#fff"
+  - id: hidden
+    opposite: true
+    show: false
+series:
+  - entity: sensor.kamstrup_total_import_filter
+    name: Forbrug
+    type: column
+    yaxis_id: kwh
+    unit: kWh
+    float_precision: 1
+    statistics:
+      type: sum
+      period: day
+      align: end
+    group_by:
+      func: diff
+      duration: 1day
+      fill: "null"
+      start_with_last: true
+    show:
+      datalabels: true
+      legend_value: false
+      in_brush: true
+      in_header: false
+    color_threshold:
+      - value: 0
+        color: green
+      - value: 10
+        color: orange
+      - value: 15
+        color: red
+      - value: 25
+        color: darkred
+  - entity: sensor.kamstrup_total_import_filter_cost
+    name: Pris
+    type: line
+    yaxis_id: pris
+    unit: kr
+    float_precision: 1
+    stroke_width: 2
+    statistics:
+      type: sum
+      period: day
+      align: end
+    group_by:
+      func: diff
+      duration: 1day
+      fill: "null"
+      start_with_last: true
+    show:
+      datalabels: false
+      legend_value: false
+      in_header: false
+      in_brush: true
+      extremas: time
+    extend_to: false
+  - entity: sensor.kamstrup_total_import_filter
+    name: Totalt forbrug
+    yaxis_id: hidden
+    unit: kwh
+    float_precision: 1
+    stroke_width: 2
+    statistics:
+      type: sum
+      period: day
+      align: end
+    group_by:
+      func: diff
+      duration: 1month
+      fill: "null"
+      start_with_last: true
+    show:
+      datalabels: false
+      legend_value: false
+      in_header: true
+      in_chart: false
+  - entity: sensor.kamstrup_total_import_filter_cost
+    name: Total pris
+    yaxis_id: hidden
+    unit: kr.
+    float_precision: 1
+    stroke_width: 2
+    statistics:
+      type: sum
+      period: day
+      align: end
+    group_by:
+      func: diff
+      duration: 1month
+      fill: "null"
+      start_with_last: true
+    show:
+      datalabels: false
+      legend_value: false
+      in_header: true
+      in_chart: false

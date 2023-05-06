@@ -48,7 +48,7 @@ http:
 #───────────────────────────────────────────────────────────────────────────────
 lovelace:
   # Define dashboards
-  mode: storage
+  mode: yaml
   dashboards:
     tablet-yaml:
       mode: yaml
@@ -69,39 +69,52 @@ lovelace:
       show_in_sidebar: true
       filename: mobile.yaml
   # Include external resources
-  # resources:
-  #   - url: /hacsfiles/our-groceries-card/our-groceries-card.js #
-  #     type: module
-  #   - url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js #
-  #     type: module
-  #   - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js #
-  #     type: module
-  #   - url: /hacsfiles/button-card/button-card.js #
-  #     type: module
-  #   - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js #
-  #     type: module
-  #   - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
-  #     type: module
-  #   - url: /hacsfiles/atomic-calendar-revive/atomic-calendar-revive.js
-  #     type: module
-  #   - url: /hacsfiles/kiosk-mode/kiosk-mode.js
-  #     type: module
-  #   - url: /hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js
-  #     type: module
-  #   - url: /hacsfiles/spotify-card/spotify-card.js
-  #     type: module
-  #   - url: /hacsfiles/bar-card/bar-card.js
-  #     type: module
-  #   - url: /hacsfiles/swipe-card/swipe-card.js #
-  #     type: module
-  #   - url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
-  #     type: module
-  #   - url: /hacsfiles/lovelace-collapsable-cards/collapsable-cards.js
-  #     type: module
-  #   - url: /hacsfiles/sonos-playlist-card/sonos-playlist-card.js
-  #     type: module
-  #   - url: /hacsfiles/apexcharts-card/apexcharts-card.js
-  #     type: module
+  resources:
+    - url: /hacsfiles/our-groceries-card/our-groceries-card.js #
+      type: module
+    - url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js #
+      type: module
+    - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js #
+      type: module
+    - url: /hacsfiles/button-card/button-card.js #
+      type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js #
+      type: module
+    - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+      type: module
+    - url: /hacsfiles/atomic-calendar-revive/atomic-calendar-revive.js
+      type: module
+    - url: /hacsfiles/kiosk-mode/kiosk-mode.js
+      type: module
+    - url: /hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js
+      type: module
+    - url: /hacsfiles/spotify-card/spotify-card.js
+      type: module
+    - url: /hacsfiles/bar-card/bar-card.js
+      type: module
+    - url: /hacsfiles/swipe-card/swipe-card.js #
+      type: module
+    - url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
+      type: module
+    - url: /hacsfiles/lovelace-collapsable-cards/collapsable-cards.js
+      type: module
+    - url: /hacsfiles/sonos-playlist-card/sonos-playlist-card.js
+      type: module
+    - url: /hacsfiles/apexcharts-card/apexcharts-card.js
+      type: module
+    - url: /hacsfiles/history-explorer-card/history-explorer-card.js
+      type: module
+    - url: /hacsfiles/ha-sankey-chart/ha-sankey-chart.js
+      type: module
+    - url: /hacsfiles/power-flow-card-plus/power-flow-card-plus.js
+      type: module
+    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+      type: module
+    - url: /hacsfiles/lovelace-layout-card/layout-card.js
+      type: module
+    - url: /hacsfiles/compass-card/compass-card.js
+      type: module
+
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
 #───────────────────────────────────────────────────────────────────────────────
@@ -372,6 +385,9 @@ sensor:
       - name
       - slug
       - image
+      - recipeYield
+      - totalTime
+      - recipeIngredient
     value_template: "{{ value_json.date }}"
 
   # Today
@@ -392,6 +408,9 @@ sensor:
       - name
       - slug
       - image
+      - recipeYield
+      - totalTime
+      - recipeIngredient
     value_template: "{{ value_json.date }}"
 
   # Tomorrow
@@ -412,6 +431,9 @@ sensor:
       - name
       - slug
       - image
+      - recipeYield
+      - totalTime
+      - recipeIngredient
     value_template: "{{ value_json.date }}"
 
   # Day 2

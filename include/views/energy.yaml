@@ -1,0 +1,218 @@
+icon: mdi:lightning-bolt-circle
+title: Energi
+panel: true
+subview: true
+cards:
+  - type: vertical-stack
+    cards:
+      ######################################################################
+      ###                          Header row                            ###
+      ######################################################################
+      - type: horizontal-stack
+        cards:
+          - !include ../cards/tablet_header.yaml
+      ######################################################################
+      ###                        Sidebar Buttons                         ###
+      ######################################################################
+      - type: custom:layout-card
+        layout_type: custom:grid-layout
+        layout_options:
+          margin: 0px 0px 0px 5px
+          grid-template-columns: 110px 1155px
+          grid-template-rows: auto
+          grid-template-areas: |
+            "left middle"
+        cards:
+          - !include ../cards/energy_type_selection2.yaml
+
+          ######################################################################
+          ###                          Main content                          ###
+          ######################################################################
+          - type: vertical-stack
+            view_layout:
+              margin: 0px 0px 0px 0px
+              grid:area: middle
+            cards:
+              - type: vertical-stack
+                cards:
+                  ### Dummy
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "never_show_this"
+                    card:
+                      type: entity
+                      entity: sun.sun
+                  #─────────────────────────────────────────────────────────────
+                  # Energy prices
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "price"
+                    card:
+                      type: custom:swipe-card
+                      parameters:
+                        effect: "coverflow"
+                        grabCursor: true
+                        centeredSlides: true
+                        slidesPerView: "auto"
+                        coverflowEffect:
+                          rotate: 50
+                          stretch: 0
+                          depth: 100
+                          modifier: 1
+                          slideShadows: true
+                        pagination:
+                          type: "bullets"
+                        navigation:
+                      cards:
+                        # Electricity spotprices for today and tomorrow
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/energy_price_graph_tablet.yaml
+                            - !include ../cards/energy_price_info.yaml
+                        # Electricity forward prices
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/electricity_forward_prices.yaml
+                            - type: markdown
+                              content: >-
+                                **Kilde**: [EnergiDanmark](https://www.energidanmark.dk/markedsinfo/prisudvikling/)
+                        # Gas prices
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/gas_price_graph2.yaml
+                            - type: markdown
+                              content: >-
+                                **Kilde**: [Trading Economics - EU Natural Gas](https://tradingeconomics.com/commodity/eu-natural-gas)
+
+                  #─────────────────────────────────────────────────────────────
+                  # Energy predictions
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "predictions"
+                    card:
+                      type: custom:layout-card
+                      layout_type: custom:grid-layout
+                      layout:
+                        grid-template-columns: 750px auto
+                        grid-template-rows: auto
+                        margin: 0px 0px 0px 0px
+                        padding: 0px 0px 0px 0px
+                      cards:
+                        - !include ../cards/energy_predictions.yaml
+                        - !include ../cards/electricity_price_prediction_table.yaml
+
+                  #─────────────────────────────────────────────────────────────
+                  # Energy actual consumption
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "actual"
+                    card:
+                      type: horizontal-stack
+                      cards:
+                        # Daily
+                        - type: vertical-stack
+                          cards:
+                            - type: "custom:button-card"
+                              template: header_button2
+                              name: Dag
+                            - !include ../cards/energy_info_daily.yaml
+                            - !include ../cards/energy_graph_daily.yaml
+                        # Weekly
+                        - type: vertical-stack
+                          cards:
+                            - type: "custom:button-card"
+                              template: header_button2
+                              name: Uge
+                            - !include ../cards/energy_info_weekly.yaml
+                            - !include ../cards/energy_graph_weekly.yaml
+                        # Monthly
+                        - type: vertical-stack
+                          cards:
+                            - type: "custom:button-card"
+                              template: header_button2
+                              name: Måned
+                            - !include ../cards/energy_info_monthly.yaml
+                            - !include ../cards/energy_graph_monthly3.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Solar production
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "solar"
+                    card:
+                      type: horizontal-stack
+                      cards:
+                        # Column #1
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/solar_production_graph.yaml
+                            - type: horizontal-stack
+                              cards:
+                                - !include ../cards/solar_sun_direction.yaml
+                                - !include ../cards/solar_weather_info.yaml
+
+                        # Column #2
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/solar_power_live.yaml
+                            #- type: energy-distribution
+                            - !include ../cards/solar_production_daily.yaml
+                        # Column #3
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/solar_production_details.yaml
+                            - !include ../cards/solar_battery_overview.yaml
+                  #─────────────────────────────────────────────────────────────
+                  # Live energy view
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "live"
+                    card:
+                      type: horizontal-stack
+                      cards:
+                        - type: vertical-stack
+                          cards:
+                            - !include ../cards/solar_power_flow.yaml
+                            - !include ../cards/solar_power_gauges.yaml
+                        - !include ../cards/energy_distribution_live.yaml
+
+                  #─────────────────────────────────────────────────────────────
+                  # Dashboard
+                  #─────────────────────────────────────────────────────────────
+                  - type: conditional
+                    conditions:
+                      - entity: input_select.energy_type
+                        state: "dashboard"
+                    card:
+                      type: vertical-stack
+                      cards:
+                        - type: energy-date-selection
+                        - type: custom:swipe-card
+                          parameters:
+                            effect: "coverflow"
+                            grabCursor: true
+                            centeredSlides: true
+                            slidesPerView: "auto"
+                            coverflowEffect:
+                              rotate: 50
+                              stretch: 0
+                              depth: 100
+                              modifier: 1
+                              slideShadows: true
+                            pagination:
+                              type: "bullets"
+                            navigation:
+                          cards:
+                            - type: energy-usage-graph
+                            - type: energy-sources-table
+                            - type: energy-solar-graph

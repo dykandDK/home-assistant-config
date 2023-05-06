@@ -1,0 +1,72 @@
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: gauge
+        entity: sensor.total_solar_production
+        name: Produktion
+        min: 0
+        max: 11000
+        needle: true
+        segments:
+          - from: 0
+            color: "#db4437"
+          - from: 1000
+            color: "#ffa600"
+          - from: 2000
+            color: yellow
+          - from: 3000
+            color: "#43a047"
+      - type: gauge
+        entity: sensor.deyemodbus_deye_load_totalpower
+        needle: true
+        name: Forbrug
+        min: 0
+        max: 5000
+        segments:
+          - from: 0
+            color: "#43a047"
+          - from: 1000
+            color: yellow
+          - from: 2000
+            color: "#ffa600"
+          - from: 3000
+            color: "#db4437"
+      # - type: horizontal-stack
+      #   cards:
+      - type: gauge
+        entity: sensor.deyemodbus_deye_battery_output_power
+        name: Opladning(-) / brug(+)
+        needle: true
+        min: -5000
+        max: 5000
+        segments:
+          - from: -5000
+            color: "#ffa600"
+          - from: -3000
+            color: "#43a047"
+          - from: 500
+            color: yellow
+          - from: 2500
+            color: "#ffa600"
+          - from: 3500
+            color: "#db4437"
+      - type: gauge
+        entity: sensor.deyemodbus_deye_total_grid_power
+        name: Køb(+) / Salg (-)
+        needle: true
+        min: -8000
+        max: 8000
+        segments:
+          - from: -8000
+            color: "#db4437"
+          - from: -6000
+            color: "#ffa600"
+          - from: -4000
+            color: "#43a047"
+          - from: 1500
+            color: yellow
+          - from: 2500
+            color: "#ffa600"
+          - from: 3500
+            color: "#db4437"

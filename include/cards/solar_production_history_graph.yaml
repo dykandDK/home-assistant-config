@@ -1,0 +1,43 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display solar production forecast versus actual production
+#
+# Inverter data is collected via the Solarman integration:
+#
+# https://github.com/StephanJoubert/home_assistant_solarman
+#
+# Solar forecast is based on the Solcast integration:
+#
+# https://github.com/oziee/ha-solcast-solar
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:history-explorer-card - https://github.com/alexarch21/history-explorer-card
+
+type: custom:history-explorer-card
+cardName: historycard-75830160
+header: Produktion ift. forbrug
+graphs:
+  - type: line
+    options:
+      showSamples: false
+    entities:
+      - entity: sensor.solarman_deye_pv1_power
+        name: PV1
+      - entity: sensor.solarman_deye_pv2_power
+        name: PV2
+      - entity: sensor.total_solar_production
+        name: TOTAL
+      - entity: sensor.solcast_forecast_next_hour
+        name: Prognose
+  - type: bar
+    options:
+      showSamples: false
+      interval: hourly
+    entities:
+      - entity: sensor.solarman_deye_daily_load_consumption
+        name: Forbrug
+      - entity: sensor.solarman_deye_daily_energy_bought
+        name: Køb

@@ -1,0 +1,55 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Sankey chart with current energy distribution
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:sankey-chart:
+
+type: custom:sankey-chart
+show_names: true
+unit_prefix: w
+round: 1
+height: 600
+wide: true
+sections:
+  - entities:
+      - entity_id: sensor.total_solar_production
+        color: var(--warning-color)
+        name: Solenergi
+      - entity_id: sensor.deyemodbus_deye_total_grid_power
+        name: Import/eksport
+      - entity_id: sensor.deyemodbus_deye_battery_output_power
+        color: var(--success-color)
+        name: Batteri
+  - entities:
+      - entity_id: sensor.deyemodbus_deye_load_totalpower
+        name: Totalt forbrug
+        children:
+          - sensor.ev_charging_power_in_watt
+          - sensor.shellyplug_s_d9b8b3_power
+          - sensor.shellyplug_s_d9b93c_power
+          - sensor.shellyplug_s_d9ba8e_power
+          - sensor.shellyplug_s_f132a4_power
+          - sensor.shellyplug_s_f1c2f0_power
+          - other_kwh
+  - entities:
+      - entity_id: sensor.ev_charging_power_in_watt
+        name: Opladning
+      - entity_id: sensor.shellyplug_s_d9b93c_power
+        #name: Skrivebord
+        name: Kontor
+      - entity_id: sensor.shellyplug_s_d9ba8e_power
+        name: test
+      - entity_id: sensor.shellyplug_s_f132a4_power
+        name: Rack
+      - entity_id: sensor.shellyplug_s_f1c2f0_power
+        #name: LAGUR
+        name: Pumpe
+      - entity_id: sensor.shellyplug_s_d9b8b3_power
+        name: Nilan
+      - entity_id: other_kwh
+        type: remaining_parent_state
+        name: Øvrigt forbrug

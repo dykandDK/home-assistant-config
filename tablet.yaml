@@ -198,8 +198,8 @@ views:
   - !include include/views/music2.yaml
 
   ##############################################################################
-  ### 05                     ELECTRICITY CONSUMPTION                         ###
+  ### 05                     CUSTOM ENERGY DASHBOARD                         ###
   ##############################################################################
-  - !include include/views/electricity.yaml
+  - !include include/views/energy.yaml
 
 title: " "

@@ -1,0 +1,257 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display solar production details.
+#
+# Inverter data is collected via the Solarman integration:
+#
+# https://github.com/StephanJoubert/home_assistant_solarman
+#
+# Solar forecast is based on the Solcast integration:
+#
+# https://github.com/oziee/ha-solcast-solar
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:multiple-entity-row - https://github.com/RomRider/apexcharts-card
+
+type: entities
+show_header_toggle: false
+entities:
+  - entity: sensor.total_solar_production
+    icon: mdi:solar-panel
+    name: Produktion
+    type: custom:multiple-entity-row
+    state_header: Total
+    entities:
+      - entity: sensor.solarman_deye_pv1_power
+        name: PV1
+      - entity: sensor.solarman_deye_pv2_power
+        name: PV2
+  - entity: sensor.total_solar_utilization
+    icon: mdi:percent-box-outline
+    name: Effektivitet
+    type: custom:multiple-entity-row
+    mdi: null
+    state_header: Total
+    entities:
+      - entity: sensor.pv1_utilization
+        name: PV1
+      - entity: sensor.pv2_utilization
+        name: PV2
+  - entity: sensor.solarman_deye_ac_temperature
+    icon: mdi:temperature-celsius
+    name: Temperaturer
+    type: custom:multiple-entity-row
+    state_header: AC
+    entities:
+      - entity: sensor.solarman_deye_dc_temperature
+        name: DC
+      - entity: sensor.solarman_deye_battery_temperature
+        name: Batteri
+  - entity: sensor.solcast_forecast_this_hour
+    name: Prognose denne time
+  - entity: sensor.solarman_deye_battery_power
+    name: Opladning af husbatteri
+  - entity: switch.deyemodbus_deye_time_of_use
+    name: Tillad brug af batteri
+    icon: mdi:battery-check-outline
+    type: custom:multiple-entity-row
+    toggle: true
+    entities:
+      - icon: mdi:cog
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              title: Indstillinger for brug af batteri
+              #hide_header: false
+              #large: true
+              size: fullscreen
+              content: !include ../cards/solar_battery_config.yaml
+
+  - entity: sensor.ehmawz7t_power
+    name: Opladning af elbil
+    type: custom:multiple-entity-row
+    format: precision1
+    entities:
+      - icon: mdi:play
+        tap_action:
+          action: call-service
+          service: easee.action_command
+          service_data:
+            device_id: dfcf39638b885719c21886f49c7c5fbe
+            action_command: resume
+          confirmation:
+            text: "Vil du fortsætte opladning?"
+      - icon: mdi:pause
+        tap_action:
+          action: call-service
+          service: easee.action_command
+          service_data:
+            device_id: dfcf39638b885719c21886f49c7c5fbe
+            action_command: pause
+          confirmation:
+            text: "Vil du sætte opladning på pause?"
+  - entity: input_boolean.auto_adjust_charging
+    name: Automatisk tilpasning af ladestyrke
+  # - entity: input_number.ev_charging_rate_kwh
+  #   name: Nuværende ladestyrke i kWh
+  #   secondary_info: last-changed
+  - entity: input_number.ev_charging_rate_kwh
+    type: custom:multiple-entity-row
+    name: Ladestyrke
+    show_state: false
+    icon: mdi:car-electric
+    secondary_info: last-changed
+    entities:
+      - icon: mdi:minus-circle
+        tap_action:
+          action: call-service
+          service: input_number.decrement
+          service_data:
+            entity_id: input_number.ev_charging_rate_kwh
+      - entity: input_number.ev_charging_rate_kwh
+        name: false
+        format: precision0
+      - icon: mdi:plus-circle
+        tap_action:
+          action: call-service
+          service: input_number.increment
+          service_data:
+            entity_id: input_number.ev_charging_rate_kwh
+
+    ### Daglige totaler ###
+  # - type: section
+  #   label: Daglige totaler
+  # - entity: sensor.solarman_deye_daily_production
+  #   name: Daglig produktion
+  # - entity: sensor.solarman_deye_daily_load_consumption
+  #   name: Dagligt forbrug
+  # - entity: sensor.solarman_deye_daily_energy_bought
+  #   icon: mdi:transmission-tower
+  #   name: Dagligt køb/salg
+  #   type: custom:multiple-entity-row
+  #   state_header: Køb
+  #   entities:
+  #     - entity: sensor.solarman_deye_daily_energy_sold
+  #       name: Salg
+  # - entity: sensor.solarman_deye_daily_battery_charge
+  #   name: Dagligt batteri
+  #   type: custom:multiple-entity-row
+  #   state_header: Opladet
+  #   icon: mdi:battery-sync
+  #   entities:
+  #     - entity: sensor.solarman_deye_daily_battery_discharge
+  #       name: Forbrug
+  ### Totaler ###
+  # - type: section
+  #   label: Totaler
+  # - entity: sensor.solarman_deye_total_production
+  #   name: Total produktion
+  # - entity: sensor.solarman_deye_total_load_consumption
+  #   name: Total forbrug
+  # - entity: sensor.solarman_deye_total_energy_bought
+  #   icon: mdi:transmission-tower
+  #   name: Total køb/salg
+  #   type: custom:multiple-entity-row
+  #   state_header: Køb
+  #   entities:
+  #     - entity: sensor.solarman_deye_total_energy_sold
+  #       name: Salg
+  # - entity: sensor.solarman_deye_total_battery_charge
+  #   name: Batteribrug
+  #   type: custom:multiple-entity-row
+  #   state_header: Opladet
+  #   icon: mdi:battery-sync
+  #   entities:
+  #     - entity: sensor.solarman_deye_total_battery_discharge
+  #       name: Forbrug
+  # - entity: sensor.solarman_deye_total_grid_power
+  #   name: Total Grid Power
+  # - entity: sensor.solarman_deye_total_grid_production
+  #   name: Total Grid Production
+  # - entity: sensor.solarman_deye_total_load_power
+  #   name: Total Load Power
+  ### Øvrige data ###
+  # - type: section
+  #   label: Øvrigt
+  # - entity: sensor.solarman_deye_alert
+  #   name: Alert
+  # - entity: sensor.solarman_deye_battery_current
+  #   name: Battery Current
+  # - entity: sensor.solarman_deye_battery_temperature
+  #   name: Battery Temperature
+  # - entity: sensor.solarman_deye_battery_voltage
+  #   name: Battery Voltage
+  # - entity: sensor.solarman_deye_communication_board_version_no
+  #   name: Communication Board Version No.
+  # - entity: sensor.solarman_deye_control_board_version_no
+  #   name: Control Board Version No.
+  # - entity: sensor.solarman_deye_current_l1
+  #   name: Current L1
+  # - entity: sensor.solarman_deye_current_l2
+  #   name: Current L2
+  # - entity: sensor.solarman_deye_current_l3
+  #   name: Current L3
+  # - entity: sensor.solarman_deye_daily_battery_charge
+  #   name: Daily Battery Charge
+  # - entity: sensor.solarman_deye_dc_temperature
+  #   name: DC Temperature
+  # - entity: sensor.solarman_deye_external_ct_l1_power
+  #   name: External CT L1 Power
+  # - entity: sensor.solarman_deye_external_ct_l2_power
+  #   name: External CT L2 Power
+  # - entity: sensor.solarman_deye_external_ct_l3_power
+  #   name: External CT L3 Power
+  # - entity: sensor.solarman_deye_grid_voltage_l1
+  #   name: Grid Voltage L1
+  # - entity: sensor.solarman_deye_grid_voltage_l2
+  #   name: Grid Voltage L2
+  # - entity: sensor.solarman_deye_grid_voltage_l3
+  #   name: Grid Voltage L3
+  # - entity: sensor.solarman_deye_internal_ct_l1_power
+  #   name: Internal CT L1 Power
+  # - entity: sensor.solarman_deye_internal_ct_l2_power
+  #   name: Internal CT L2 Power
+  # - entity: sensor.solarman_deye_internal_ct_l3_power
+  #   name: Internal CT L3 Power
+  # - entity: sensor.solarman_deye_inverter_id
+  #   name: Inverter ID
+  # - entity: sensor.solarman_deye_inverter_l1_power
+  #   name: Inverter L1 Power
+  # - entity: sensor.solarman_deye_inverter_l2_power
+  #   name: Inverter L2 Power
+  # - entity: sensor.solarman_deye_inverter_l3_power
+  #   name: Inverter L3 Power
+  # - entity: sensor.solarman_deye_load_l1_power
+  #   name: Load L1 Power
+  # - entity: sensor.solarman_deye_load_l2_power
+  #   name: Load L2 Power
+  # - entity: sensor.solarman_deye_load_l3_power
+  #   name: Load L3 Power
+  # - entity: sensor.solarman_deye_load_voltage_l1
+  #   name: Load Voltage L1
+  # - entity: sensor.solarman_deye_load_voltage_l2
+  #   name: Load Voltage L2
+  # - entity: sensor.solarman_deye_load_voltage_l3
+  #   name: Load Voltage L3
+  # - entity: sensor.solarman_deye_pv1_current
+  #   name: PV1 Current
+  # - entity: sensor.solarman_deye_pv1_power
+  #   name: PV1 Power
+  # - entity: sensor.solarman_deye_pv1_voltage
+  #   name: PV1 Voltage
+  # - entity: sensor.solarman_deye_pv2_current
+  #   name: PV2 Current
+  # - entity: sensor.solarman_deye_pv2_power
+  #   name: PV2 Power
+  # - entity: sensor.solarman_deye_pv2_voltage
+  #   name: PV2 Voltage
+  # - entity: sensor.solarman_deye_status_connection
+  #   name: Status_connection
+  # - entity: sensor.solarman_deye_status_lastupdate
+  #   name: Status_lastUpdate
+title: Detaljer

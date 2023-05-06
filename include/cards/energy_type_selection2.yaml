@@ -1,0 +1,137 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Buttons to select type of data for energy data display
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card: https://github.com/custom-cards/button-card
+
+### Energy prices
+type: vertical-stack
+view_layout:
+  margin: 0px 0px 0px 0px
+  grid:area: left
+cards:
+  ### Dummy
+  - type: conditional
+    conditions:
+      - entity: input_select.energy_type
+        state: "never_show_this"
+    card:
+      type: entity
+      entity: sun.sun
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:tag-outline #mdi:cash
+    name: Priser
+    template: sidebar_button
+    state:
+      - value: "price"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: price
+  ### Energy price forecasts
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:chart-timeline-variant-shimmer
+    name: Prognose
+    template: sidebar_button
+    state:
+      - value: "predictions"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: predictions
+  ### Energy consumption
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:counter #mdi:home-lightning-bolt-outline
+    name: Forbrug
+    template: sidebar_button
+    state:
+      - value: "actual"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: actual
+  ### Solar production
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:solar-power-variant
+    name: Solceller
+    template: sidebar_button
+    state:
+      - value: "solar"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: solar
+  ### Live view
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:transit-connection-variant #mdi:network
+    name: Live
+    template: sidebar_button
+    state:
+      - value: "live"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: live
+  ### Live view
+  - type: "custom:button-card"
+    entity: input_select.energy_type
+    color_type: card
+    icon: mdi:view-dashboard
+    name: Dashboard
+    template: sidebar_button
+    state:
+      - value: "dashboard"
+        styles:
+          card:
+            - border: 2px solid var(--paper-item-icon-active-color)
+            - background-color: var(--primary-color)
+    tap_action:
+      service: input_select.select_option
+      action: call-service
+      service_data:
+        entity_id: input_select.energy_type
+        option: dashboard

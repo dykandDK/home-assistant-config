@@ -1,0 +1,175 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Custom button-card with weather forecast for the this and the next two hours.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:button-card - https://github.com/custom-cards/button-card
+
+type: vertical-stack
+cards:
+  ##############################################################################
+  # Current hour - weather and solar production forecast
+  ##############################################################################
+  - type: custom:button-card
+    entity: weather.karlslunde_hourly
+    name: Denne time
+    template: custom_weather_forecast_card
+    state_display: >-
+      [[[
+        let c= entity.state;
+        let txt;
+        switch (c)
+        {
+          case "clearnight": 
+            txt = "Nat"; 
+            break;
+          case "cloudy": 
+            txt = "Overskyet";
+            break;
+          case "fog": 
+            txt = "Tåge";
+            break;
+          case "lightningrainy": 
+            txt = "Torden";
+            break;
+          case "partlycloudy": 
+            txt = "Delvist overskyet";
+            break;
+          case "pouring": 
+            txt = "Kraftig regn";
+            break;
+          case "rainy": 
+            txt = "Regn";
+            break;
+          case "snowy": 
+            txt = "Sne";
+            break;
+          case "snowyrainy": 
+            txt = "Sne og slud";
+            break;
+          case "sunny": txt = "Solrigt";
+        }
+        return txt;
+      ]]]
+    label: >-
+      [[[ 
+        let s= states['sensor.solcast_forecast_this_hour'].state;
+        return parseFloat(s).toLocaleString('da-DK') + ' kWh';
+      ]]]
+    icon: >-
+      [[[ 
+        let c= entity.state;
+        return "mdi:weather-" +  c.replace("partly","partly-").replace("clear","").replace('lightning','lightning-').replace('snowyrainy','snowy-rainy');
+      ]]]
+  ##############################################################################
+  # Next hour - weather and solar production forecast
+  ##############################################################################
+  - type: custom:button-card
+    entity: weather.karlslunde_hourly
+    name: Næste time
+    template: custom_weather_forecast_card
+    label: >-
+      [[[ 
+        let s= states['sensor.solcast_forecast_next_hour'].state;
+        return parseFloat(s).toLocaleString('da-DK') + ' kWh';
+      ]]]
+    state_display: >-
+      [[[
+        let c= entity.attributes.forecast[1].condition;
+        let txt;
+        switch (c)
+        {
+          case "clearnight": 
+            txt = "Nat"; 
+            break;
+          case "cloudy": 
+            txt = "Overskyet";
+            break;
+          case "fog": 
+            txt = "Tåge";
+            break;
+          case "lightningrainy": 
+            txt = "Torden";
+            break;
+          case "partlycloudy": 
+            txt = "Delvist overskyet";
+            break;
+          case "pouring": 
+            txt = "Kraftig regn";
+            break;
+          case "rainy": 
+            txt = "Regn";
+            break;
+          case "snowy": 
+            txt = "Sne";
+            break;
+          case "snowyrainy": 
+            txt = "Sne og slud";
+            break;
+          case "sunny": txt = "Solrigt";
+        }
+        return txt;
+      ]]]
+    icon: >-
+      [[[ 
+        let c= entity.attributes.forecast[1].condition;
+        return "mdi:weather-" +  c.replace("partly","partly-").replace("clear","").replace('lightning','lightning-').replace('snowyrainy','snowy-rainy');
+      ]]]
+  ##############################################################################
+  # Two hours from now - weather and solar production forecast
+  ##############################################################################
+  - type: custom:button-card
+    entity: weather.karlslunde_hourly
+    name: Om 2 timer
+    template: custom_weather_forecast_card
+    label: >-
+      [[[ 
+        let h = new Date().getHours();
+        let s= states['sensor.solcast_forecast_today'].attributes.forecast[h+2].pv_estimate*1000;
+        return parseInt(s).toLocaleString('da-DK') + ' kWh';
+      ]]]
+    state_display: >-
+      [[[
+        let c= entity.attributes.forecast[2].condition;
+        let txt;
+        switch (c)
+        {
+          case "clearnight": 
+            txt = "Nat"; 
+            break;
+          case "cloudy": 
+            txt = "Overskyet";
+            break;
+          case "fog": 
+            txt = "Tåge";
+            break;
+          case "lightningrainy": 
+            txt = "Torden";
+            break;
+          case "partlycloudy": 
+            txt = "Delvist overskyet";
+            break;
+          case "pouring": 
+            txt = "Kraftig regn";
+            break;
+          case "rainy": 
+            txt = "Regn";
+            break;
+          case "snowy": 
+            txt = "Sne";
+            break;
+          case "snowyrainy": 
+            txt = "Sne og slud";
+            break;
+          case "sunny": txt = "Solrigt";
+        }
+        return txt;
+      ]]]
+    icon: >-
+      [[[ 
+        let c= entity.attributes.forecast[2].condition;
+        return "mdi:weather-" +  c.replace("partly","partly-").replace("clear","").replace('lightning','lightning-').replace('snowyrainy','snowy-rainy');
+      ]]]

@@ -1,0 +1,29 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  History-explorer-card with gas prices
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:history-explorer-card -https://github.com/alexarch21/history-explorer-card
+
+type: custom:history-explorer-card
+header: Udvikling i gaspris
+showCurrentValues: true
+combineSameUnits: true
+defaultTimeRange: 8w
+uiLayout:
+  toolbar: top
+  selector: hide
+statistics:
+  enabled: true
+  mode: mean
+  period: hour
+graphs:
+  - type: line
+    options:
+      height: 455
+    entities:
+      - entity: sensor.ttf_gas_spot_price
+        name: TTF Gas spotpris

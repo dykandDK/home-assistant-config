@@ -1,0 +1,102 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to change house battery usage and charging settings using the Deye modbus
+# integration:
+#
+# https://github.com/klatremis/esphome-for-deye
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:multiple-entity-row - https://github.com/bramkragten/swipe-card
+
+type: entities
+entities:
+  - entity: switch.deyemodbus_deye_time_of_use
+    name: Tillad brug af batteri
+    icon: mdi:battery-check-outline
+  - entity: switch.deyemodbus_deye_grid_charge
+    name: Tillad opladning fra nettet
+    icon: mdi:battery-plus-outline
+  - type: section
+    label: Tidsindstilling for tilladt brug og opladning fra nettet
+  - entity: number.deyemodbus_deye_time_point_1_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 1
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_1_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_1_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_1_charge_enable
+        name: Oplad
+        toggle: true
+  - entity: number.deyemodbus_deye_time_point_2_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 2
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_2_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_2_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_2_charge_enable
+        name: Oplad
+        toggle: true
+  - entity: number.deyemodbus_deye_time_point_3_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 3
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_3_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_3_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_3_charge_enable
+        name: Oplad
+        toggle: true
+  - entity: number.deyemodbus_deye_time_point_4_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 4
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_4_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_4_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_4_charge_enable
+        name: Oplad
+        toggle: true
+  - entity: number.deyemodbus_deye_time_point_5_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 5
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_5_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_5_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_5_charge_enable
+        name: Oplad
+        toggle: true
+  - entity: number.deyemodbus_deye_time_point_6_capacity
+    icon: mdi:clock-start
+    name: Tidspunkt 6
+    type: custom:multiple-entity-row
+    state_header: "%"
+    entities:
+      - entity: sensor.deyemodbus_deye_time_point_6_starttime
+        name: Start
+      - entity: sensor.deyemodbus_deye_time_point_6_endtime
+        name: Slut
+      - entity: switch.deyemodbus_deye_time_point_6_charge_enable
+        name: Oplad
+        toggle: true
+#title: Indstillinger for batteri

@@ -1,0 +1,37 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+#  Compass showing current sun direction and elevation
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - https://github.com/tomvanswam/compass-card
+
+type: custom:compass-card
+header:
+  title:
+    value: Solen
+    show: false
+  icon:
+    show: false
+indicator_sensors:
+  - sensor: sun.sun
+    attribute: azimuth
+    indicator:
+      type: circle
+value_sensors:
+  - sensor: sun.sun
+    attribute: elevation
+    units: °
+compass:
+  north:
+    show: true
+  south:
+    show: true
+  east:
+    show: true
+  west:
+    show: true
+  circle:
+    background_image: /local/assets/map_outline_small3.png

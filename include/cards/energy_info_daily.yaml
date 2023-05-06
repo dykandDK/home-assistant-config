@@ -1,0 +1,49 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display daily energy consumption information.
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# None
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      # Energy consumption - today
+      - type: statistic
+        period:
+          calendar:
+            period: day
+        stat_type: change
+        entity: sensor.kamstrup_total_import_filter
+        name: Dagens forbrug
+        icon: mdi:home-lightning-bolt-outline
+      # Energy costs - today
+      - type: statistic
+        period:
+          calendar:
+            period: day
+        stat_type: change
+        entity: sensor.kamstrup_total_import_filter_cost
+        name: Dagens pris
+        icon: mdi:cash-100
+  - type: horizontal-stack
+    cards:
+      - type: statistic
+        period:
+          calendar:
+            period: day
+        stat_type: change
+        entity: sensor.ehmawz7t_lifetime_energy
+        name: Opladning
+        icon: mdi:car-electric
+      - type: statistic
+        period:
+          calendar:
+            period: day
+        stat_type: change
+        entity: sensor.ehmawz7t_lifetime_energy_cost
+        name: Pris
+        icon: mdi:cash-100

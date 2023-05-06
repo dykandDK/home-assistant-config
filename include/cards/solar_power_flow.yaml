@@ -1,0 +1,44 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display live solar production and grid consumption flow
+#
+# Inverter data is collected via the Solarman integration:
+#
+# https://github.com/StephanJoubert/home_assistant_solarman
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:power-flow-card-plus - https://github.com/flixlix/power-flow-card-plus
+
+##############################################################################
+# Live power flows -
+##############################################################################
+
+type: custom:power-flow-card-plus
+entities:
+  grid:
+    entity: sensor.deyemodbus_deye_total_grid_power
+    power_outage:
+      entity: sensor.power_outage
+    display_state: one_way
+    color_circle: true
+  battery:
+    entity: sensor.deyemodbus_deye_battery_output_power
+    state_of_charge: sensor.deyemodbus_deye_battery_capacity
+    color_circle: true
+  home:
+    #entity: sensor.house_consumption_excl_ev_charging
+    entity: sensor.deyemodbus_deye_load_totalpower
+    color_icon: true
+  solar:
+    entity: sensor.total_solar_production
+  individual1:
+    entity: sensor.ev_charging_power_in_watt
+    name: Bil
+    icon: mdi:car
+    display_zero: true
+    color: var(--energy-gas-color)
+    display_state: one_way
+watt_threshold: 0

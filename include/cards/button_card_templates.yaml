@@ -3,6 +3,62 @@
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
+# Button-card template for sidebar buttons used in custom Energy dashboard view
+#───────────────────────────────────────────────────────────────────────────────
+sidebar_button:
+  color_type: card
+  styles:
+    card:
+      - background-color: var(--card-background-color)
+      - color: var(--primary-foreground-color)
+      - border-radius: 10px
+      - width: 100px
+      - height: 100px
+      - border: 2px solid var(--paper-item-icon-active-color)
+
+#───────────────────────────────────────────────────────────────────────────────
+# Button card for header button
+#───────────────────────────────────────────────────────────────────────────────
+header_button2:
+  layout: vertical
+  show_state: false
+  show_icon: false
+  color_type: label-card
+  color: var(--paper-listbox-color)
+  styles:
+    card:
+      - padding: 10px 15px
+      #- background-color: var(--paper-item-icon-active-color)
+      - background-color: var(--primary-color)
+    name:
+      - text-transform: uppercase
+      - color: var(--primary-background-color)
+      - justify-self: center
+      - font-weight: bold
+
+#───────────────────────────────────────────────────────────────────────────────
+# Custom button card with weather and solar forecast
+#───────────────────────────────────────────────────────────────────────────────
+custom_weather_forecast_card:
+  color_type: icon
+  show_state: true
+  show_label: true
+  layout: icon_name_state2nd
+  styles:
+    card:
+      - height: 53px
+    name:
+      - justify-self: start
+      - font-size: 12px
+      - font-weight: bold
+    state:
+      - justify-self: start
+      - font-size: 12px
+    label:
+      - justify-self: start
+      - font-size: 12px
+
+#───────────────────────────────────────────────────────────────────────────────
 # Custom button card with similar appearance as the standard sensor card
 #───────────────────────────────────────────────────────────────────────────────
 custom_sensor_card:
