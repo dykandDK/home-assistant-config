@@ -17,7 +17,7 @@ apex_config:
         - "#fff"
       fontSize: 11px
     distributed: true
-    offsetY: -9
+    #offsetY: -9
     background:
       enabled: false
   plotOptions:
