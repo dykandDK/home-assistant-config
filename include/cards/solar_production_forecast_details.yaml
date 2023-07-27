@@ -1,0 +1,82 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display solar production details for the next 7 days
+#
+# Inverter data is collected via the Solarman integration:
+#
+# https://github.com/StephanJoubert/home_assistant_solarman
+#
+# Solar forecast is based on the Solcast integration:
+#
+# https://github.com/oziee/ha-solcast-solar
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:multiple-entity-row - https://github.com/benct/lovelace-multiple-entity-row
+
+type: vertical-stack
+cards:
+  ### Display last update time and number of free API calls used
+  - type: entities
+    entities:
+      - entity: sensor.solcast_api_last_polled
+        name: Lastest update
+        type: custom:multiple-entity-row
+        secondary_info:
+          entity: sensor.solcast_api_last_polled
+          format: relative
+          name: false
+      - entity: sensor.solcast_api_used
+        name: API calls used
+        type: custom:multiple-entity-row
+        unit: " of 10"
+      - type: button
+        name: " "
+        action_name: UPDATE
+        icon: " "
+        tap_action:
+          action: call-service
+          service: solcast_solar.update_forecasts
+          confirmation:
+            text: Update solar forecasts?
+  ### Display weather and solar production forecasts for the next 7 days
+  - type: markdown
+    title: Weekly solar forecast
+    content: >-
+      {% set ns = namespace(found=false,firstname='') -%}
+      {% set ns.count = 0 -%}
+      {% set ns.total = 0 -%}
+      <table>
+      <tr><th width=35px></th><th align=left width=150px>Day</th><th align=right width=125px></th><th align=right width=125px>Forecast</th></tr>
+      {% set weekdaynames_dk=['Monday','Tuesday','Wendeysday','Thursday','Friday','Saturday','Sunday'] -%}
+      {% set ns.day = 0 -%}
+      {% for w in state_attr('weather.home','forecast') -%}
+      {% set ns.day=ns.day+1 %}
+      {% set h=w.datetime | as_datetime | as_local %}
+      {% if ns.day==1 %} 
+      {% set d='Today' %} 
+      {% elif ns.day==2  %} 
+      {% set d='Tomorrow' %} 
+      {% else %}
+      {% set d= weekdaynames_dk[h.isoweekday()-1] %}
+      {% endif %}
+      <tr><td><ha-icon icon='mdi:weather-{{w.condition | replace('partly','partly-')
+      | replace('clear','') | replace('lightning','lightning-') |
+      replace('snowyrainy','snowy-rainy')-}}'/></ha-icon></td>
+      <td>{{ d }}</td>
+      {% if d=='Today' %}
+        {% set ns.curval = states('sensor.solcast_forecast_today') %}
+      {% elif d=='Tomorrow'  %} 
+        {% set ns.curval = states('sensor.solcast_forecast_tomorrow') %}
+      {% else %}
+        {% set ns.curval = states('sensor.solcast_forecast_d' + ns.day|string) %}
+      {% endif %}
+      <td></td>
+      <td align=right>{{"%.2f"| format(ns.curval|float(2)) }} kWh</td></tr>
+      {% set ns.total = ns.total + ns.curval|float(2) %}
+      {% endfor -%}
+      <tr><td></td><td><strong>TOTAL</strong></td><td></td>
+      <td align=right><strong>{{ "%.2f"| format(ns.total) }} kWh</td></strong></tr>
+      </table>

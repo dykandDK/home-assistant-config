@@ -19,7 +19,7 @@ apex_config:
 all_series_config:
   unit: " kWh"
 header:
-  title: Solproduktion pr. time
+  title: Hourly solar prodcution
   show: true
   standard_format: true
   show_states: true
@@ -30,7 +30,7 @@ span:
   offset: "-0h"
 now:
   show: true
-  label: Nu
+  label: Now
 yaxis:
   - id: kwh
     min: 0
@@ -40,7 +40,7 @@ yaxis:
     show: false
 series:
   - entity: sensor.solarman_deye_daily_production
-    name: Faktisk
+    name: Actual
     type: line
     color: 03A9F4
     unit: kWh
@@ -57,7 +57,7 @@ series:
   - entity: sensor.solcast_forecast_today
     yaxis_id: kwh
     type: area
-    name: Estimeret
+    name: Estimated
     color: orange
     data_generator: |
       var today = entity.attributes.forecast.map((start, index) => {
@@ -74,7 +74,7 @@ series:
   - entity: sensor.solcast_forecast_tomorrow
     yaxis_id: kwh
     type: area
-    name: I morgen
+    name: Tomorrow
     color: grey
     data_generator: |
       var today = entity.attributes.forecast.map((start, index) => {
@@ -91,7 +91,7 @@ series:
   - entity: sensor.solcast_forecast_remaining_today
     yaxis_id: header_only
     type: line
-    name: Rest i dag
+    name: Remaining today
     color: orange
     show:
       legend_value: true
@@ -99,7 +99,7 @@ series:
       in_chart: false
   - entity: sensor.solcast_api_last_polled
     yaxis_id: header_only
-    name: Sidst opdateret
+    name: Last update
     unit: " min."
     transform: return ((Date.now()) - (new Date(x).getTime())) / 60 / 60 / 24
     show:
@@ -107,8 +107,16 @@ series:
       in_header: true
       in_chart: false
     header_actions:
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          service: browser_mod.popup
+          data:
+            title: Solar forecast details
+            size: fullscreen
+            content: !include solar_production_forecast_details.yaml
       double_tap_action:
         action: call-service
         service: solcast_solar.update_forecasts
         confirmation:
-          text: Vil du opdatere prognosen?
+          text: Update solar forecasts?

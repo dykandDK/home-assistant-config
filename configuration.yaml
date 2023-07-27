@@ -114,6 +114,22 @@ lovelace:
       type: module
     - url: /hacsfiles/compass-card/compass-card.js
       type: module
+    - url: /hacsfiles/ha-nfl-card/ha-nfl-card.js
+      type: module
+    - url: /hacsfiles/history-explorer-card/history-explorer-card.js
+      type: module
+    - url: /hacsfiles/ha-teamtracker-card/ha-teamtracker-card.js
+      type: module
+    - url: /hacsfiles/tabbed-card/tabbed-card.js
+      type: module
+    - url: /hacsfiles/ha-sankey-chart/ha-sankey-chart.js
+      type: module
+    - url: /hacsfiles/power-flow-card-plus/power-flow-card-plus.js
+      type: module
+    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js
+      type: module
+    - url: /hacsfiles/lovelace-fold-entity-row/fold-entity-row.js
+      type: module
 
 #───────────────────────────────────────────────────────────────────────────────
 # Enables the frontend and include themes
@@ -701,6 +717,9 @@ input_select:
       - price
       - predictions
       - actual
+      - solar
+      - live
+      - dashboard
   energy_range:
     name: Select time range for electricity consumption
     options:
@@ -708,6 +727,12 @@ input_select:
       - week
       - month
       - year
+  weather_info_select:
+    name: Select which type of weather forecast to show
+    options:
+      - 2day
+      - rain
+      - pollen
 
 #───────────────────────────────────────────────────────────────────────────────
 # Input number
@@ -717,11 +742,12 @@ input_number:
     min: 0
     max: 99999999
   countdown_select:
-    name: Nedtælling i antal minutter
+    name: Count down in minutes
     initial: 5
     min: 0
     max: 15
     step: 1
+
 #───────────────────────────────────────────────────────────────────────────────
 # Input time
 #───────────────────────────────────────────────────────────────────────────────
@@ -731,6 +757,22 @@ input_datetime:
     icon: mdi:alarm
     has_date: false
     has_time: true
+  car_charge_time:
+    name: Time for scheduled start of EV charging
+    icon: mdi:clock-start
+    has_date: true
+    has_time: true
+  car_charge_stop:
+    name: Time for scheduled stop of EV charging
+    icon: mdi:clock-end
+    has_date: true
+    has_time: true
+  spa_filter_last_change:
+    name: Date/time of last hot tub filter change
+    icon: mdi:hot-tub
+    has_date: true
+    has_time: true
+
 #───────────────────────────────────────────────────────────────────────────────
 # Timer
 #───────────────────────────────────────────────────────────────────────────────
@@ -760,11 +802,7 @@ alarm_control_panel:
 #───────────────────────────────────────────────────────────────────────────────
 # Enable browser_mod integration
 #───────────────────────────────────────────────────────────────────────────────
-browser_mod:
-  devices:
-    87b2d147-4c0bd366:
-      name: Lenovo M93z
-      #camera: true
+
 #───────────────────────────────────────────────────────────────────────────────
 # Bosch Indego Connect 400 lawnmover (disabled for winter storage)
 #───────────────────────────────────────────────────────────────────────────────
@@ -800,7 +838,6 @@ calendar:
 #───────────────────────────────────────────────────────────────────────────────
 # Light groups
 #───────────────────────────────────────────────────────────────────────────────
-
 light:
   - platform: group
     name: standerto
@@ -816,14 +853,6 @@ netatmo:
   client_secret: !secret netatmo_secret
 
 #───────────────────────────────────────────────────────────────────────────────
-# Xiaomi Roborock integration
-#───────────────────────────────────────────────────────────────────────────────
-# vacuum:
-#   - platform: xiaomi_miio
-#     host: 192.168.2.40
-#     token: !secret roborock_token
-
-#───────────────────────────────────────────────────────────────────────────────
 # Our Groceries custom component
 #───────────────────────────────────────────────────────────────────────────────
 ourgroceries:
@@ -831,20 +860,11 @@ ourgroceries:
   password: !secret og_password
 
 #───────────────────────────────────────────────────────────────────────────────
-# Synology SRM integration
-#───────────────────────────────────────────────────────────────────────────────
-# device_tracker:
-#   - platform: bluetooth_tracker
-#     consider_home: 180
-#     new_device_defaults:
-#       track_new_devices: false
-
-#───────────────────────────────────────────────────────────────────────────────
 # Spotify integration
 #───────────────────────────────────────────────────────────────────────────────
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
+# Deprecated with version 2022.6 - configuration no longer needed as it has
+# moved to UI
+
 #───────────────────────────────────────────────────────────────────────────────
 # Spotcast integration
 #───────────────────────────────────────────────────────────────────────────────
