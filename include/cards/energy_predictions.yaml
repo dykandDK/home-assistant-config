@@ -11,6 +11,12 @@
 
 type: custom:apexcharts-card
 apex_config:
+  subtitle:
+    text: Alle priser er excl. moms, afgifter og tariffer
+    offsetY: -20
+    offsetX: 6
+    margin: 0
+    align: left
   tooltip:
     x:
       format: dddd d. MMMM yyyy, kl. HH
@@ -99,7 +105,7 @@ series:
         return [new Date(start["date"]).getTime(), entity.attributes.prognose[index]["value"]/100];
       });
       return data;
-  - entity: sensor.elpriser_excl_afgifter
+  - entity: sensor.elprognose_carnot_dk
     name: Carnot.dk
     type: line
     color: 03a9f4
@@ -110,8 +116,8 @@ series:
       extremas: true
       legend_value: false
     data_generator: |
-      var data = entity.attributes.forecast.map((start, index) => {
-        return [new Date(start["hour"]).getTime(), entity.attributes.forecast[index]["price"]];
+      var data = entity.attributes.prognose.map((start, index) => {
+        return [new Date(start["date"]).getTime(), entity.attributes.prognose[index]["value"]/1000];
       });
       return data;
   - entity: sensor.elpriser_excl_afgifter
@@ -126,7 +132,7 @@ series:
       legend_value: false
     data_generator: |
       var today = entity.attributes.raw_today.map((start, index) => {
-        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]];
+        return [new Date(start["hour"]).getTime(), entity.attributes.raw_today[index]["price"]/1.25];
       });
       if (entity.attributes.tomorrow_valid) {
         var tomorrow = entity.attributes.raw_tomorrow.map((start, index) => {
@@ -137,4 +143,49 @@ series:
       } else {
         var data = today
       }
+      return data;
+  - entity: sensor.elprognose_carnot_dk
+    name: EWII Fastpris
+    type: line
+    stroke_width: 3
+    color: cyan
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: false
+      legend_value: true
+    data_generator: |
+      var data = entity.attributes.prognose.map((start, index) => {
+          return [new Date(start["date"]).getTime(), hass.states['sensor.ewii_fastpris_1_aar'].state];
+      });
+      return data;
+  - entity: sensor.elprognose_carnot_dk
+    name: Terminspris 2024
+    type: line
+    stroke_width: 3
+    color: darkgrey
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: false
+      legend_value: true
+    data_generator: |
+      var data = entity.attributes.prognose.map((start, index) => {
+          return [new Date(start["date"]).getTime(), hass.states['sensor.el_terminspris_2024'].state];
+      });
+      return data;
+  - entity: sensor.elprognose_carnot_dk
+    name: Terminspris Q3'23
+    type: line
+    stroke_width: 3
+    color: lightgrey
+    float_precision: 2
+    extend_to: false
+    show:
+      extremas: false
+      legend_value: true
+    data_generator: |
+      var data = entity.attributes.prognose.map((start, index) => {
+          return [new Date(start["date"]).getTime(), hass.states['sensor.el_terminspris_q3_23'].state];
+      });
       return data;
