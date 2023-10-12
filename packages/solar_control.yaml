@@ -1,0 +1,181 @@
+################################################################################
+# PACKAGE WITH SOLAR EV CHARGING CONTROL TEMPLATES, HELPERS AND AUTOMATIONS
+#
+# Created and maintained by DykandDK (github.com/DykandDK/)
+#
+# Revision History:
+# - 2023/09/30 - First version
+#
+################################################################################
+
+#───────────────────────────────────────────────────────────────────────────────
+# HELPERS
+#───────────────────────────────────────────────────────────────────────────────
+# This section includes defintions of input helpers that can be added to your
+# dashboard. The helpers are used in templates and automations.
+#───────────────────────────────────────────────────────────────────────────────
+input_boolean:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Switch to toggle automatic adjustment of EV charging to solar production.
+  # Used as condition in automation so it is possible to charge at full speed
+  # during night or if prices are low.
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_auto_adjust_charging:
+    name: Automatically adjust charging
+    icon: mdi:flash-auto
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Switch to toggle automatic start and stop of EV charging based on current
+  # solar production. Used as condition in automation so it is possible to
+  # disable stop of charing if your car does not allow resume.
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_auto_start_charging:
+    name: Automatically start and stop charging
+    icon: mdi:play-pause
+
+input_number:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Buffer in watts to exclude in calculation of excess solar energy available.
+  # This can be used to save energy for other purposes, e.g. charging of house
+  # battery or selling to the grid, depending on your inverter settings
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_energy_buffer:
+    name: Energy buffer in watts
+    icon: mdi:home-minus
+    unit_of_measurement: "W"
+    min: 0
+    max: 5000
+    step: 100
+    mode: slider
+
+#───────────────────────────────────────────────────────────────────────────────
+# TEMPLATES
+#───────────────────────────────────────────────────────────────────────────────
+# The following templates will calculate excess solar production that can be
+# used for EV charging or other purposes.
+#───────────────────────────────────────────────────────────────────────────────
+template:
+  - sensor:
+      #─────────────────────────────────────────────────────────────────────────
+      # This template will calculate excess energy from solar production that
+      # can be used for EV charging or other purposes.
+      #─────────────────────────────────────────────────────────────────────────
+      - name: "Solar Control - Excess Solar Energy"
+        unique_id: solar_control_excess_solar_energy
+        unit_of_measurement: "W"
+        icon: mdi:octagram-plus-outline
+        state: >
+          {#──────────────────────────────────────────────────────────────────── 
+          CONFIGURATION
+          ──────────────────────────────────────────────────────────────────────
+          Change the each of the entities below to the entities providing the
+          relevant information about current solar production, total house
+          consumption and current EV charging. It is also possible to add a 
+          buffer that will be substracted from the calculation of excess solar
+          energy available.
+
+          All sensors should provide the state in watts. If the sensors are 
+          using kW for measurement, multiply the value with 1,000 to convert
+          to watts.
+          ────────────────────────────────────────────────────────────────────#}
+          {# Current total solar production in watts #}
+          {% set solar_production = states('sensor.total_solar_production') | float  %}
+
+          {# Current total consumption in watts #}
+          {% set current_consumption = states('sensor.deyemodbus_deye_load_totalpower') | float %}
+
+          {# Current EV charging in watts #}
+          {% set ev_charging = states('sensor.ehmawz7t_power') | float * 1000 %}
+
+          {#──────────────────────────────────────────────────────────────────── 
+          END OF CONFIGURATION
+          ────────────────────────────────────────────────────────────────────#}
+          {{ (solar_production - current_consumption + ev_charging - states('input_number.solar_control_energy_buffer') | float) | int }}
+
+      #─────────────────────────────────────────────────────────────────────────
+      # This template calculates the charging amps and whether  1 or 3 phase
+      # charging should be used based on available excess solar production.
+      #
+      # The template is designed for used with the Easee Home Charger, but can
+      # be used with other chargers where charging is controlled in amps
+      #
+      # Minimum amps per phase for this charger is 6A ~ 1.4 kW
+      # Maximum amps per phase can be set in the configuration section below
+      #─────────────────────────────────────────────────────────────────────────
+      - name: "Solar Control - EV Charging"
+        unique_id: solar_control_ev_charging
+        icon: mdi:ev-station
+        state: "{{ this.attributes.status | default('pause') }}"
+        #state: "test"
+        attributes:
+          phases: >
+            {#──────────────────────────────────────────────────────────────────── 
+            CONFIGURATION
+            ──────────────────────────────────────────────────────────────────────
+            You can change the voltage or maximum allowed current per phase below
+            ────────────────────────────────────────────────────────────────────#}
+            {% set max_charging = states('sensor.solar_control_excess_solar_energy') | float  %}
+            {% set v = 235 %}
+            {% set maxPhaseA = 16 %}
+            {#──────────────────────────────────────────────────────────────────── 
+            END OF CONFIGURATION
+            ────────────────────────────────────────────────────────────────────#}
+            {% if max_charging<(6*v) %}
+              {% set phases = {"status": "pause", "count": 0, "P1": 0, "P2": 0, "P3": 0 } %}
+            {% elif max_charging > (6*3*v)  %}
+              {% set maxCharge =(max_charging/3/v),maxPhaseA  %}
+              {% set phases = {"status": "charge", "count": 3, "P1": maxCharge|min|int, "P2": maxCharge|min|int, "P3": maxCharge|min|int } %}
+            {% else %}
+              {% set maxCharge = (max_charging/v),maxPhaseA %}
+              {% set phases = {"status": "charge", "count": 1, "P1": maxCharge|min|int, "P2": 0, "P3": 0 } %}
+            {% endif %}
+            {{ phases }}
+          status: "{{ iif(this.attributes.phases.status=='pause','Pause','Opladning ' + (this.attributes.phases.count|string) + ' '+ iif(this.attributes.phases.count==1,'fase','faser') +': '+(this.attributes.phases.P1|string)+'A') }}"
+
+#───────────────────────────────────────────────────────────────────────────────
+# AUTOMATIONS
+#───────────────────────────────────────────────────────────────────────────────
+# The following automations will adjust EV charging to current solar production:
+#
+# 1) If automatic adjustment is enabled, adjust the current charging rate
+#    (ampere) on Easee Home Charger based on calculated excess solar production
+#───────────────────────────────────────────────────────────────────────────────
+automation:
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation adjusts the current charging rate (in ampere) on Easee Home
+  # Charger based on calculated excess solar production, but only if automatic
+  # adjustment is enabled
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Change EV charging ampere"
+    id: solar_control_adjust_ev_charging
+    description: "This automation changes the EV charging rate based on current solar production."
+    trigger:
+      - platform: state
+        entity_id:
+          - sensor.solar_control_ev_charging
+      - platform: state
+        entity_id:
+          - input_boolean.solar_control_auto_adjust_charging
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.solar_control_auto_adjust_charging
+        state: "on"
+      - condition: state
+        entity_id: sensor.easee_status
+        state: "charging"
+    action:
+      - service: easee.set_circuit_dynamic_limit
+        data_template:
+          device_id: xxxxxxxxxxxxxxxxxxxxxxxx
+          currentP1: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P1 }}"
+          currentP2: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P2 }}"
+          currentP3: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P3 }}"
+      - delay:
+          hours: 0
+          minutes: 1
+          seconds: 0
+          milliseconds: 0
+    mode: single
+    max_exceeded: silent
