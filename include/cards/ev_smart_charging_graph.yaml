@@ -1,3 +1,21 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card to display planned EV charging schedule and electricity prices
+#
+# Data is generated using the EV Smart Charging integration:
+#
+# https://github.com/jonasbkarlsson/ev_smart_charging/
+#
+# and electricity prices generated using the Energi Data Service integration:
+#
+# https://github.com/MTrab/energidataservice
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - custom:apexcharts-card - https://github.com/RomRider/apexcharts-card
+
 type: custom:apexcharts-card
 now:
   show: true
