@@ -1,0 +1,99 @@
+type: custom:apexcharts-card
+now:
+  show: true
+  label: Now
+  color: "#ffc0cb"
+locale: en
+header:
+  show: true
+  title: EV Smart Charging Planning
+  show_states: true
+  standard_format: true
+graph_span: 2d
+yaxis:
+  - min: ~0
+    apex_config:
+      forceNiceScale: true
+span:
+  start: day
+apex_config:
+  legend:
+    show: false
+  xaxis:
+    labels:
+      show: true
+      format: HH
+      rotate: -45
+      rotateAlways: true
+      hideOverlappingLabels: true
+      style:
+        fontSize: 10
+        fontWeight: 10
+  chart:
+    height: 245px
+series:
+  - entity: sensor.ev_smart_charging_charging
+    name: Electricty price
+    unit: " kr/kWh"
+    color: purple
+    data_generator: >
+      return entity.attributes.raw_two_days.map((entry) => { return [new
+      Date(entry.start), entry.value]; });
+    type: line
+    float_precision: 2
+    show:
+      in_header: before_now
+    extend_to: false
+    color_threshold:
+      - value: -1
+        color: green
+      - value: 1
+        color: green
+      - value: 2
+        color: yellow
+      - value: 2.5
+        color: orange
+      - value: 3
+        color: red
+      - value: 4
+        color: darkred
+      - value: 5
+        color: black
+  - entity: sensor.ev_smart_charging_charging
+    name: Charging
+    data_generator: >
+      return entity.attributes.charging_schedule.map((entry) => { return
+      [new Date(entry.start), entry.value]; });
+    type: area
+    curve: stepline
+    color: darkgrey
+    stroke_width: 3
+    show:
+      in_header: false
+    extend_to: false
+  - entity: sensor.ev_smart_charging_charging
+    name: Price limit
+    unit: " kr/kWh"
+    color: red
+    stroke_width: 2
+    data_generator: >
+      return entity.attributes.raw_two_days.map((entry) => { return [new
+      Date(entry.start),
+      hass.states['number.ev_smart_charging_electricity_price_limit'].state];
+      });
+    type: line
+    extend_to: false
+  - entity: sensor.ev_smart_charging_charging
+    name: Price low
+    unit: " kr/kWh"
+    color: darkgreen
+    stroke_width: 2
+    data_generator: >
+      return entity.attributes.raw_two_days.map((entry) => { return [new
+      Date(entry.start),
+      hass.states['number.ev_smart_charging_low_price_charging_level'].state];
+      });
+    type: line
+    extend_to: false
+experimental:
+  color_threshold: true
