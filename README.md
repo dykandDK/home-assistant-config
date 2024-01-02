@@ -175,7 +175,7 @@ SOFTWARE.
 [commits-shield]: https://img.shields.io/github/commit-activity/m/dykandDK/home-assistant-config.svg
 [commits]: https://github.com/dykandDK/home-assistant-config/commits/master
 [license-shield]: https://img.shields.io/badge/license-MIT-green.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
 [last-commit-shield]: https://img.shields.io/github/last-commit/dykandDK/home-assistant-config.svg
 [stars-shield]: https://img.shields.io/github/stars/dykandDK/home-assistant-config.svg?style=social&label=Stars
 [forks-shield]: https://img.shields.io/github/forks/dykandDK/home-assistant-config.svg?style=social&label=Forks
