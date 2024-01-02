@@ -4,8 +4,7 @@
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
-# Configure a default setup of Home Assistant
-# (frontend, api, etc)
+# Configure a default setup of Home Assistant (frontend, api, etc)
 #───────────────────────────────────────────────────────────────────────────────
 default_config:
 
@@ -20,9 +19,12 @@ homeassistant:
   media_dirs:
     media: /media
   unit_system: metric
+  time_zone: "Europe/Copenhagen"
   currency: DKK
+  country: DK
+
 #───────────────────────────────────────────────────────────────────────────────
-# Allow external access via DuckDNS.org
+# Allow external access
 #───────────────────────────────────────────────────────────────────────────────
 http:
   #ssl_certificate: /ssl/fullchain.pem
@@ -42,6 +44,11 @@ http:
   # Number of failed login attempts from a single IP after which it will be
   # automatically banned.
   #login_attempts_threshold: 5
+
+#───────────────────────────────────────────────────────────────────────────────
+# Websocket API and sensor
+#───────────────────────────────────────────────────────────────────────────────
+websocket_api:
 
 #───────────────────────────────────────────────────────────────────────────────
 # Save lovelace UI in seperate file and add resources
@@ -140,16 +147,16 @@ frontend:
 #───────────────────────────────────────────────────────────────────────────────
 # Enables IOS Actionable Notifications
 #───────────────────────────────────────────────────────────────────────────────
-ios:
-  push:
-    categories: !include ios_push_categories.yaml
+# ios:
+#   push:
+#     categories: !include ios_push_categories.yaml
 
 #───────────────────────────────────────────────────────────────────────────────
 # Text to speech
 #───────────────────────────────────────────────────────────────────────────────
 tts:
   - platform: google_translate
-    base_url: !secret TTS_base_url
+#    base_url: !secret TTS_base_url
 
 #───────────────────────────────────────────────────────────────────────────────
 # Additional file includes
@@ -213,9 +220,9 @@ homekit:
       - light.bryggers_2
       - light.bryggers
       - light.standerto
-      - light.hue_white_light_1 #Spisebord
-      - light.dimmable_light_5 #Stander
-      - light.dimmable_light_9 #Loft, kontor
+      - light.hue_white_light_1
+      - light.dimmable_light_5
+      - light.dimmable_light_9
       - scene.film
       - scene.mellem
       - scene.lege
@@ -225,12 +232,6 @@ homekit:
       - camera.reolink_e1_pro_profile000_mainstream
       - media_player.marantz_sr7010
   entity_config:
-    # switch.on_off_plug_in_unit_4:
-    #   name: Sengebord
-    #   type: outlet
-    # switch.on_off_plug_in_unit_5:
-    #   name: Blæser
-    #   type: outlet
     light.hue_white_light_1:
       name: Spisebord
     light.dimmable_light_5:
@@ -360,10 +361,6 @@ sensor:
   #─────────────────────────────────────────────────────────────────────────────
   # Host system monitor
   #─────────────────────────────────────────────────────────────────────────────
-  # Log file size
-  - platform: filesize
-    file_paths:
-      - /config/home-assistant.log
 
   #─────────────────────────────────────────────────────────────────────────────
   # Carnot.dk REST sensor
@@ -848,16 +845,20 @@ light:
 #───────────────────────────────────────────────────────────────────────────────
 # Netatmo Presence camera
 #───────────────────────────────────────────────────────────────────────────────
-netatmo:
-  client_id: !secret netatmo_apikey
-  client_secret: !secret netatmo_secret
+# Deprecated with version 2022.6 - configuration no longer needed as it has
+# moved to UI
+# netatmo:
+#   client_id: !secret netatmo_apikey
+#   client_secret: !secret netatmo_secret
 
 #───────────────────────────────────────────────────────────────────────────────
 # Our Groceries custom component
 #───────────────────────────────────────────────────────────────────────────────
-ourgroceries:
-  username: !secret og_username
-  password: !secret og_password
+# Deprecated with version 2023.12 - configuration no longer needed as it has
+# moved to UI
+# ourgroceries:
+#   username: !secret og_username
+#   password: !secret og_password
 
 #───────────────────────────────────────────────────────────────────────────────
 # Spotify integration
