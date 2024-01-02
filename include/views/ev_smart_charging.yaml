@@ -1,0 +1,386 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# View to configure and display scheduled charging using the EV Smart Charging
+# integration (https://github.com/jonasbkarlsson/ev_smart_charging/)
+#
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# - vertical-stack-in-card - https://github.com/ofekashery/vertical-stack-in-card
+# - apex-charts - https://github.com/RomRider/apexcharts-card
+# - bar-card - https://github.com/custom-cards/bar-card
+
+icon: mdi:car-electric
+title: EV Smart Charging
+panel: true
+cards:
+  - type: horizontal-stack
+    cards:
+      ##########################################################################
+      ###                      Display planned charging                      ###
+      ##########################################################################
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: markdown
+            content: >
+              ### <ha-icon icon="mdi:information-outline"></ha-icon>&nbsp;&nbsp;Status
+
+              {% set status = states.sensor.ev_smart_charging_status.state -%} 
+              {% set status = status | replace('Waiting for charging to begin','Venter på start af planlagt opladning den ') -%}
+              {% set status = status | replace("Waiting for new prices","Venter på opdatering af elpriser") -%} 
+              {% set status = status | replace("No charging planned","Ingen opladning er planlagt") -%}
+              {% set status = status | replace("Charging","Opladning") -%} 
+              {% set status = status | replace("Keeping charger on","Opladning afsluttes ikke") -%} 
+              {% set status = status | replace("Disconnected","Bil er ikke tilsluttet") -%}
+              {% set status = status | replace("Smart charging not active","Automatisk opladning er deaktiveret") -%}
+              {% set status = status | replace("Low price charging","Opladning ved lav pris") -%} 
+              {% set status = status | replace("Low SOC charging","Opladning ved lavt batteri") -%} 
+              {{status -}}
+
+              {{ iif(states.sensor.ev_smart_charging_charging.state=='on',' begyndte ','') -}} 
+              {% if state_attr('sensor.ev_smart_charging_charging','Charging is planned') == True -%} 
+              {{ state_attr('sensor.ev_smart_charging_charging','Charging start time') | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') -}} 
+              {% endif -%} {%
+              if state_attr('sensor.ev_smart_charging_charging','Charging is planned') == True -%} ,&nbsp;der afsluttes
+              {{state_attr('sensor.ev_smart_charging_charging','Charging stop time') | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') | replace('/','.') -}} 
+              {% endif %}
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_smart_charging_activated
+                name: Automatisk opladning
+                icon: mdi:auto-fix
+              - type: section
+                label: Batteri
+              - type: custom:bar-card
+                show_header_toggle: false
+                height: 30px
+                entity_row: true
+                animation:
+                  "0":
+                    state: "on"
+                    speed: 5
+                severity:
+                  - color: Red
+                    to: "20"
+                    from: "0"
+                  - color: Orange
+                    from: "21"
+                    to: "49"
+                  - color: Yellow
+                    from: "50"
+                    to: "60"
+                  - color: LawnGreen
+                    from: "61"
+                    to: "74"
+                  - color: Green
+                    from: "75"
+                    to: "100"
+                positions:
+                  icon: "off"
+                  indicator: "off"
+                  name: "off"
+                  value: inside
+                entities:
+                  - entity: sensor.ev_smart_charging_charging
+                    attribute: EV SOC
+                icon: mdi:battery-70
+                unit_of_measurement: "%"
+                state_color: false
+              - type: attribute
+                entity: sensor.ev_smart_charging_charging
+                attribute: EV SOC
+                name: Nuværende batteri
+                suffix: "%"
+                icon: mdi:battery-medium
+              - type: attribute
+                entity: sensor.ev_smart_charging_charging
+                attribute: EV target SOC
+                name: Oplad til
+                suffix: "%"
+                icon: mdi:battery-charging
+          - type: markdown
+            content: >-
+              ***
+
+              {% set soc = state_attr('sensor.ev_smart_charging_charging','EV SOC') | float -%}
+              {% set tsoc = state_attr('sensor.ev_smart_charging_charging','EV target SOC') | float -%} 
+              {% set speed = states.number.ev_smart_charging_charging_speed.state | float -%} 
+              <table width=100%><tr><td width=80%>Resterende estimeret ladetid:</td>
+              <td width=15% align=right>{{ ((tsoc-soc)/speed*60) | int }}  min.
+              </td></tr></table> 
+
+
+              ***
+          - type: markdown
+            content: |
+              ### <ha-icon icon="mdi:hours-24"></ha-icon>&nbsp;&nbsp;Planlagt opladning
+          - type: custom:apexcharts-card
+            now:
+              show: true
+              label: Nu
+              color: "#ffc0cb"
+            locale: en
+            header:
+              show: true
+              title: ""
+              show_states: true
+              standard_format: true
+            graph_span: 2d
+            yaxis:
+              - min: ~0
+                apex_config:
+                  forceNiceScale: true
+            span:
+              start: day
+            apex_config:
+              legend:
+                show: false
+              xaxis:
+                labels:
+                  show: true
+                  format: HH
+                  rotate: -45
+                  rotateAlways: true
+                  hideOverlappingLabels: true
+                  style:
+                    fontSize: 10
+                    fontWeight: 10
+              chart:
+                height: 245px
+              dataLabels:
+                enabled: true
+                offsetY: 0
+                textAnchor: top
+                style:
+                  fontSize: 10px
+                  colors:
+                    - "#fff"
+                distributed: true
+                background:
+                  enabled: false
+                formatter: |
+                  EVAL:function(value) {
+                    return value.toFixed(2);
+                  }
+            series:
+              - entity: sensor.ev_smart_charging_charging
+                name: Elpris
+                unit: " kr."
+                color: purple
+                data_generator: >
+                  return entity.attributes.raw_two_days.map((entry) => { return [new
+                  Date(entry.start), entry.value]; });
+                type: line
+                float_precision: 2
+                show:
+                  in_header: before_now
+                extend_to: false
+                color_threshold:
+                  - value: -1
+                    color: green
+                  - value: 1
+                    color: green
+                  - value: 2
+                    color: yellow
+                  - value: 2.5
+                    color: orange
+                  - value: 3
+                    color: red
+                  - value: 4
+                    color: darkred
+                  - value: 5
+                    color: black
+              - entity: sensor.ev_smart_charging_charging
+                name: Opvarmning
+                data_generator: >
+                  return entity.attributes.charging_schedule.map((entry) => { return
+                  [new Date(entry.start), entry.value]; });
+                type: area
+                curve: stepline
+                color: darkgrey
+                stroke_width: 3
+                show:
+                  in_header: false
+                extend_to: false
+              - entity: sensor.ev_smart_charging_charging
+                name: Prisloft
+                unit: " kr."
+                float_precision: 2
+                color: red
+                stroke_width: 2
+                data_generator: >
+                  return entity.attributes.raw_two_days.map((entry) => { return [new
+                  Date(entry.start),
+                  hass.states['number.ev_smart_charging_electricity_price_limit'].state];
+                  });
+                type: line
+                extend_to: false
+              - entity: sensor.ev_smart_charging_charging
+                name: Lav pris
+                unit: " kr."
+                color: darkgreen
+                stroke_width: 2
+                float_precision: 2
+                data_generator: >
+                  return entity.attributes.raw_two_days.map((entry) => { return [new
+                  Date(entry.start),
+                  hass.states['number.ev_smart_charging_low_price_charging_level'].state];
+                  });
+                type: line
+                extend_to: false
+            experimental:
+              color_threshold: true
+
+      ##########################################################################
+      ###              Configure scheduled charging (1 of 3)                 ###
+      ##########################################################################
+      - type: custom:vertical-stack-in-card
+        title: Konfiguration (1/3)
+        cards:
+          - type: markdown
+            content: >-
+              **Start af opladning**<br>Det tidligste tidspunkt på dagen, hvor
+              opladningen må starte. Hvis 'None' er valgt, vil start af opladning ikke
+              være begrænset til et specifikt tidspunkt.
+          - type: entities
+            entities:
+              - entity: select.ev_smart_charging_charge_start_time
+                name: Start-tidspunkt
+                icon: mdi:clock-start
+          - type: markdown
+            content: >-
+              **Slut på opladning**<br>Det seneste tidspunkt på dagen, hvor opladning
+              skal nå måltemperaturen. Hvis 'None' er valgt, vil opladningen blive
+              optimeret ved at bruge alle timer med tilgængelig prisinformation,
+              herunder før morgendagens priser er tilgængelige.
+          - type: entities
+            entities:
+              - entity: select.ev_smart_charging_charge_completion_time
+                name: Slut-tidspunkt
+                icon: mdi:clock-end
+              - type: divider
+          - type: markdown
+            content: >-
+              **Opladningshastighed**<br>Opladningshastigheden udtrykt i procent pr.
+              time. Hvis elbilen f.eks. har et 77 kWh batteri, og opladeren kan levere
+              11 kW (3-faset 16 A), skal du indstille denne parameter til 14,3
+              (11/77*100). Hvis der er begrænsninger i opladningseffekten, bør du anføre
+              en lavere værdi.
+          - type: entities
+            entities:
+              - entity: number.ev_smart_charging_charging_speed
+                name: Opladningshastighed
+              - type: divider
+          - type: markdown
+            content: >-
+              **Anvend prisloft**<br>Hvis du anvender prisloft, vil opladning ikke blive
+              udført i timer, hvor elprisen er over det fastsatte prisloft på
+              {{states.number.ev_smart_charging_electricity_price_limit.state|float}}
+              kr.<br><br>**BEMÆRK:** Dette kan føre til, at opladningen ikke når det
+              ønskede batteriniveau.
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_apply_price_limit
+                name: Anvend prisloft
+                icon: mdi:format-paragraph-spacing
+              - entity: number.ev_smart_charging_electricity_price_limit
+                name: Prisloft
+
+      ##########################################################################
+      ###              Configure scheduled charging (2 of 3)                 ###
+      ##########################################################################
+      - type: custom:vertical-stack-in-card
+        title: Konfiguration (2/3)
+        cards:
+          - type: markdown
+            content: >-
+              **Oplad ved lavt batteri**<br>Når denne er aktiveret, sker opladningen
+              straks til det angivne minimumsniveau
+              ({{states.number.ev_smart_charging_minimum_ev_soc.state|int}}%), hvis
+              batteriet er under den angivne grænse for lav batteri
+              ({{states.number.ev_smart_charging_low_soc_charging_level.state|int}}%),
+              når bilen tilsluttes ladeboksen.<br><br>**BEMÆRK:** Opladningen sker uden
+              hensyn til de aktuelle priser.
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_low_soc_charging
+                name: Oplad ved lavt batteri
+                icon: mdi:battery-charging-10
+              - entity: number.ev_smart_charging_low_soc_charging_level
+                name: Lav batteri-%
+                icon: mdi:battery-low
+              - entity: number.ev_smart_charging_minimum_ev_soc
+                name: Oplad altid til min. %
+                icon: mdi:battery-charging
+              - type: section
+          - type: markdown
+            content: >-
+              **Oplad ved lav pris**<br>Når denne er aktiveret, sker opladningen straks,
+              hvis elprisen er under den angivne prisgrænse
+              ({{states.number.ev_smart_charging_low_price_charging_level.state|float}}
+              kr.)
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_low_price_charging
+                name: Oplad ved lav pris
+                icon: mdi:format-paragraph-spacing
+              - entity: number.ev_smart_charging_low_price_charging_level
+                name: Prisgrænse
+          - type: markdown
+            content: >-
+              **Opportunistisk opladning**<br>Når denne er aktiveret, reduceres
+              prisgrænsen yderligere, hvis prisen i slutningen af dagen er lavere end
+              prisloftet * Opportunistisk grænse / 100.<br><br>Når det opportunistiske
+              niveau er sat til
+              {{states.number.ev_smart_charging_opportunistic_level.state|int}}, sættes
+              prisgrænsen således til
+              {{states.number.ev_smart_charging_opportunistic_level.state|int}}% af
+              prisloftet på
+              {{states.number.ev_smart_charging_electricity_price_limit.state|float}} = 
+              {{(states.number.ev_smart_charging_opportunistic_level.state|int)/100*(states.number.ev_smart_charging_electricity_price_limit.state|float)}}
+              kr. Hvis priserne for i morgen er tilgængelige, vil prisen i slutningen af
+              dagen i morgen blive brugt som udløser.
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_opportunistic_charging
+                name: Opportunistisk opladning
+                icon: mdi:chart-bar-stacked
+              - entity: number.ev_smart_charging_opportunistic_level
+                name: Opportunistisk grænse
+                icon: mdi:percent-box
+
+      ##########################################################################
+      ###              Configure scheduled charging (3 of 3)                 ###
+      ##########################################################################
+      - type: custom:vertical-stack-in-card
+        title: Konfiguration (3/3)
+        cards:
+          - type: markdown
+            content: >-
+              **Sammenhængende opladning**<br>Når denne er aktiveret, sker opladningen
+              som udgangspunkt i én sammenhængende opladningssession. Hvis den er slået
+              fra, planlægges opladning på timerne med laveste elpris, selvom de ikke er
+              sammenhængende. Opladningen kan derfor starte og stoppe flere gange.
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_continuous_charging_preferred
+                name: Planlæg sammenhængende opladning
+                icon: mdi:recycle-variant
+              - type: section
+          - type: markdown
+            content: >-
+              **Afslut ikke opladning**<br>Når denne er aktiveret, vil sensoren
+              `ev_smart_charging_charging` ikke slukke efter en afsluttet
+              opladningssession. Funktionen er beregnet til at gøre det muligt at
+              foretage forkonditionering før afgang med brug af strøm fra ladeboksen.
+              Det vil sige, at forvarmning/afkøling af bilen kan ske fra elnettet i
+              stedet for batteriet. Hvis denne mulighed bruges, vil funktionen
+              Elprisgrænse blive slået fra, og omvendt.  <br><br>**BEMÆRK** Det er
+              krævet, at status på bilens opkobling styres korrekt for at denne funktion
+              kan fungere. Der er også en antagelse om, at selve elbilen stopper
+              opladningen, når det planlagte batteriniveau er nået.
+          - type: entities
+            entities:
+              - entity: switch.ev_smart_charging_keep_charger_on
+                name: Afslut ikke opladning
