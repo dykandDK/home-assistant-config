@@ -1,0 +1,410 @@
+#───────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────
+# Card with overview of status and control of room specific elements
+# such as lights, media players etc. including information about temperature
+# etc. in the kitchen
+
+#───────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────
+# The following components are required for the core parts of the room card:
+
+# - Custom Button Card: https://github.com/custom-cards/button-card
+# - Mushroom Cards: https://github.com/piitaya/lovelace-mushroom
+# - Card_mod: https://github.com/thomasloven/lovelace-card-mod
+
+# The following additional components are required for the pop-up windows:
+
+# - Browser_mod: https://github.com/thomasloven/hass-browser_mod
+# - Mini Media Player: https://github.com/kalkih/mini-media-player
+# - Swipe-card: https://github.com/bramkragten/swipe-card
+# - Sonos Playlist Card: https://github.com/ChrisK91/sonos-playlist-card
+# - Vertical Stack-in Card: https://github.com/ofekashery/vertical-stack-in-card
+
+type: custom:button-card
+icon: mdi:silverware-fork-knife
+name: Kitchen
+show_label: true
+label: |
+  [[[ 
+    return Number(states["sensor.velux_sensor_temperature"].state).toFixed(1) + '°C | '
+    + Number(states["sensor.velux_sensor_humidity"].state).toFixed(0) +'%'
+    ; 
+  ]]]
+custom_fields:
+  #─────────────────────────────────────────────────────────────────────────────
+  # Control icon #1: Kitch Lights
+  #─────────────────────────────────────────────────────────────────────────────
+  c1:
+    card:
+      type: custom:mushroom-template-card
+      primary: ""
+      icon: mdi:lightbulb
+      icon_color: |
+        {% if states.light | selectattr('state', 'eq', 'on')
+           | map(attribute='entity_id')
+           | map('area_name')
+           | select('in', ['Alrum'])
+           | list | count > 0  %}
+           yellow
+        {% else %}  
+           grey
+        {% endif %}
+      secondary: ""
+      badge_color: ""
+      badge_icon: ""
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          service: browser_mod.popup
+          data:
+            title: Kitch Lights
+            size: fullscreen
+            dismiss_action:
+              service: browser_mod.javascript
+              data:
+                code: window.history.back()
+            content:
+              type: vertical-stack
+              cards:
+                - type: custom:mushroom-light-card
+                  entity: light.daemp_alrum
+                  name: Dinning Table
+                  use_light_color: true
+                  show_brightness_control: true
+                  show_color_temp_control: false
+                  show_color_control: false
+                  collapsible_controls: false
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                      }
+                - type: custom:mushroom-light-card
+                  entity: light.daemp_kokken
+                  name: Spots
+                  use_light_color: true
+                  show_brightness_control: true
+                  show_color_temp_control: false
+                  show_color_control: false
+                  collapsible_controls: false
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                      }
+                - type: custom:mushroom-light-card
+                  entity: light.bordlampe
+                  use_light_color: true
+                  show_brightness_control: true
+                  show_color_temp_control: false
+                  show_color_control: false
+                  collapsible_controls: false
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                      }
+                - type: custom:mushroom-light-card
+                  entity: light.lightstrip_kokken
+                  use_light_color: true
+                  show_brightness_control: true
+                  show_color_temp_control: false
+                  show_color_control: true
+                  collapsible_controls: false
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                      }
+              card_mod:
+                style: |
+                  ha-card {
+                    --ha-card-border-width: 0;
+                  }
+      card_mod:
+        style: |
+          ha-card {
+            box-shadow: none;
+            --ha-card-border-width: 0 !important;
+            background: none;
+          }
+
+          :host {
+            --mush-icon-size: 38px;
+          }
+  #─────────────────────────────────────────────────────────────────────────────
+  # Control icon #2: Kitchen Mediaplayer
+  #─────────────────────────────────────────────────────────────────────────────
+  c2:
+    card:
+      type: custom:mushroom-template-card
+      primary: ""
+      icon: mdi:music
+      entity: media_player.alrum
+      icon_color: |
+        {% if is_state(entity, 'playing') %}
+        purple
+        {% else %}  
+        grey
+        {% endif %}
+      secondary: ""
+      badge_color: ""
+      badge_icon: ""
+      double_tap_action:
+        action: call-service
+        service: media_player.media_play_pause
+        target:
+          entity_id: media_player.alrum
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          service: browser_mod.popup
+          data:
+            title: Kichen Mediaplayer
+            dismiss_action:
+              service: browser_mod.javascript
+              data:
+                code: window.history.back()
+            size: fullscreen
+            content:
+              type: vertical-stack
+              cards:
+                - type: custom:mini-media-player
+                  entity: media_player.alrum
+                  artwork: cover-fit
+                  source: icon
+                  info: scroll
+                  hide:
+                    power: true
+                    name: true
+                  speaker_group:
+                    platform: sonos
+                    show_group_count: true
+                    entities:
+                      - entity_id: media_player.alrum
+                        name: Kitchen
+                      - entity_id: media_player.stue
+                        name: Living room
+                  group: false
+                  shortcuts:
+                    columns: 3
+                    buttons:
+                      - name: P3
+                        icon: mdi:radio
+                        type: music
+                        id: http://live-icy.gss.dr.dk/A/A05H.mp3
+                      - name: Pop FM
+                        icon: mdi:radio
+                        type: music
+                        id: http://live-bauerdk.sharp-stream.com/popfm128.mp3
+                      - name: Nova
+                        icon: mdi:radio
+                        type: music
+                        id: http://live-bauerdk.sharp-stream.com/nova128.mp3
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                      }
+                - type: custom:swipe-card
+                  cards:
+                    - type: custom:sonos-playlist-card
+                      player: media_player.alrum
+                      limit: 9
+                      gridWidth: 28
+                    - type: custom:sonos-playlist-card
+                      player: media_player.alrum
+                      playlist_type: featured
+                      limit: 9
+                      gridWidth: 25
+              card_mod:
+                style: |
+                  ha-card {
+                    --ha-card-border-width: 0;
+                  }
+      card_mod:
+        style: |
+          ha-card {
+            box-shadow: none;
+            --ha-card-border-width: 0 !important;
+            background: none;
+          }
+
+          :host {
+            --mush-icon-size: 38px;
+          }
+  #─────────────────────────────────────────────────────────────────────────────
+  # Control icon #3: Kitchen Motion Sensor
+  #─────────────────────────────────────────────────────────────────────────────
+  c3:
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.alrum_bevaegelse
+      icon: |
+        {% if is_state(entity, 'on') %}
+        mdi:motion-sensor
+        {% else %}  
+        mdi:motion-sensor-off
+        {% endif %}
+      icon_color: |
+        {% if is_state(entity, 'on') %}
+        red
+        {% else %}  
+        grey
+        {% endif %}
+      primary: ""
+      secondary: ""
+      badge_color: ""
+      badge_icon: ""
+      tap_action:
+        action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            box-shadow: none;
+            --ha-card-border-width: 0 !important;
+            background: none;
+          }
+
+          :host {
+            --mush-icon-size: 38px;
+          }
+  #─────────────────────────────────────────────────────────────────────────────
+  # Control icon #4: Kitchen Skylight
+  #─────────────────────────────────────────────────────────────────────────────
+  c4:
+    card:
+      type: custom:mushroom-template-card
+      entity: cover.ovenlys_alrum
+      icon: |
+        {% if is_state(entity, 'open') %}
+        mdi:window-open
+        {% else %}  
+        mdi:window-closed
+        {% endif %}
+      icon_color: |
+        {% if is_state(entity, 'open') %}
+        green
+        {% else %}  
+        grey
+        {% endif %}
+      primary: ""
+      secondary: ""
+      badge_color: ""
+      badge_icon: ""
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          service: browser_mod.popup
+          data:
+            title: Skylight
+            dismiss_action:
+              service: browser_mod.javascript
+              data:
+                code: window.history.back()
+            size: fullscreen
+            content:
+              type: vertical-stack
+              cards:
+                - type: custom:vertical-stack-in-card
+                  cards:
+                    - type: custom:mushroom-cover-card
+                      entity: cover.ovenlys_alrum
+                      show_position_control: true
+                      show_buttons_control: false
+                      card_mod:
+                        style: |
+                          ha-card {
+                          --ha-card-border-width: 0;
+                          }
+                    - type: custom:mushroom-cover-card
+                      entity: cover.ovenlys_alrum
+                      show_position_control: false
+                      show_buttons_control: true
+                      icon_type: none
+                      primary_info: none
+                      secondary_info: none
+                      card_mod:
+                        style: |
+                          ha-card {
+                          --ha-card-border-width: 0;
+                          }
+                    - type: custom:mushroom-entity-card
+                      entity: input_boolean.manual_override
+                      tap_action:
+                        action: toggle
+                      card_mod:
+                        style: |
+                          ha-card {
+                          --ha-card-border-width: 0;
+                          }
+              card_mod:
+                style: |
+                  ha-card {
+                    --ha-card-border-width: 0;
+                  }
+      card_mod:
+        style: |
+          ha-card {
+            box-shadow: none;
+            --ha-card-border-width: 0 !important;
+            background: none;
+          }
+
+          :host {
+            --mush-icon-size: 38px;
+          }
+#───────────────────────────────────────────────────────────────────────────────
+# The styles below could also be added to a button-card template if several
+# room cards will be used
+#───────────────────────────────────────────────────────────────────────────────
+styles:
+  grid:
+    - grid-template-areas: '"n" "l" "i"'
+    - grid-template-columns: 1fr
+    - grid-template-rows: min-content min-content 1fr
+  card:
+    - height: 178px
+    - margin: 0px
+    - padding: 0px
+  name:
+    - font-size: 16px
+    - font-weight: 600
+    - justify-self: start
+    - padding-left: 15px
+    - padding-top: 8px
+  label:
+    - font-size: 12px
+    - justify-self: start
+    - font-weight: 600
+    - color: grey
+    - padding-left: 15px
+  icon:
+    - position: absolute
+    - left: "-20px"
+    - top: 20px
+    - background-color: rgba(3, 169, 244, 0.2)
+    - color: "#03A9F4"
+    - border-radius: 50%
+    - width: 80px
+    - height: 80px
+    - padding: 30px
+  custom_fields:
+    c1:
+      - position: absolute
+      - top: "-8px"
+      - left: 125px
+    c2:
+      - position: absolute
+      - top: 35px
+      - left: 125px
+    c3:
+      - position: absolute
+      - top: 78px
+      - left: 125px
+    c4:
+      - position: absolute
+      - top: 121px
+      - left: 125px
