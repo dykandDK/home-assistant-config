@@ -5,7 +5,8 @@
 #
 # Revision History:
 # - 2023/09/30 - First version
-#
+# - 2024/07/24 - Updated automation with changes to Easee integration service
+#                calls by changing currentPX to to current_px
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
@@ -169,9 +170,9 @@ automation:
       - service: easee.set_circuit_dynamic_limit
         data_template:
           device_id: xxxxxxxxxxxxxxxxxxxxxxxx
-          currentP1: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P1 }}"
-          currentP2: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P2 }}"
-          currentP3: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P3 }}"
+          current_p1: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P1 }}"
+          current_p2: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P2 }}"
+          current_p3: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P3 }}"
       - delay:
           hours: 0
           minutes: 1
