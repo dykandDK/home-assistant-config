@@ -49,3 +49,9 @@ This [flow](EV_charging.json) automates control over charging of my EV at home u
 ### **Screenshot**
 ![EV Charging](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/EV_charging.png)
 
+## Mealie
+This [flow](Mealie.json) imports the weekly dinner recipes from the Mealie addon including all ingredients required for each recipe. The data is stored as attributes in a sensor and can then be displayed on your dashboard or used in automations.
+
+### **Screenshot**
+![Mealie](https://github.com/dykandDK/home-assistant-config/blob/master/automations/node-RED/screenshots/Mealie.png)
+

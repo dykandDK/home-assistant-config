@@ -1,0 +1,415 @@
+[
+    {
+        "id": "40f5c31a612eaf88",
+        "type": "tab",
+        "label": "Mealie",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bed5369894ef62a9",
+        "type": "debug",
+        "z": "40f5c31a612eaf88",
+        "name": "Weekly recipes",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "1238fb6b4aaf90b7",
+        "type": "comment",
+        "z": "40f5c31a612eaf88",
+        "name": "Get recipes for next 7 days",
+        "info": "",
+        "x": 140,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "0b74db4b3483b220",
+        "type": "inject",
+        "z": "40f5c31a612eaf88",
+        "name": "Hourly update",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 90,
+        "wires": [
+            [
+                "8553350c0af4b0e9"
+            ]
+        ]
+    },
+    {
+        "id": "695cd9182ab80228",
+        "type": "server-state-changed",
+        "z": "40f5c31a612eaf88",
+        "name": "Manuel update?",
+        "server": "49e64ea71c5ef4d9",
+        "version": 5,
+        "outputs": 1,
+        "exposeAsEntityConfig": "",
+        "entityId": "input_boolean.recipe_reload",
+        "entityIdType": "exact",
+        "outputInitially": false,
+        "stateType": "str",
+        "ifState": "",
+        "ifStateType": "str",
+        "ifStateOperator": "is",
+        "outputOnlyOnStateChange": true,
+        "for": "",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 130,
+        "y": 150,
+        "wires": [
+            [
+                "8553350c0af4b0e9"
+            ]
+        ]
+    },
+    {
+        "id": "7368dad6fcfb3424",
+        "type": "http request",
+        "z": "40f5c31a612eaf88",
+        "name": "Get mealplan from Mealie",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "query",
+        "url": "http://xxx.xxx.xxx:9090/api/groups/mealplans",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 790,
+        "y": 90,
+        "wires": [
+            [
+                "a83aec9219e62f52"
+            ]
+        ]
+    },
+    {
+        "id": "8553350c0af4b0e9",
+        "type": "function",
+        "z": "40f5c31a612eaf88",
+        "name": "Limit to next 7 days",
+        "func": "msg.topic=\"\";\nlet today = new Date();\nlet next7days = new Date();\nnext7days.setDate(today.getDate() + 6);\n\nfunction padTo2Digits(num) {\n    return num.toString().padStart(2, '0');\n}\n\nfunction formatDate(date) {\n    return [\n        date.getFullYear(),\n        padTo2Digits(date.getMonth() + 1),\n        padTo2Digits(date.getDate()),\n    ].join('-');\n}\n\nlet NewMsg = {\n    \"topic\": \"\",\n    \"payload\" : {\n        \"start_date\": formatDate(today),\n        \"end_date\": formatDate(next7days)\n}};\nreturn NewMsg;\n\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 90,
+        "wires": [
+            [
+                "a03834862be17da3"
+            ]
+        ]
+    },
+    {
+        "id": "a83aec9219e62f52",
+        "type": "function",
+        "z": "40f5c31a612eaf88",
+        "name": "Process plan",
+        "func": "msg.topic=\"\";\nlet today = new Date();\nlet weekday = new Date();\nconst plan = [];\nlet recipes=msg.payload.items;\n\nfor (let i = 0; i < 7; i++) {\n    //weekday.setDate(today.getDate() + i);\n    weekday = new Date(new Date().getTime() + (i * 24 * 60 * 60 * 1000));\n    var recipe = recipes.find(obj => {\n        return obj.date === formatDate(weekday)\n    })\n    let id = null;\n    let rname = '(Intet planlagt)';\n    let url = '';\n    let image = '/local/images/no_recipe.jpg';\n    if (typeof (recipe) != \"undefined\") { \n        id = recipe.recipe.id;\n        rname = recipe.recipe.name;\n        url = 'http://xxx.xxx.xxx:9090/g/home/r/' + recipe.recipe.slug;\n        image = 'http://xxx.xxx.xxx:9090/api/media/recipes/'+id +'/images/min-original.webp';\n        }\n    plan.push(\n        {\n            \"Weekday\": capitalizeFirst(weekday.toLocaleDateString('da-DK', { weekday: 'long', })),\n            \"Date\": formatDate(weekday),\n            \"recipe_name\": rname,\n            \"recipe_url\": url,\n            \"recipe_image\": image,\n            \"mealieID\": id\n        });\n}\n\nmsg.payload=plan;\nmsg.headers=msg.headers2;\nreturn msg;\n\n// Functions\n\nfunction padTo2Digits(num) {\n    return num.toString().padStart(2, '0');\n}\n\nfunction formatDate(date) {\n    return [\n        date.getFullYear(),\n        padTo2Digits(date.getMonth()+1 ),\n        padTo2Digits(date.getDate()),\n    ].join('-');\n}\n\nfunction capitalizeFirst(word) {\n    return word.charAt(0).toUpperCase() + word.slice(1);\n}\n\n\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 90,
+        "wires": [
+            [
+                "5ed7df0d12f2faa7"
+            ]
+        ]
+    },
+    {
+        "id": "792655aab6b4c1cf",
+        "type": "ha-sensor",
+        "z": "40f5c31a612eaf88",
+        "name": "Weekly recipe sensor",
+        "entityConfig": "8ae38a23bb038927",
+        "version": 0,
+        "state": "payload[0].recipe_name",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "recipes",
+                "value": "payload",
+                "valueType": "msg"
+            }
+        ],
+        "inputOverride": "allow",
+        "outputProperties": [],
+        "x": 990,
+        "y": 210,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5ed7df0d12f2faa7",
+        "type": "split",
+        "z": "40f5c31a612eaf88",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 300,
+        "y": 150,
+        "wires": [
+            [
+                "c15f7ee8a1a20a36"
+            ]
+        ]
+    },
+    {
+        "id": "f30e1c3446aa2135",
+        "type": "function",
+        "z": "40f5c31a612eaf88",
+        "name": "Append details",
+        "func": "let recipe=msg.recipe;\nrecipe.recipe_yield = msg.payload.recipeYield;\nrecipe.recipe_time = msg.payload.totalTime;\nrecipe.recipe_decription = msg.payload.description;\nrecipe.recipe_instructions = msg.payload.recipeInstructions;\nrecipe.recipe_ingredients = msg.payload.recipeIngredient;\nrecipe.recipe_orgurl = msg.payload.orgURL;\nmsg.payload=recipe;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 150,
+        "wires": [
+            [
+                "bab160a5f598428f"
+            ]
+        ]
+    },
+    {
+        "id": "bab160a5f598428f",
+        "type": "join",
+        "z": "40f5c31a612eaf88",
+        "name": "",
+        "mode": "auto",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": "false",
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "x": 610,
+        "y": 210,
+        "wires": [
+            [
+                "bed5369894ef62a9",
+                "792655aab6b4c1cf"
+            ]
+        ]
+    },
+    {
+        "id": "87021f4620eeb416",
+        "type": "http request",
+        "z": "40f5c31a612eaf88",
+        "name": "Get recipe details",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://xxx.xxx.xxx:9090/api/recipes/{{{payload.mealieID}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 810,
+        "y": 150,
+        "wires": [
+            [
+                "f30e1c3446aa2135"
+            ]
+        ]
+    },
+    {
+        "id": "c15f7ee8a1a20a36",
+        "type": "switch",
+        "z": "40f5c31a612eaf88",
+        "name": "Is valid recipe?",
+        "property": "payload.mealieID",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 450,
+        "y": 150,
+        "wires": [
+            [
+                "64768db4b6c013d4"
+            ],
+            [
+                "bab160a5f598428f"
+            ]
+        ]
+    },
+    {
+        "id": "64768db4b6c013d4",
+        "type": "change",
+        "z": "40f5c31a612eaf88",
+        "name": "Save recipe",
+        "rules": [
+            {
+                "t": "set",
+                "p": "recipe",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 630,
+        "y": 150,
+        "wires": [
+            [
+                "87021f4620eeb416"
+            ]
+        ]
+    },
+    {
+        "id": "a03834862be17da3",
+        "type": "function",
+        "z": "40f5c31a612eaf88",
+        "name": "Set header",
+        "func": "msg.headers = {\n    \"Authorization\": \"Bearer token\"\n}\nmsg.headers2 = msg.headers;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 90,
+        "wires": [
+            [
+                "7368dad6fcfb3424"
+            ]
+        ]
+    },
+    {
+        "id": "49e64ea71c5ef4d9",
+        "type": "server",
+        "name": "Home Assistant",
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true
+    },
+    {
+        "id": "8ae38a23bb038927",
+        "type": "ha-entity-config",
+        "server": "49e64ea71c5ef4d9",
+        "deviceConfig": "",
+        "name": "sensor config for weekly recipe sensor",
+        "version": "6",
+        "entityType": "sensor",
+        "haConfig": [
+            {
+                "property": "name",
+                "value": "weekly_recipes"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:silverware"
+            },
+            {
+                "property": "entity_category",
+                "value": ""
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": ""
+            },
+            {
+                "property": "state_class",
+                "value": ""
+            }
+        ],
+        "resend": true,
+        "debugEnabled": false
+    }
+]
