@@ -1,0 +1,503 @@
+#───────────────────────────────────────────────────────────────────────────────────────
+# Description:
+#───────────────────────────────────────────────────────────────────────────────────────
+# Subview for managing charging of house battery
+#
+#───────────────────────────────────────────────────────────────────────────────────────
+# Custom components required:
+#───────────────────────────────────────────────────────────────────────────────────────
+# - vertical-stack-in-card: https://github.com/ofekashery/vertical-stack-in-card
+# - mushroom-chips-card:    https://github.com/piitaya/lovelace-mushroom
+# - bar-card:               https://github.com/custom-cards/bar-card
+# - multiple-entity-row:    https://github.com/benct/lovelace-multiple-entity-row
+# - apexcharts-card:        https://github.com/RomRider/apexcharts-card
+# - swipe-card:             https://github.com/bramkragten/swipe-card
+#───────────────────────────────────────────────────────────────────────────────────────
+
+title: Husbatteri
+path: home_battery
+icon: mdi:home-battery-outline
+subview: true
+badges: []
+cards:
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.mobile_dev_mode
+            state: "off"
+        chip:
+          type: back
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.mobile_dev_mode
+            state: "off"
+        chip:
+          type: template
+          icon: ""
+          content: Husbatteri
+          card_mod:
+            style: |
+              ha-card {
+                --chip-background: transparent;
+                --chip-font-size: 20px;
+                --chip-border-radius: 0%;
+                box-shadow: none !important;
+                }
+      - type: spacer
+      - type: template
+        icon: |-
+          {% if states(entity) == 'off' %}
+          mdi:cog
+          {% else %}
+          mdi:close
+          {% endif %}
+        tap_action:
+          action: toggle
+        entity: input_boolean.config_house
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.config_house
+        state: "off"
+    card:
+      type: custom:vertical-stack-in-card
+      cards:
+        - type: markdown
+          content: >
+            {% set status =
+            state_translated('sensor.ev_smart_charging_house_status') %} {% set
+            status = status | replace('Oplader' ,'Opladning') %} ### <ha-icon
+            icon="mdi:information-outline"></ha-icon>&nbsp;&nbsp;Status
+
+            {{ status -}} {{
+            iif(states.sensor.ev_smart_charging_house_charging.state=='on','
+            blev startet','') -}} {% if
+            state_attr('sensor.ev_smart_charging_house_charging','charging_is_planned')
+            == True -%} &nbsp;den {{
+            state_attr('sensor.ev_smart_charging_house_charging','charging_start_time')
+            | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') -}} {%
+            endif -%} {% if
+            state_attr('sensor.ev_smart_charging_house_charging','charging_is_planned')
+            == True -%} &nbsp;og vil slutte den 
+            {{state_attr('sensor.ev_smart_charging_house_charging','charging_stop_time')
+            | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') |
+            replace('/','.') -}} {% endif %}
+        - type: entities
+          entities:
+            - entity: switch.ev_smart_charging_house_smart_charging_activated
+              name: Automatisk opladning
+              icon: mdi:auto-fix
+            - type: section
+              label: Batteri
+            - type: custom:bar-card
+              show_header_toggle: false
+              height: 30px
+              entity_row: true
+              animation:
+                "0":
+                  state: "on"
+                  speed: 5
+              severity:
+                - color: Red
+                  to: "20"
+                  from: "0"
+                - color: Orange
+                  from: "21"
+                  to: "49"
+                - color: Yellow
+                  from: "50"
+                  to: "60"
+                - color: LawnGreen
+                  from: "61"
+                  to: "74"
+                - color: Green
+                  from: "75"
+                  to: "100"
+              positions:
+                icon: "off"
+                indicator: "off"
+                name: "off"
+                value: inside
+              entities:
+                - entity: sensor.solarman_deye_battery_soc
+              icon: mdi:battery-70
+              unit_of_measurement: "%"
+              state_color: false
+            - type: custom:multiple-entity-row
+              entity: sensor.solar_control_house_battery_target_soc
+              name: Mål for batteri
+            - type: section
+        - type: markdown
+          content: >
+            ### <ha-icon icon="mdi:hours-24"></ha-icon>&nbsp;&nbsp;Planlagt
+            opladning
+        - type: custom:apexcharts-card
+          now:
+            show: true
+            label: Nu
+            color: "#ffc0cb"
+          locale: en
+          header:
+            show: true
+            title: ""
+            show_states: true
+            standard_format: true
+          graph_span: 2d
+          yaxis:
+            - min: ~0
+              apex_config:
+                forceNiceScale: true
+          span:
+            start: day
+          apex_config:
+            legend:
+              show: false
+            xaxis:
+              labels:
+                show: true
+                format: HH
+                rotate: -45
+                rotateAlways: true
+                hideOverlappingLabels: true
+                style:
+                  fontSize: 10
+                  fontWeight: 10
+            chart:
+              height: 245px
+            dataLabels:
+              enabled: true
+              offsetY: 0
+              textAnchor: top
+              style:
+                fontSize: 10px
+                colors:
+                  - "#fff"
+              distributed: true
+              background:
+                enabled: false
+              formatter: |
+                EVAL:function(value) {
+                  return value.toFixed(2);
+                }
+          series:
+            - entity: sensor.ev_smart_charging_house_charging
+              name: Elpris
+              unit: " kr."
+              color: purple
+              data_generator: >
+                return entity.attributes.raw_two_days.map((entry) => { return
+                [new Date(entry.start), entry.value]; });
+              type: line
+              float_precision: 2
+              show:
+                in_header: before_now
+              extend_to: false
+              color_threshold:
+                - value: -1
+                  color: green
+                - value: 1
+                  color: green
+                - value: 2
+                  color: yellow
+                - value: 2.5
+                  color: orange
+                - value: 3
+                  color: red
+                - value: 4
+                  color: darkred
+                - value: 5
+                  color: black
+            - entity: sensor.ev_smart_charging_house_charging
+              name: opladning
+              data_generator: >
+                return entity.attributes.charging_schedule.map((entry) => {
+                return [new Date(entry.start), entry.value]; });
+              type: area
+              curve: stepline
+              color: darkgrey
+              stroke_width: 3
+              show:
+                in_header: false
+              extend_to: false
+            - entity: sensor.ev_smart_charging_house_charging
+              name: Prisloft
+              unit: " kr."
+              float_precision: 2
+              color: red
+              stroke_width: 2
+              data_generator: >
+                return entity.attributes.raw_two_days.map((entry) => { return
+                [new Date(entry.start),
+                hass.states['number.ev_smart_charging_house_electricity_price_limit'].state];
+                });
+              type: line
+              extend_to: false
+            - entity: sensor.ev_smart_charging_house_charging
+              name: Lav pris
+              unit: " kr."
+              color: darkgreen
+              stroke_width: 2
+              float_precision: 2
+              data_generator: >
+                return entity.attributes.raw_two_days.map((entry) => { return
+                [new Date(entry.start),
+                hass.states['number.ev_smart_charging_house_low_price_charging_level'].state];
+                });
+              type: line
+              extend_to: false
+          experimental:
+            color_threshold: true
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.config_house
+        state: "on"
+    card:
+      type: custom:swipe-card
+      cards:
+        - type: custom:vertical-stack-in-card
+          cards:
+            - type: markdown
+              content: >
+                ### <ha-icon icon="mdi:cog"></ha-icon>&nbsp;&nbsp;Konfiguration
+                af opladning (1/3)
+
+                **Oplad til**<br>Angiver det niveau, som husbatteriet, skal
+                oplades til inden aftenspids eller i løbet af natten.
+            - type: entities
+              entities:
+                - entity: >-
+                    input_number.solar_control_house_battery_target_soc_before_peak
+                  name: Før aftenspids
+                - entity: input_number.solar_control_house_battery_target_soc_midnight
+                  name: Om natten
+                - type: section
+            - type: markdown
+              title: null
+              content: >-
+                **Prisforskel**<br>Angiver den forskel i kr. pr. kWh, der som
+                minimum skal være i den gennemsnitlige timepris på tidspunktet
+                for hhv. opladning af og brug fra husbatteriet:
+            - type: entities
+              entities:
+                - entity: input_number.solar_control_house_battery_min_saving
+                  name: Min. besparelse/kWh
+                - type: section
+            - type: markdown
+              content: >-
+                **Oplad kun ved utilstrækkelig solproduktion**<br>Angiv grænse
+                for hvornår batteriet skal oplades om natten, hvis den
+                estimerede solproduktion for den kommende dag er lavere end
+                grænsen:
+            - type: entities
+              entities:
+                - entity: input_number.solar_control_production_charge_limit
+                  name: Min. solproduktion
+        - type: custom:vertical-stack-in-card
+          cards:
+            - type: markdown
+              content: >
+                ### <ha-icon icon="mdi:cog"></ha-icon>&nbsp;&nbsp;Konfiguration
+                af opladning (2/3)
+
+                **Start af opladning**<br>Det tidligste tidspunkt på dagen, hvor
+                opladningen må starte. Hvis 'None' er valgt, vil start af
+                opladning ikke være begrænset til et specifikt tidspunkt.
+            - type: entities
+              entities:
+                - entity: select.ev_smart_charging_house_charge_start_time
+                  name: Start-tidspunkt
+                  icon: mdi:clock-start
+            - type: markdown
+              content: >-
+                **Slut på opladning**<br>Det seneste tidspunkt på dagen, hvor
+                batteriet skal nå målniveauet. Hvis 'None' er valgt, vil
+                opladningen blive optimeret ved at bruge alle timer med
+                tilgængelig prisinformation - også før priser for i morgen er
+                kendte.
+            - type: entities
+              entities:
+                - entity: select.ev_smart_charging_house_charge_completion_time
+                  name: Slut-tidspunkt
+                  icon: mdi:clock-end
+                - type: divider
+            - type: markdown
+              content: >-
+                **Opladningshastighed**<br>Opladningshastigheden udtrykt i
+                procent pr. time. For eksempel, hvis batteriet har en samlet
+                kapacitet på 10 kWh og kan oplades med 5 kWh pr. time, skal du
+                indstille denne parameter til 50 (5/10*100).
+            - type: entities
+              entities:
+                - entity: number.ev_smart_charging_house_charging_speed
+                  name: Hastighed
+        - type: custom:vertical-stack-in-card
+          cards:
+            - type: markdown
+              content: >
+                ### <ha-icon icon="mdi:cog"></ha-icon>&nbsp;&nbsp;Konfiguration
+                af opladning (3/3)
+
+                **Anvend prisloft**<br>Hvis du anvender prisloft, vil opladning
+                vil ikke blive udført i timer, hvor elprisen er over det
+                fastsatte prisloft.<br><br>**BEMÆRK:** Dette kan føre til, at
+                opladningen ikke når den definerede mål-batteriniveau.
+            - type: entities
+              entities:
+                - entity: switch.ev_smart_charging_house_apply_price_limit
+                  name: Anvend prisloft
+                  icon: mdi:format-paragraph-spacing
+                - entity: number.ev_smart_charging_house_electricity_price_limit
+                  name: Prisloft
+  - type: markdown
+    content: >-
+
+
+
+      {% set current_time = now().hour -%}
+
+      {% set ns = namespace(prices = []) -%}
+
+      {% set prices = state_attr("sensor.elpriser_inkl_afgifter", "today") |
+      list + state_attr("sensor.elpriser_inkl_afgifter", "tomorrow") | list if
+      state_attr("sensor.elpriser_inkl_afgifter", "tomorrow_valid") and
+      states.sensor.elpriser_inkl_afgifter.attributes.tomorrow[0] | float >0
+      else state_attr("sensor.elpriser_inkl_afgifter", "today") -%}
+
+      {% set forecast0 = state_attr("sensor.solcast_pv_forecast_forecast_today",
+      "detailedHourly") -%}
+
+      {% set start_index = current_time | int -%}
+
+      {% set start_index = 0 %}
+
+      {% set end_index = ([ prices | length] | min ) | int  -%}
+
+      {% set ns.p_td_00_06 = 0 -%}
+
+      {% set ns.p_td_06_17 = 0 -%}
+
+      {% set ns.p_td_17_21 = 0 -%}
+
+      {% set ns.p_td_21_00 = 0 -%}
+
+      {% set ns.f_td_00_06 = 0 -%}
+
+      {% set ns.f_td_06_17 = 0 -%}
+
+      {% set ns.f_td_17_21 = 0 -%}
+
+      {% set ns.f_td_21_00 = 0 -%}
+
+
+      {% set ns.p_tm_00_06 = 0 -%}
+
+      {% set ns.p_tm_06_17 = 0 -%}
+
+      {% set ns.p_tm_17_21 = 0 -%}
+
+      {% set ns.p_tm_21_00 = 0 -%}
+
+      {% set ns.f_tm_00_06 = 0 -%}
+
+      {% set ns.f_tm_06_17 = 0 -%}
+
+      {% set ns.f_tm_17_21 = 0 -%}
+
+      {% set ns.f_tm_21_00 = 0 -%}
+
+
+      {% for index in range(start_index, end_index) -%}
+
+      {%- set price = prices[index] | float -%}
+
+
+      {% if (index < 6) -%}{% set ns.p_td_00_06 = price+ns.p_td_00_06 -%}{%
+      endif-%}
+
+      {% if (index > 5 and index < 17) -%}{% set ns.p_td_06_17 =
+      price+ns.p_td_06_17 -%}{% set ns.f_td_06_17 = ns.f_td_06_17 +
+      forecast0[index].pv_estimate-%}{% endif-%}
+
+      {% if (index > 16 and index < 21) -%}{% set ns.p_td_17_21 =
+      price+ns.p_td_17_21 -%}{% endif-%}
+
+      {% if (index > 20 and index < 24) -%}{% set ns.p_td_21_00 =
+      price+ns.p_td_21_00 -%}{% endif-%}
+
+
+      {% if (index > 23 and index < 30) -%}{% set ns.p_tm_00_06 =
+      ns.p_tm_00_06+price -%}{% endif-%}
+
+      {% if (index > 29 and index < 41) -%}{% set ns.p_tm_06_17 =
+      ns.p_tm_06_17+price -%}{% endif-%}
+
+      {% if (index > 40 and index < 45) -%}{% set ns.p_tm_17_21 =
+      ns.p_tm_17_21+price -%}{% endif-%}
+
+      {% if (index > 44 and index < 48) -%}{% set ns.p_tm_21_00 =
+      ns.p_tm_21_00+price -%}{% endif-%}
+
+      {% endfor -%}
+
+      {% set p_td_00_06_avg = ns.p_td_00_06/6 %}
+
+      {% set p_td_06_17_avg = ns.p_td_06_17/11  %}
+
+      {% set p_td_17_21_avg = ns.p_td_17_21/4 %}
+
+      {% set p_td_21_00_avg = ns.p_td_21_00/3 %}
+
+      {% set p_tm_00_06_avg = ns.p_tm_00_06/6 %}
+
+      {% set p_tm_06_17_avg = ns.p_tm_06_17/11  %}
+
+      {% set p_tm_17_21_avg = ns.p_tm_17_21/4 %}
+
+      {% set p_tm_21_00_avg = ns.p_tm_21_00/3 %}
+
+
+      <table><tr><th width=100px align=left>Tid</th><th width=75px
+      align=left>Gns.</th><th width=75px align=right>Forskel</th></tr>
+
+      <tr><td>I dag 00-06</td><td>{{ "%.2f" | format(p_td_00_06_avg) }}</tr>
+
+      <tr><td>I dag 06-17</td><td>{{ "%.2f" | format(p_td_06_17_avg) }}</td><td
+      align=right>{{ "%.2f" | format(p_td_06_17_avg - p_td_00_06_avg) }}</tr>
+
+      <tr><td>I dag 17-21</td><td>{{ "%.2f" | format(p_td_17_21_avg) }}</td><td
+      align=right>{{ "%.2f" | format(p_td_17_21_avg - p_td_06_17_avg) }}</tr>
+
+      <tr><td>I dag 21-00</td><td>{{ "%.2f" | format(p_td_21_00_avg) }}</td><td
+      align=right>{{ "%.2f" | format(p_td_21_00_avg - p_td_17_21_avg) }}</tr>
+
+      {% if end_index > 25 %}
+
+      <tr><td>I morgen 00-06</td><td>{{ "%.2f" | format(p_tm_00_06_avg)
+      }}</td><td align=right>{{ "%.2f" | format(p_tm_00_06_avg - p_td_21_00_avg)
+      }}</tr>
+
+      <tr><td>I morgen 06-17</td><td>{{ "%.2f" | format(p_tm_06_17_avg)
+      }}</td><td align=right>{{ "%.2f" | format(p_tm_06_17_avg - p_tm_00_06_avg)
+      }}</tr>
+
+      <tr><td>I morgen 17-21</td><td>{{ "%.2f" | format(p_tm_17_21_avg)
+      }}</td><td align=right>{{ "%.2f" | format(p_tm_17_21_avg - p_tm_06_17_avg)
+      }}</tr>
+
+      <tr><td>I morgen 21-00</td><td>{{ "%.2f" | format(p_tm_21_00_avg)
+      }}</td><td align=right>{{ "%.2f" | format(p_tm_21_00_avg - p_tm_17_21_avg)
+      }}</tr>
+
+      {% endif %}
+
+
+      </table>
+    title: Elpriser - gennemsnit
+    visibility:
+      - condition: state
+        entity: input_boolean.config_house
+        state: "off"

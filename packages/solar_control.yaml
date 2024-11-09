@@ -7,6 +7,8 @@
 # - 2023/09/30 - First version
 # - 2024/07/24 - Updated automation with changes to Easee integration service
 #                calls by changing currentPX to to current_px
+# - 2024/11/09 - Added additional helpers, templates and automations to optimize
+#                solar selling and house battery grid charging
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
@@ -34,6 +36,14 @@ input_boolean:
     name: Automatically start and stop charging
     icon: mdi:play-pause
 
+  #─────────────────────────────────────────────────────────────────────────────
+  # Switch to toggle automations to optimize solar selling based on expected
+  # solar production and selling prices.
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_optimize_solar_selling:
+    name: Enable automation to optimize solar selling
+    icon: mdi:auto-fix
+
 input_number:
   #─────────────────────────────────────────────────────────────────────────────
   # Buffer in watts to exclude in calculation of excess solar energy available.
@@ -48,6 +58,93 @@ input_number:
     max: 5000
     step: 100
     mode: slider
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Target state-of-charge (SOC) for house battery.
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_house_battery_target_soc_before_peak:
+    name: Target SOC of house battery before price peak (17.00)
+    icon: mdi:battery-charging-60
+    unit_of_measurement: "%"
+    min: 0
+    max: 100
+    step: 5
+    mode: slider
+
+  solar_control_house_battery_target_soc_midnight:
+    name: Target SOC of house battery before next day price
+    icon: mdi:battery-charging-80
+    unit_of_measurement: "%"
+    min: 0
+    max: 100
+    step: 5
+    mode: slider
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Set minimum savings per kWh before grid charging of house battery is started
+  #
+  # The savings should account for costs associated with:
+  #
+  # - cost of battery degradation (based on the expected capacity loss over the
+  #   garantued cycles - e.g. 30% loss of capacity loss over 6000 cycles)
+  # - loss resulting from AC-DC-AC conversion
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_house_battery_min_saving:
+    name: Minimum difference in hourly prices to charge house battery
+    icon: mdi:piggy-bank-outline
+    min: 0
+    max: 5
+    step: 0.05
+    mode: box
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Set solar production limit for the next day. If the estimated solar
+  # production is higher than this limit, the battery will not be charged.
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_production_charge_limit:
+    name: Charge only if estimated production exceeds
+    icon: mdi:solar-power
+    unit_of_measurement: "kWh"
+    min: 0
+    max: 15
+    step: 0.5
+    mode: box
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Set price limit for when solar selling should be disabled
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_solar_selling_cutoff:
+    name: Price limit for solar selling
+    icon: mdi:chart-sankey
+    unit_of_measurement: "DKK/kWh"
+    min: -1.00
+    max: 5.00
+    step: 0.05
+    mode: box
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Prioritize selling if sales price exceeds this limit
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_prioritize_selling_above_price:
+    name: Prioritize solar selling when price exceeds this limit
+    icon: mdi:cash-fast
+    unit_of_measurement: "DKK/kWh"
+    min: 0
+    max: 5.00
+    step: 0.05
+    mode: box
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # Sell only if expected production exceeds this limit
+  #─────────────────────────────────────────────────────────────────────────────
+  solar_control_production_selling_limit:
+    name: Sell only if estimated production exceeds
+    icon: mdi:solar-power
+    unit_of_measurement: "kWh"
+    min: 0
+    max: 50
+    step: 1
+    mode: box
 
 #───────────────────────────────────────────────────────────────────────────────
 # TEMPLATES
@@ -133,13 +230,140 @@ template:
             {{ phases }}
           status: "{{ iif(this.attributes.phases.status=='pause','Pause','Opladning ' + (this.attributes.phases.count|string) + ' '+ iif(this.attributes.phases.count==1,'fase','faser') +': '+(this.attributes.phases.P1|string)+'A') }}"
 
+      #─────────────────────────────────────────────────────────────────────────
+      # This template sets the house battery target SoC based on values defined
+      # in input numbers and whether charging from grid is enabled and defined
+      # charging criteria's are met.
+      #─────────────────────────────────────────────────────────────────────────
+      - name: "Solar Control - House battery target SoC"
+        unique_id: solar_control_house_battery_target_soc
+        icon: mdi:battery-charging
+        state: "{{ this.attributes.targetSOC | default(0) }}"
+        unit_of_measurement: "%"
+        attributes:
+          status: >
+            {#──────────────────────────────────────────────────────────────────── 
+            CONFIGURATION
+            ──────────────────────────────────────────────────────────────────────
+            Change name of sensor with  Solar forecast provided the Solcast 
+            integration
+            ────────────────────────────────────────────────────────────────────#}
+            {% set forecast0 = states("sensor.solcast_pv_forecast_forecast_today")|float -%}
+            {% set forecast1 = states("sensor.solcast_pv_forecast_forecast_tomorrow")|float -%}
+            {#──────────────────────────────────────────────────────────────────── 
+            END OF CONFIGURATION
+            ────────────────────────────────────────────────────────────────────#}
+            {% set min_prod = states("input_number.solar_control_production_charge_limit")|float -%}
+            {% set min_diff = states("input_number.solar_control_house_battery_min_saving")|float -%}
+            {% if now().hour > 16 %}
+               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Tomorrow_00_06_vs_06_17 | float %}
+               {% if forecast1 > min_prod %}  
+                 {% set min_diff = 9999 %}
+               {% endif %}
+            {% elif now().hour <6 %}
+               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Today_00_06_vs_06_17 | float %}
+               {% if forecast0 > min_prod %}  
+                 {% set min_diff = 9999 %}
+               {% endif %}
+            {% else %}
+               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Today_06_17_vs_17_21 | float %}
+            {% endif %}
+            {% if cur_diff > min_diff %}
+            charge
+            {% else %}
+            no_charging
+            {% endif %}
+          targetSOC: >
+            {% if this.attributes.status =='charge' %}
+              {% if now().hour > 16 or now().hour <6 %}
+                {{ states('input_number.solar_control_house_battery_target_soc_midnight')|int }}
+              {% else %}
+                {{ states('input_number.solar_control_house_battery_target_soc_before_peak')|int }}
+              {% endif %}
+            {% else %}
+              0
+            {% endif %}
+
+      #─────────────────────────────────────────────────────────────────────────
+      # This template calculates this price differences between the average
+      # electricity prices during different time intervals:
+      #
+      # - Hours between 00 and 05
+      # - Hours between 06 and 16
+      # - Hours between 17 and 20
+      # - Hours between 21 and 23
+      #─────────────────────────────────────────────────────────────────────────
+      - name: "Solar Control - Price differences"
+        unique_id: solar_control_price_differences
+        icon: mdi:battery-charging
+        state: "{{ states('input_number.solar_control_house_battery_target_soc_before_peak')|float }}"
+        unit_of_measurement: "%"
+        attributes:
+          price_diffs: >
+            {#──────────────────────────────────────────────────────────────────── 
+            CONFIGURATION
+            ──────────────────────────────────────────────────────────────────────
+            Change name of sensor with electricity prices provided by the Energi 
+            Data Service integration
+            ────────────────────────────────────────────────────────────────────#}
+            {% set eds = "sensor.energi_data_service" -%}
+            {#──────────────────────────────────────────────────────────────────── 
+            END OF CONFIGURATION
+            ────────────────────────────────────────────────────────────────────#}
+            {% set prices = state_attr(eds, "today") | list + state_attr(eds, "tomorrow") | list if state_attr(eds, "tomorrow_valid") else state_attr(eds, "today") -%}
+            {% set current_time = now().hour -%}
+            {% set ns = namespace(prices = []) -%}
+            {% set start_index = current_time | int -%}
+            {% set start_index = 0 %}
+            {% set end_index = ([ prices | length] | min ) | int  -%}
+            {% set ns.p_td_00_06 = 0 -%}
+            {% set ns.p_td_06_17 = 0 -%}
+            {% set ns.p_td_17_21 = 0 -%}
+            {% set ns.p_td_21_00 = 0 -%}
+            {% set ns.f_td_00_06 = 0 -%}
+            {% set ns.f_td_06_17 = 0 -%}
+            {% set ns.f_td_17_21 = 0 -%}
+            {% set ns.f_td_21_00 = 0 -%}
+
+            {% set ns.p_tm_00_06 = 0 -%}
+            {% set ns.p_tm_06_17 = 0 -%}
+            {% set ns.p_tm_17_21 = 0 -%}
+            {% set ns.p_tm_21_00 = 0 -%}
+            {% set ns.f_tm_00_06 = 0 -%}
+            {% set ns.f_tm_06_17 = 0 -%}
+            {% set ns.f_tm_17_21 = 0 -%}
+            {% set ns.f_tm_21_00 = 0 -%}
+
+            {% for index in range(start_index, end_index) -%}
+              {%- set price = prices[index] | float -%}
+              {% if (index < 6) -%}{% set ns.p_td_00_06 = price+ns.p_td_00_06 -%}{% endif-%}
+              {% if (index > 5 and index < 17) -%}{% set ns.p_td_06_17 = price+ns.p_td_06_17 -%}{% endif-%}
+              {% if (index > 16 and index < 21) -%}{% set ns.p_td_17_21 = price+ns.p_td_17_21 -%}{% endif-%}
+              {% if (index > 20 and index < 24) -%}{% set ns.p_td_21_00 = price+ns.p_td_21_00 -%}{% endif-%}
+              {% if (index > 23 and index < 30) -%}{% set ns.p_tm_00_06 = ns.p_tm_00_06+price -%}{% endif-%}
+              {% if (index > 29 and index < 41) -%}{% set ns.p_tm_06_17 = ns.p_tm_06_17+price -%}{% endif-%}
+              {% if (index > 40 and index < 45) -%}{% set ns.p_tm_17_21 = ns.p_tm_17_21+price -%}{% endif-%}
+              {% if (index > 44 and index < 48) -%}{% set ns.p_tm_21_00 = ns.p_tm_21_00+price -%}{% endif-%}
+            {% endfor -%}
+
+            {% set p_td_00_06_avg = ns.p_td_00_06/6 %}
+            {% set p_td_06_17_avg = ns.p_td_06_17/11  %}
+            {% set p_td_17_21_avg = ns.p_td_17_21/4 %}
+            {% set p_td_21_00_avg = ns.p_td_21_00/3 %}
+            {% set p_tm_00_06_avg = ns.p_tm_00_06/6 %}
+            {% set p_tm_06_17_avg = ns.p_tm_06_17/11  %}
+            {% set p_tm_17_21_avg = ns.p_tm_17_21/4 %}
+            {% set p_tm_21_00_avg = ns.p_tm_21_00/3 %}
+
+            {% set diffs = {"Today_00_06_vs_06_17":  "%.2f" | format(p_td_06_17_avg - p_td_00_06_avg)|float, 
+                            "Today_06_17_vs_17_21":  "%.2f" | format(p_td_17_21_avg - p_td_06_17_avg)|float,  
+                            "Tomorrow_00_06_vs_06_17":  "%.2f" | format(p_tm_06_17_avg - p_tm_00_06_avg)|float } 
+                            %}
+
+            {{ diffs }}
+
 #───────────────────────────────────────────────────────────────────────────────
 # AUTOMATIONS
-#───────────────────────────────────────────────────────────────────────────────
-# The following automations will adjust EV charging to current solar production:
-#
-# 1) If automatic adjustment is enabled, adjust the current charging rate
-#    (ampere) on Easee Home Charger based on calculated excess solar production
 #───────────────────────────────────────────────────────────────────────────────
 automation:
   #─────────────────────────────────────────────────────────────────────────────
@@ -180,3 +404,137 @@ automation:
           milliseconds: 0
     mode: single
     max_exceeded: silent
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation disables solar selling if the current sales prices are below
+  # the defined cutoff value-
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Disable solar selling"
+    id: solar_control_disable_solar_selling
+    description: "This automation disables export to grid if current sales prices are below a defined threshold"
+    trigger:
+      - trigger: numeric_state
+        entity_id:
+          - sensor.eksportpriser
+        below: input_number.solar_control_solar_selling_cutoff
+      - trigger: state
+        entity_id:
+          - input_boolean.solar_control_optimize_solar_selling
+    condition:
+      - condition: state
+        entity_id: input_boolean.solar_control_optimize_solar_selling
+        state: "on"
+      - condition: numeric_state
+        entity_id: sensor.eksportpriser
+        below: input_number.solar_control_solar_selling_cutoff
+    action:
+      - action: switch.turn_off
+        target:
+          entity_id: switch.deyemodbus_deye_solar_sell
+    mode: single
+    max_exceeded: silent
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation enables solar selling when the current sales price is above
+  # the defined cutoff value-
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Enable solar selling"
+    id: solar_control_enable_solar_selling
+    description: "This automation enables export to grid if current sales prices are above a defined threshold"
+    trigger:
+      - trigger: numeric_state
+        entity_id:
+          - sensor.eksportpriser
+        above: input_number.solar_control_solar_selling_cutoff
+      - trigger: state
+        entity_id:
+          - input_boolean.solar_control_optimize_solar_selling
+    condition:
+      - condition: state
+        entity_id: input_boolean.solar_control_optimize_solar_selling
+        state: "on"
+      - condition: numeric_state
+        entity_id: sensor.eksportpriser
+        above: input_number.solar_control_solar_selling_cutoff
+    action:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.deyemodbus_deye_solar_sell
+    mode: single
+    max_exceeded: silent
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation activates grid charging of house battery when the EV Smart
+  # Charging sensor has status = 'on' and sets the defined target SoC
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Start grid charging"
+    id: solar_control_start_grid_charging
+    description: Enable grid charging based on EV Smart Charging status
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.ev_smart_charging_house_charging
+        to: "on"
+        from: "off"
+    conditions: []
+    actions:
+      - choose:
+          - conditions:
+              - condition: time
+                before: "05:54:00"
+            sequence:
+              - action: switch.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: switch.deyemodbus_deye_time_point_1_charge_enable
+              - action: number.set_value
+                target:
+                  entity_id: number.deyemodbus_deye_time_point_1_capacity
+                data:
+                  value: >-
+                    {{states('input_number.solar_control_house_battery_target_soc_midnight')|int}}
+          - conditions:
+              - condition: time
+                after: "05:59:00"
+            sequence:
+              - action: switch.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: switch.deyemodbus_deye_time_point_4_charge_enable
+              - action: number.set_value
+                target:
+                  entity_id: number.deyemodbus_deye_time_point_4_capacity
+                data:
+                  value: >-
+                    {{states('input_number.solar_control_house_battery_target_soc_before_peak')|int}}
+    mode: single
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation deactivates grid charging of house battery when the EV Smart
+  # Charging sensor has status = 'off'
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Stop grid charging"
+    id: solar_control_stop_grid_charging
+    description: Disable grid charging based on EV Smart Charging status
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.ev_smart_charging_house_charging
+        to: "off"
+        from: "on"
+    conditions: []
+    actions:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+            - switch.deyemodbus_deye_time_point_1_charge_enable
+            - switch.deyemodbus_deye_time_point_2_charge_enable
+            - switch.deyemodbus_deye_time_point_3_charge_enable
+            - switch.deyemodbus_deye_time_point_4_charge_enable
+            - switch.deyemodbus_deye_time_point_5_charge_enable
+            - switch.deyemodbus_deye_time_point_6_charge_enable
+    mode: single
