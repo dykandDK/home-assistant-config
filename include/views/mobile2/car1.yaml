@@ -1,0 +1,1168 @@
+#───────────────────────────────────────────────────────────────────────────────────────
+# DESCRIPTION
+#───────────────────────────────────────────────────────────────────────────────────────
+# Subview for viewing EV status and controlling charging
+#───────────────────────────────────────────────────────────────────────────────────────
+# CUSTOM CARDS REQUIRED
+#───────────────────────────────────────────────────────────────────────────────────────
+# - vertical-stack-in-card: https://github.com/ofekashery/vertical-stack-in-card
+# - mushroom-chips-card:    https://github.com/piitaya/lovelace-mushroom
+# - button-card             https://github.com/custom-cards/button-card
+# - bar-card:               https://github.com/custom-cards/bar-card
+# - expander-card           https://github.com/Alia5/lovelace-expander-card
+# - card_mod                https://github.com/thomasloven/lovelace-card-mod
+#───────────────────────────────────────────────────────────────────────────────────────
+# INTEGRATIONS USED
+#───────────────────────────────────────────────────────────────────────────────────────
+# - My Skoda                https://github.com/skodaconnect/homeassistant-myskoda
+# - Easee charger:          https://github.com/nordicopen/easee_hass
+# - EV Smart Charging:      https://github.com/jonasbkarlsson/ev_smart_charging/
+#───────────────────────────────────────────────────────────────────────────────────────
+# TEMPLATES & HELPERS USED
+#───────────────────────────────────────────────────────────────────────────────────────
+# - input_boolean.mobile_dev_mode   - Hide title chips if header is visible
+# - input_boolean.config_car1       - Show or hide EV Charging details
+# - input_datetime.car_charge_time  - Start time of manually scheduled charging
+# - input_datetime.car_charge_stop  - End time of manually scheduled charging
+# - Solar control package           - Helpers and automations for solar charging:
+#   (https://github.com/dykandDK/home-assistant-config/blob/master/packages/solar_control.yaml)
+#───────────────────────────────────────────────────────────────────────────────────────
+title: ENYAQ
+path: car1
+icon: mdi:car-electric
+subview: true
+badges: []
+cards:
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.mobile_dev_mode
+            state: "off"
+        chip:
+          type: back
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.mobile_dev_mode
+            state: "off"
+        chip:
+          type: template
+          icon: ""
+          content: ENYAQ
+          card_mod:
+            style: |
+              ha-card {
+                --chip-background: transparent;
+                --chip-font-size: 20px;
+                --chip-border-radius: 0%;
+                box-shadow: none !important;
+                }
+      - type: spacer
+      - type: template
+        icon: |-
+          {% if states(entity) == 'off' %}
+          mdi:cog
+          {% else %}
+          mdi:close
+          {% endif %}
+        tap_action:
+          action: toggle
+        entity: input_boolean.config_car1
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.config_car1
+        state: "off"
+    card:
+      type: picture-elements
+      image: /local/assets/enyaq_top.jpeg
+      entity_id: skoda_enyaq_batteriprocent
+      elements:
+        - type: image
+          entity: skoda_enyaq_batteriprocent
+          image: local/assets/battery_outline2.png
+          style:
+            top: 30px
+            left: 51%
+            width: 75%
+        - type: custom:bar-card
+          entity: skoda_enyaq_batteriprocent
+          show_header_toggle: false
+          height: 30px
+          entity_row: true
+          animation:
+            - state: "on"
+              speed: 5
+          severity:
+            - color: Green
+              from: 0
+              to: 100
+          positions:
+            icon: "off"
+            indicator: "off"
+            name: "off"
+            value: inside
+          style:
+            top: 30px
+            left: 50%
+            width: 70%
+            vertical-align: middle
+            font-size: 20px
+            "--paper-item-icon-color": black
+        - type: state-icon
+          entity: climate.skoda_enyaq_klimaanlaeg
+          title: Klima
+          suffix: ""
+          style:
+            top: 27%
+            left: 41%
+            text-align: left
+            "--paper-item-icon-color": darkgrey
+        - type: state-label
+          entity: sensor.enyaq_climatisation_target_temperature
+          title: Klima
+          suffix: ""
+          style:
+            top: 27%
+            left: 52%
+            font-size: 16px
+            color: rgba(255,255,255,1)
+            text-align: left
+        - type: state-icon
+          entity: switch.enyaq_seat_heating_front_left
+          icon: mdi:car-seat-heater
+          title: Sædevarme - fører
+          suffix: ""
+          style:
+            top: 37%
+            left: 41%
+            font-size: 16px
+            "--paper-item-icon-color": black
+            text-align: left
+        - type: state-icon
+          entity: switch.enyaq_seat_heating_front_right
+          icon: mdi:car-seat-heater
+          title: Sædevarme - passager
+          suffix: ""
+          style:
+            top: 37%
+            left: 58%
+            font-size: 16px
+            "--paper-item-icon-color": black
+            text-align: left
+        - type: state-label
+          entity: sensor.enyaq_electric_range
+          style:
+            top: 83%
+            left: 50%
+            font-size: 25px
+            text-align: right
+            color: rgba(0,0,0,1)
+        - type: state-icon
+          entity: binary_sensor.skoda_enyaq_ladekabel
+          style:
+            top: 30px
+            left: 5%
+            "--paper-item-icon-color": black
+        - type: state-icon
+          entity: switch.enyaq_charging
+          style:
+            top: 30px
+            left: 95%
+            "--paper-item-icon-color": black
+        - type: state-icon
+          entity: binary_sensor.enyaq_door_open_left_front
+          style:
+            top: 250px
+            left: 15%
+        - type: state-icon
+          entity: binary_sensor.enyaq_window_open_left_front
+          style:
+            top: 250px
+            left: 5%
+        - type: state-icon
+          entity: binary_sensor.enyaq_window_open_right_front
+          style:
+            top: 250px
+            left: 95%
+        - type: state-icon
+          entity: binary_sensor.enyaq_door_open_right_front
+          style:
+            top: 250px
+            left: 85%
+        - type: state-icon
+          entity: binary_sensor.enyaq_door_open_left_back
+          style:
+            top: 380px
+            left: 15%
+        - type: state-icon
+          entity: binary_sensor.enyaq_window_open_left_back
+          style:
+            top: 380px
+            left: 5%
+        - type: state-icon
+          entity: binary_sensor.enyaq_window_open_right_back
+          style:
+            top: 380px
+            left: 95%
+        - type: state-icon
+          entity: binary_sensor.enyaq_door_open_right_back
+          style:
+            top: 380px
+            left: 85%
+        - type: state-icon
+          entity: binary_sensor.enyaq_trunk_closed
+          icon: mdi:square
+          style:
+            top: 70%
+            left: 50%
+            "--paper-item-icon-color": black
+        - type: conditional
+          conditions:
+            - entity: sensor.skoda_enyaq_ladestatus
+              state_not: charging
+          elements:
+            - type: state-label
+              entity: number.skoda_enyaq_ladegraense
+              title: Opladningsgrænse
+              prefix: "Opladningsgrænse: "
+              suffix: ""
+              style:
+                top: 88%
+                left: 50%
+                font-size: 16px
+                color: rgba(0,0,0,1)
+                text-align: left
+        - type: conditional
+          conditions:
+            - entity: sensor.skoda_enyaq_ladestatus
+              state: charging
+          elements:
+            - type: state-label
+              entity: number.skoda_enyaq_ladegraense
+              title: Oplader til
+              prefix: "Oplader til "
+              suffix: ""
+              style:
+                top: 95%
+                left: 17%
+                font-size: 16px
+                color: rgba(0,0,0,1)
+                text-align: left
+            - type: state-label
+              entity: sensor.skoda_enyaq_restopladningstid
+              title: Resterende opladningstid
+              prefix: "Resterende tid: "
+              suffix: " min."
+              style:
+                top: 95%
+                left: 60%
+                font-size: 16px
+                color: rgba(0,0,0,1)
+                text-align: right
+                width: 100px
+        - type: conditional
+          conditions:
+            - entity: sensor.skoda_enyaq_ladestatus
+              state: readyForCharging
+          elements:
+            - type: conditional
+              conditions:
+                - entity: binary_sensor.skoda_enyaq_ladekabel
+                  state: connected
+              elements:
+                - type: state-label
+                  entity: input_datetime.car_charge_time
+                  title: Planlagt tidspunkt for opladning
+                  prefix: "Planlagt opladning: "
+                  style:
+                    top: 95%
+                    left: 22%
+                    font-size: 16px
+                    color: rgba(0,0,0,1)
+                    text-align: right
+                    width: 100px
+        - type: icon
+          icon: mdi:counter
+          style:
+            top: 96%
+            left: 71%
+        - type: state-label
+          entity: sensor.enyaq_odometer
+          style:
+            top: 96%
+            left: 85%
+        - type: icon
+          icon: mdi:map-marker-radius-outline
+          entity: sensor.enyaq_odometer
+          style:
+            top: 96%
+            left: 38%
+        - type: state-label
+          entity: device_tracker.enyaq_position
+          style:
+            top: 96%
+            left: 50%
+        - type: state-icon
+          entity: binary_sensor.enyaq_doors_locked
+          style:
+            top: 96%
+            left: 5%
+        - type: state-label
+          entity: binary_sensor.enyaq_doors_locked
+          style:
+            top: 96%
+            left: 15%
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.config_car1
+        state: "on"
+    card:
+      type: custom:vertical-stack-in-card
+      cards:
+        - type: custom:button-card
+          name: Styring af opladning
+          color_type: label-card
+          styles:
+            card:
+              - background-color: var(--secondary-color)
+              - height: 45px
+            name:
+              - color: black
+              - justify-self: start
+              - font-size: 24px
+              - padding-left: 20px
+              - padding-top: 10px
+        - type: custom:mushroom-entity-card
+          name: "Oplad til:"
+          entity: sensor.enyaq_minimum_charge_level
+          icon: mdi:battery-high
+          layout: horizontal
+          secondary_info: state
+        - type: custom:mushroom-entity-card
+          entity: input_boolean.auto_adjust_charging
+          tap_action:
+            action: toggle
+          layout: horizontal
+          name: Tilpas ladestyrke til solproduktion?
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: input_boolean.auto_adjust_charging
+              state: "on"
+          card:
+            type: custom:mushroom-number-card
+            entity: input_number.solar_control_energy_buffer
+            display_mode: slider
+            layout: horizontal
+            name: Buffer
+            card_mod:
+              style: |
+                ha-card {
+                  --ha-card-border-width: 0;
+                    }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: input_boolean.auto_adjust_charging
+              state: "off"
+          card:
+            type: custom:mushroom-number-card
+            entity: input_number.ev_charging_rate_kwh
+            name: "Lade-effekt:"
+            icon: mdi:lightning-bolt-circle
+            layout: horizontal
+            display_mode: buttons
+            secondary_info: last-changed
+            card_mod:
+              style: |
+                ha-card {
+                  --ha-card-border-width: 0;
+                    }
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-entity-card
+              entity: sensor.easee_power
+              layout: horizontal
+              name: Opladning
+              secondary_info: last-changed
+              card_mod:
+                style: |
+                  ha-card {
+                    --ha-card-border-width: 0;
+                      }
+            - type: horizontal-stack
+              cards:
+                - type: custom:mushroom-template-card
+                  entity: sensor.easee_status
+                  primary: ""
+                  secondary: ""
+                  icon: mdi:play
+                  layout: horizontal
+                  icon_color: >
+                    {% if states(entity) == "charging" %} grey {% else %} blue
+                    {% endif %}
+                  tap_action:
+                    action: call-service
+                    service: easee.action_command
+                    service_data:
+                      device_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                      action_command: resume
+                    confirmation:
+                      text: Vil du fortsætte opladning?
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                          }
+                - type: custom:mushroom-template-card
+                  primary: ""
+                  secondary: ""
+                  icon: mdi:pause
+                  layout: horizontal
+                  icon_color: |
+                    {% if states(entity) == "charging" %}
+                    blue
+                    {% else %}
+                    grey
+                    {% endif %}
+                  entity: sensor.easee_status
+                  tap_action:
+                    action: call-service
+                    service: easee.action_command
+                    service_data:
+                      device_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                      action_command: pause
+                    confirmation:
+                      text: Vil du sætte opladning på pause?
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                          }
+                - type: custom:button-card
+                  entity: sensor.easee_power
+                  show_state: true
+                  show_icon: false
+                  show_name: false
+                  color_type: label-card
+                  styles:
+                    card:
+                      - background-color: var(--secondary-color)
+                      - width: 80px
+                      - height: 100%
+                    state:
+                      - color: black
+                      - justify-self: end
+                      - font-size: 14px
+                      - font-weight: 400
+                      - padding-right: 20px
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --ha-card-border-width: 0;
+                          }
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.config_car1
+        state: "on"
+    card:
+      type: custom:vertical-stack-in-card
+      cards:
+        - type: custom:button-card
+          name: Planlæg opladning
+          color_type: label-card
+          styles:
+            card:
+              - background-color: var(--secondary-color)
+              - height: 45px
+            name:
+              - color: black
+              - justify-self: start
+              - font-size: 24px
+              - padding-left: 20px
+              - padding-top: 10px
+        - type: custom:mushroom-entity-card
+          entity: switch.ev_smart_charging_enyaq_smart_charging_activated
+          icon: mdi:auto-fix
+          tap_action:
+            action: toggle
+          layout: horizontal
+          name: Oplad automatisk på billigste tidspunkt?
+          card_mod:
+            style: |
+              ha-card {
+                --ha-card-border-width: 0;
+                  }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: switch.ev_smart_charging_enyaq_smart_charging_activated
+              state: "on"
+          card:
+            type: markdown
+            content: >
+              {% set status =
+              state_translated('sensor.ev_smart_charging_enyaq_status') |
+              replace('oplading','opladning')
+
+              %}  ### <ha-icon
+              icon="mdi:information-outline"></ha-icon>&nbsp;&nbsp;Status på
+              automatisk opladning
+
+              {{ status -}} {{
+              iif(states.sensor.ev_smart_charging_enyaq_charging.state=='on','
+              blev startet','') -}} {% if
+              state_attr('sensor.ev_smart_charging_enyaq_charging','charging_is_planned')
+              == True -%} &nbsp;den {{
+              state_attr('sensor.ev_smart_charging_enyaq_charging','charging_start_time')
+              | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') -}} {%
+              endif -%} {% if
+              state_attr('sensor.ev_smart_charging_enyaq_charging','charging_is_planned')
+              == True -%} &nbsp;og vil slutte den 
+              {{state_attr('sensor.ev_smart_charging_enyaq_charging','charging_stop_time')
+              | as_timestamp | timestamp_custom('%d-%m-%Y, kl. %H:%M') |
+              replace('/','.') -}} {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  --ha-card-border-width: 0;
+                    }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: switch.ev_smart_charging_enyaq_smart_charging_activated
+              state: "off"
+          card:
+            type: custom:expander-card
+            title-card:
+              type: custom:mushroom-entity-card
+              entity: input_datetime.car_charge_time
+            clear: true
+            title-card-button-overlay: true
+            padding: "0"
+            overlay-margin: 1em
+            cards:
+              - type: custom:button-card
+                name: Start opladning
+                layout: icon_name_state
+                entity: input_datetime.car_charge_time
+                show_icon: false
+                show_state: false
+                show_name: false
+                custom_fields:
+                  hour: |-
+                    [[[var newtime = new
+                        Date(entity.state);
+                        return newtime.toLocaleTimeString("da-DA").substring(0, 2);;]]]
+                  minute: |-
+                    [[[var newtime = new
+                        Date(entity.state);
+                        return newtime.toLocaleTimeString("da-DA").substring(5, 2).replace('.','');;]]]
+                  add_hour:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-up
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        icon:
+                          - font-size: 20px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()+60*60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  substract_hour:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-down
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 10px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()-60*60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  add_minute:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-up
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 12px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()+60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  substract_minute:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-down
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 10px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()-60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  today:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      name: I dag
+                      show_name: true
+                      show_icon: false
+                      show_state: false
+                      styles:
+                        name:
+                          - color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-background-color)";
+                                 return "var(--primary-color)";
+                                ;
+                              ]]]
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - font-size: 14px
+                          - justify-self: start
+                        card:
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - border: 0px
+                          - padding: 4px
+                          - border-radius: 0px
+                          - width: 70px
+                          - height: 30px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          date: |-
+                            [[[
+                                var curtime = new Date();
+
+                                return curtime.toISOString().substring(0, 10);
+                              ]]]
+                  tomorrow:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      name: I morgen
+                      show_name: true
+                      show_icon: false
+                      show_state: false
+                      styles:
+                        name:
+                          - color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-background-color)";
+                                 return "var(--primary-color)";
+                                ;
+                              ]]]
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - font-size: 14px
+                          - justify-self: start
+                        card:
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - border: 0px
+                          - padding: 4px
+                          - border-radius: 0px
+                          - width: 70px
+                          - height: 30px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          date: |-
+                            [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                return curtime.toISOString().substring(0, 10);
+                              ]]]
+                styles:
+                  card:
+                    - width: 375px
+                    - height: 126px
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-background-color)
+                  grid:
+                    - grid-template-areas: '"n" "s"'
+                    - grid-template-rows: min-content 1fr
+                    - grid-template-columns: 1fr
+                  custom_fields:
+                    hour:
+                      - justify-self: center
+                      - position: absolute
+                      - left: 65%
+                      - top: 50px
+                      - width: 50px
+                      - height: 25px
+                      - background-color: var(--primary-color)
+                      - padding-top: 9px
+                      - font-size: 14px
+                      - font-weight: 300
+                    minute:
+                      - justify-self: center
+                      - position: absolute
+                      - left: 85%
+                      - top: 50px
+                      - width: 50px
+                      - height: 25px
+                      - background-color: var(--primary-color)
+                      - padding-top: 9px
+                      - font-size: 14px
+                      - font-weight: 300
+                    add_hour:
+                      - position: absolute
+                      - left: 65%
+                      - font-weight: 300
+                      - top: 20px
+                    add_minute:
+                      - position: absolute
+                      - left: 85%
+                      - font-weight: 300
+                      - top: 20px
+                    substract_hour:
+                      - position: absolute
+                      - left: 65%
+                      - font-weight: 300
+                      - top: 85px
+                    substract_minute:
+                      - position: absolute
+                      - left: 85%
+                      - font-weight: 300
+                      - top: 85px
+                    today:
+                      - position: absolute
+                      - left: 16px
+                      - top: 50px
+                      - font-size: 14px
+                    tomorrow:
+                      - position: absolute
+                      - left: 104px
+                      - top: 50px
+                      - font-size: 14px
+            gap: 0
+            child-padding: "0"
+            title-card-padding: "0"
+            card_mod:
+              style: |
+                ha-card {
+                  --ha-card-border-width: 0;
+                    }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: switch.ev_smart_charging_enyaq_smart_charging_activated
+              state: "off"
+          card:
+            type: custom:expander-card
+            title-card:
+              type: custom:mushroom-entity-card
+              entity: input_datetime.car_charge_stop
+            clear: true
+            title-card-button-overlay: true
+            padding: "0"
+            overlay-margin: 1em
+            cards:
+              - type: custom:button-card
+                name: Stop opladning
+                layout: icon_name_state
+                entity: input_datetime.car_charge_stop
+                show_icon: false
+                show_state: false
+                show_name: false
+                custom_fields:
+                  hour: |-
+                    [[[var newtime = new
+                        Date(entity.state);
+                        return newtime.toLocaleTimeString("da-DA").substring(0, 2);;]]]
+                  minute: |-
+                    [[[var newtime = new
+                        Date(entity.state);
+                        return newtime.toLocaleTimeString("da-DA").substring(5, 2).replace('.','');;]]]
+                  add_hour:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-up
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        icon:
+                          - font-size: 20px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()+60*60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  substract_hour:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-down
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 10px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()-60*60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  add_minute:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-up
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 12px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()+60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  substract_minute:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      icon: mdi:chevron-down
+                      show_name: false
+                      show_icon: true
+                      show_state: false
+                      styles:
+                        name:
+                          - font-size: 10px
+                          - justify-self: start
+                          - color: var(--primary-foreground-color)
+                        card:
+                          - border-radius: 0px
+                          - width: 50px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          time: >-
+                            [[[var newtime = new
+                            Date(entity.state);newtime.setTime(newtime.getTime()-60*1000);return
+                            newtime.toLocaleTimeString("da-DA").replaceAll(".",":");]]]
+                  today:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      name: I dag
+                      show_name: true
+                      show_icon: false
+                      show_state: false
+                      styles:
+                        name:
+                          - color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-background-color)";
+                                 return "var(--primary-color)";
+                                ;
+                              ]]]
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - font-size: 14px
+                          - justify-self: start
+                        card:
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - border: 0px
+                          - padding: 4px
+                          - border-radius: 0px
+                          - width: 70px
+                          - height: 30px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          date: |-
+                            [[[
+                                var curtime = new Date();
+
+                                return curtime.toISOString().substring(0, 10);
+                              ]]]
+                  tomorrow:
+                    card:
+                      type: custom:button-card
+                      entity: input_datetime.car_charge_stop
+                      name: I morgen
+                      show_name: true
+                      show_icon: false
+                      show_state: false
+                      styles:
+                        name:
+                          - color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-background-color)";
+                                 return "var(--primary-color)";
+                                ;
+                              ]]]
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - font-size: 14px
+                          - justify-self: start
+                        card:
+                          - background-color: |
+                              [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                var newtime = new Date(entity.state);
+                                if (curtime.toISOString().substring(0, 10) == newtime.toISOString().substring(0, 10)) 
+                                 return "var(--primary-color)";
+                                 return "var(--primary-background-color)";
+                                ;
+                              ]]]
+                          - border: 0px
+                          - padding: 4px
+                          - border-radius: 0px
+                          - width: 70px
+                          - height: 30px
+                      tap_action:
+                        action: call-service
+                        service: input_datetime.set_datetime
+                        service_data:
+                          entity_id: "[[[return entity.entity_id]]]"
+                          date: |-
+                            [[[
+                                var curtime = new Date();
+                                curtime.setTime(curtime.getTime()+24*60*60*1000);
+                                return curtime.toISOString().substring(0, 10);
+                              ]]]
+                styles:
+                  card:
+                    - width: 375px
+                    - height: 126px
+                    - background-color: var(--card-background-color)
+                    - color: var(--primary-background-color)
+                  grid:
+                    - grid-template-areas: '"n" "s"'
+                    - grid-template-rows: min-content 1fr
+                    - grid-template-columns: 1fr
+                  custom_fields:
+                    hour:
+                      - justify-self: center
+                      - position: absolute
+                      - left: 65%
+                      - top: 50px
+                      - width: 50px
+                      - height: 25px
+                      - background-color: var(--primary-color)
+                      - padding-top: 9px
+                      - font-size: 14px
+                      - font-weight: 300
+                    minute:
+                      - justify-self: center
+                      - position: absolute
+                      - left: 85%
+                      - top: 50px
+                      - width: 50px
+                      - height: 25px
+                      - background-color: var(--primary-color)
+                      - padding-top: 9px
+                      - font-size: 14px
+                      - font-weight: 300
+                    add_hour:
+                      - position: absolute
+                      - left: 65%
+                      - font-weight: 300
+                      - top: 20px
+                    add_minute:
+                      - position: absolute
+                      - left: 85%
+                      - font-weight: 300
+                      - top: 20px
+                    substract_hour:
+                      - position: absolute
+                      - left: 65%
+                      - font-weight: 300
+                      - top: 85px
+                    substract_minute:
+                      - position: absolute
+                      - left: 85%
+                      - font-weight: 300
+                      - top: 85px
+                    today:
+                      - position: absolute
+                      - left: 16px
+                      - top: 50px
+                      - font-size: 14px
+                    tomorrow:
+                      - position: absolute
+                      - left: 104px
+                      - top: 50px
+                      - font-size: 14px
+            gap: 0
+            child-padding: "0"
+            title-card-padding: "0"
+            card_mod:
+              style: |
+                ha-card {
+                  --ha-card-border-width: 0;
+                    }
