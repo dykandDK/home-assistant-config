@@ -9,6 +9,8 @@
 #                calls by changing currentPX to to current_px
 # - 2024/11/09 - Added additional helpers, templates and automations to optimize
 #                solar selling and house battery grid charging
+# - 2025/02/15 - Updated "solar_control_house_battery_target_soc" template
+#                and fixed syntax errors in automations
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
@@ -204,7 +206,6 @@ template:
         unique_id: solar_control_ev_charging
         icon: mdi:ev-station
         state: "{{ this.attributes.status | default('pause') }}"
-        #state: "test"
         attributes:
           phases: >
             {#──────────────────────────────────────────────────────────────────── 
@@ -255,31 +256,44 @@ template:
             ────────────────────────────────────────────────────────────────────#}
             {% set min_prod = states("input_number.solar_control_production_charge_limit")|float -%}
             {% set min_diff = states("input_number.solar_control_house_battery_min_saving")|float -%}
+            {# Check if price difference for tomorrow are higher than the defined cutoff #}
             {% if now().hour > 16 %}
-               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Tomorrow_00_06_vs_06_17 | float %}
-               {% if forecast1 > min_prod %}  
-                 {% set min_diff = 9999 %}
-               {% endif %}
+              {% set cur_diff = state_attr('sensor.solar_control_price_differences','price_diffs').Tomorrow_00_06_vs_06_17 | float %}
+              {% if cur_diff > min_diff %}
+                {% set targetSOC= states('input_number.solar_control_house_battery_target_soc_midnight')|int %}
+              {% else %}
+                {% set cur_diff = state_attr('sensor.solar_control_price_differences','price_diffs').Tomorrow_00_06_vs_17_21 | float %}
+                {% set targetSOC= states('input_number.solar_control_house_battery_target_soc_before_peak')|int %}
+              {% endif %}
+              {% if forecast1 > min_prod %}  
+                {% set min_diff = 9999 %}
+              {% endif %}
+            {# Same check but after midnight #}
             {% elif now().hour <6 %}
-               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Today_00_06_vs_06_17 | float %}
-               {% if forecast0 > min_prod %}  
-                 {% set min_diff = 9999 %}
-               {% endif %}
+              {% set cur_diff = state_attr('sensor.solar_control_price_differences','price_diffs').Today_00_06_vs_06_17 | float %}
+              {% if cur_diff > min_diff %}
+                {% set targetSOC= states('input_number.solar_control_house_battery_target_soc_midnight')|int %}
+              {% else %}
+                {% set cur_diff = state_attr('sensor.solar_control_price_differences','price_diffs').Today_00_06_vs_17_21 | float %}
+                {% set targetSOC= states('input_number.solar_control_house_battery_target_soc_before_peak')|int %}
+              {% endif %}
+              {% if forecast0 > min_prod %}  
+                {% set min_diff = 9999 %}
+              {% endif %}
+            {# Check if price difference before dinner peak is higher than the defined cutoff #}
             {% else %}
-               {% set cur_diff = states.sensor.solar_control_prices_differences.attributes.price_diffs.Today_06_17_vs_17_21 | float %}
+              {% set cur_diff = state_attr('sensor.solar_control_price_differences','price_diffs').Today_06_17_vs_17_21 | float %}
+              {% set targetSOC= states('input_number.solar_control_house_battery_target_soc_before_peak')|int %}
             {% endif %}
             {% if cur_diff > min_diff %}
-            charge
+            charge to {{targetSOC}}%
             {% else %}
             no_charging
             {% endif %}
           targetSOC: >
-            {% if this.attributes.status =='charge' %}
-              {% if now().hour > 16 or now().hour <6 %}
-                {{ states('input_number.solar_control_house_battery_target_soc_midnight')|int }}
-              {% else %}
-                {{ states('input_number.solar_control_house_battery_target_soc_before_peak')|int }}
-              {% endif %}
+            {% set status=this.attributes.status %}
+            {% if status[0:6] =='charge' %}
+              {{ status[10:]|replace('%','')|int }}
             {% else %}
               0
             {% endif %}
@@ -374,24 +388,24 @@ automation:
   - alias: "Solar control: Change EV charging ampere"
     id: solar_control_adjust_ev_charging
     description: "This automation changes the EV charging rate based on current solar production."
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.solar_control_ev_charging
-      - platform: state
+      - trigger: state
         entity_id:
           - input_boolean.solar_control_auto_adjust_charging
         from: "off"
         to: "on"
-    condition:
+    conditions:
       - condition: state
         entity_id: input_boolean.solar_control_auto_adjust_charging
         state: "on"
       - condition: state
         entity_id: sensor.easee_status
         state: "charging"
-    action:
-      - service: easee.set_circuit_dynamic_limit
+    actions:
+      - action: easee.set_circuit_dynamic_limit
         data_template:
           device_id: xxxxxxxxxxxxxxxxxxxxxxxx
           current_p1: "{{ states.sensor.solar_control_ev_charging.attributes.phases.P1 }}"
@@ -412,7 +426,7 @@ automation:
   - alias: "Solar control: Disable solar selling"
     id: solar_control_disable_solar_selling
     description: "This automation disables export to grid if current sales prices are below a defined threshold"
-    trigger:
+    triggers:
       - trigger: numeric_state
         entity_id:
           - sensor.eksportpriser
@@ -420,14 +434,14 @@ automation:
       - trigger: state
         entity_id:
           - input_boolean.solar_control_optimize_solar_selling
-    condition:
+    conditions:
       - condition: state
         entity_id: input_boolean.solar_control_optimize_solar_selling
         state: "on"
       - condition: numeric_state
         entity_id: sensor.eksportpriser
         below: input_number.solar_control_solar_selling_cutoff
-    action:
+    actions:
       - action: switch.turn_off
         target:
           entity_id: switch.deyemodbus_deye_solar_sell
@@ -441,7 +455,7 @@ automation:
   - alias: "Solar control: Enable solar selling"
     id: solar_control_enable_solar_selling
     description: "This automation enables export to grid if current sales prices are above a defined threshold"
-    trigger:
+    triggers:
       - trigger: numeric_state
         entity_id:
           - sensor.eksportpriser
@@ -449,14 +463,14 @@ automation:
       - trigger: state
         entity_id:
           - input_boolean.solar_control_optimize_solar_selling
-    condition:
+    conditions:
       - condition: state
         entity_id: input_boolean.solar_control_optimize_solar_selling
         state: "on"
       - condition: numeric_state
         entity_id: sensor.eksportpriser
         above: input_number.solar_control_solar_selling_cutoff
-    action:
+    actions:
       - action: switch.turn_on
         target:
           entity_id: switch.deyemodbus_deye_solar_sell
