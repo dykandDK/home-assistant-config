@@ -10,7 +10,8 @@
 # - 2024/11/09 - Added additional helpers, templates and automations to optimize
 #                solar selling and house battery grid charging
 # - 2025/02/15 - Updated "solar_control_house_battery_target_soc" template
-#                and fixed syntax errors in automations
+#                and fixed syntax errors in automations. Added new automation
+#                to change EV Charging planned finish time during the day
 ################################################################################
 
 #───────────────────────────────────────────────────────────────────────────────
@@ -476,6 +477,43 @@ automation:
           entity_id: switch.deyemodbus_deye_solar_sell
     mode: single
     max_exceeded: silent
+
+  #─────────────────────────────────────────────────────────────────────────────
+  # This automation changes planned grid charging finish times two times during
+  # the day - at 07.00 and at 17.00 to ensure charging is planned to stop before
+  # the morning or evening peaks
+  #─────────────────────────────────────────────────────────────────────────────
+  - alias: "Solar control: Change grid charging finish time"
+    id: solar_control_change_grid_charging_finish
+    description: Change finish time for grid charging
+    triggers:
+      - trigger: time
+        at: "07:00:30"
+        id: kl7
+      - trigger: time
+        at: "17:00:30"
+        id: kl17
+    conditions: []
+    actions:
+      - if:
+          - condition: trigger
+            id:
+              - kl7
+        then:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: "17:00"
+            target:
+              entity_id: select.ev_smart_charging_house_charge_completion_time
+        else:
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: "07:00"
+            target:
+              entity_id: select.ev_smart_charging_house_charge_completion_time
+    mode: single
 
   #─────────────────────────────────────────────────────────────────────────────
   # This automation activates grid charging of house battery when the EV Smart
